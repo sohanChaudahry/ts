@@ -17,22 +17,22 @@ export class AccountComponent implements OnInit {
               private userService: UserService) { }
 
   ngOnInit() {
-    this.getUser();
+    // this.getUser();
   }
 
-  getUser() {
-    this.userService.getUser(this.auth.currentUser).subscribe(
-      data => this.user = data,
-      error => console.log(error),
-      () => this.isLoading = false
-    );
-  }
+  // getUser() {
+  //   this.userService.getUser(this.auth.currentUser).subscribe(
+  //     data => this.user = data,
+  //     error => console.log(error),
+  //     () => this.isLoading = false
+  //   );
+  // }
 
-  save(user) {
-    this.userService.editUser(user).subscribe(
-      res => this.toast.setMessage('account settings saved!', 'success'),
-      error => console.log(error)
-    );
-  }
+  // save(user) {
+  //   this.userService.editUser(user).subscribe(
+  //     res => this.toast.setMessage('account settings saved!', 'success'),
+  //     error => console.log(error)
+  //   );
+  // }
 
 }
