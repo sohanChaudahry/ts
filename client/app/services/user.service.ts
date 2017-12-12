@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 export class UserService {
 
   // private headers = new Headers({ 'Content-Type': 'application/json', 'charset': 'UTF-8' });
-  private headers = new Headers({ 'Content-Type': 'application/json', 'charset': 'UTF-8','Access-Control-Allow-Origin': '*','authorization':localStorage.getItem('token') });
+  private headers = new Headers({ 'Content-Type': 'application/json', 'charset': 'UTF-8','Access-Control-Allow-Origin': '*' });
 
   private options = new RequestOptions({ headers: this.headers });
 

@@ -8,6 +8,8 @@ import {PopupModule} from 'ng2-opd-popup';
 // import { FormsModule } from '@angular/forms';
 
 import { UserService } from './services/user.service';
+import { ProjectService } from './services/project.service';
+
 import { AuthService } from './services/auth.service';
 import { AuthGuardLogin } from './services/auth-guard-login.service';
 import { AuthGuardAdmin } from './services/auth-guard-admin.service';
@@ -22,13 +24,14 @@ import { AccountComponent } from './account/account.component';
 import { AdminComponent } from './admin/admin.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ProjectComponent } from './project/project.component';
-
+import {SelectModule} from 'ng2-select';
 
  @NgModule({
   imports: [
     RoutingModule,
     SharedModule,
     PopupModule.forRoot(),
+    SelectModule
      // DatePickerModule,
     // FormsModule
   ],
@@ -47,7 +50,8 @@ import { ProjectComponent } from './project/project.component';
     AuthService,
     AuthGuardLogin,
     AuthGuardAdmin,
-    UserService
+    UserService,
+    ProjectService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]

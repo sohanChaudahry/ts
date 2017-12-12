@@ -3,18 +3,18 @@
 
     <app-toast [message]="toast.message"></app-toast>
 
-    <div class="card" *ngIf="!isLoading">
+    <div class="card" *ngIf="false">
       <div class="card-header">
-        <span class="custom_span_header">Current Green HouseTypes ({{greenHouseTypes.length}})</span>
-     </div>
+        <span class="custom_span_header">Projects</span>
+      </div>
       <div class="card-block">
         <div class="table-responsive custom_table">
         <table class="table table-bordered">
             <thead class="thead-default">
               <tr>
-                <th width="60%">Type</th>
-                <th width="15%">Days</th>
-                <th width="25%">Action</th>
+                <th width="70%">Project Name</th>
+                <th width="20%">Days</th>
+                <th width="10%">Action</th>
               </tr>
             </thead>
             <tbody *ngIf="greenHouseTypes.length == 0">
@@ -39,33 +39,127 @@
         </div>
       </div>
     </div>
-    <div class="card " *ngIf="false" style="background: #eee;">
+    <div class="card " *ngIf="true">
        <div class="card-header">
-        <span class="custom_span_header">Add green house type</span>
+        <span class="custom_span_header">Create Project</span>
        </div>
-        <form class="ctm_form" [formGroup]="addGreenHouseTypeForm" (ngSubmit)="checkIdAvaiable ? updateGreenHouseType() : addGreenHouseType()">
+        <form class="ctm_form">
           <br>
           <div class="row">
               <div class="col-md-1"></div>
               <div class="col-md-5">
                  <div class="form-group">
-                   <label for="exampleFormControlTextarea1">Type</label>
-                   <input class="form-control" type="text" name="type" formControlName="type" placeholder="Type">
+                   <label for="exampleFormControlTextarea1">Project Name</label>
+                   <input class="form-control" type="text" name="type" placeholder="Project Name">
                   </div>
               </div>
               <div class="col-md-5">
                 <div class="form-group">
-                   <label for="exampleFormControlTextarea1">Days</label>
-                   <input class="form-control" type="number" name="age" formControlName="days" placeholder="Days" min="1">
+                   <label for="exampleFormControlTextarea1">Email</label>
+                   <input class="form-control" type="email" name="type" placeholder="Email">
                 </div>
               </div>
               <div class="col-md-1"></div>
           </div>
           <div class="row">
               <div class="col-md-1"></div>
+              <div class="col-md-10">
+                 <div class="form-group">
+                   <label for="exampleFormControlTextarea1">Project Description</label>
+                   <textarea class="form-control" rows="2" placeholder="Project Description" ></textarea>
+                  </div>
+              </div>
+              <div class="col-md-1"></div>
+          </div>
+          <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-10">
+                  <label>Activities</label>
+                  <div class="">
+                  <table class="table table-fixed table-bordered activity_ctm">
+                      <thead class="thead-default">
+                          <tr>
+                            <th class="col-md-1">&nbsp;</th>
+                            <th class="col-md-9">Name</th>
+                            <th class="col-md-2" style="text-align:center">Action</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr *ngFor="let act of activityData;let i=index;">
+                            <td class="col-md-1">
+                                {{i+1}}
+                            </td>
+                            <td class="col-md-9">
+                                <div class="form-group ctm_input">
+                                  <input class="form-control" type="text" placeholder="Name">
+                                </div>
+                            </td>
+                            <td class="col-md-2">
+                                <button class="btn btn-sm btn-danger" (click)="removeActivity(index);"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                <button class="btn btn-sm btn-info" (click)="addActivity();"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </td>
+                          </tr> 
+                      </tbody>  
+                  </table>
+                  </div>
+              </div>
+              <div class="col-md-1"></div>
+          </div>
+          <div class="row">
+             <!--<label>Activities</label>-->
+             <br>
+              <div class="col-md-1"></div>
               <div class="col-md-6">
-                <button class="btn btn-sm btn-primary" type="submit" [disabled]="!addGreenHouseTypeForm.valid"><i class="fa fa-floppy-o"></i> Save</button>
-                <button class="btn btn-sm btn-primary" type="button" (click)="removeEditData()"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
+                  <span class="Assign">Assign To</span>
+                  <!--<select class="form-control">
+                      <option  *ngFor="let DAYEND of roleList;" [ngValue]="DAYEND" placeholder="Employee">{{DAYEND}}</option>
+                  </select>-->
+                  <ng-select [allowClear]="true"
+                        [items]="items"
+                        [disabled]="disabled"
+                        (data)="refreshValue($event)"
+                        (selected)="selected($event)"
+                        (removed)="removed($event)"
+                        (typed)="typed($event)"
+                        placeholder="No employee selected">
+                </ng-select>
+              </div>
+              <div class="col-md-3">
+                   <span class="Assign">Role</span>
+                   <select class="form-control">
+                        <option *ngFor="let role of roleList;" [ngValue]="role" placeholder="Role">{{role}}</option>
+                   </select>
+              </div>
+              <div class="col-md-1">
+                  <span class="Assign">&nbsp;</span>
+                  <button class="btn btn-sm btn-danger">Add</button>
+              </div>
+              <div class="col-md-1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 cat_lable custom-div-margin">
+                <div class="form-group city-data">
+                    <div class="searc_head"> 
+                          <div class="col-md-5">Selected Employees</div>
+                          <div class="col-md-5">Role</div>
+                          <div class="col-md-2" style="text-align:right">Action</div>
+                    </div>
+                    <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
+                        <div class="col-md-5">{{user.name}}</div>
+                        <div class="col-md-5">{{user.role}}</div>
+                        <div class="col-md-2" class="ctm_close"><i class="fa fa-times" aria-hidden="true"></i></div>
+                    </div>    
+                </div>
+            </div>
+            <div class="col-md-1"></div>
+          </div>
+          <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-6">
+                <button class="btn btn-sm btn-primary" type="submit"><i class="fa fa-floppy-o"></i> Save</button>
+                <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
               </div>
           </div>
           <br>
