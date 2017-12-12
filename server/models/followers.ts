@@ -3,6 +3,7 @@ import * as mongoose from 'mongoose';
 var followerSchema = new mongoose.Schema({
     email: { type: String, ref: 'employees' },
     project_id: { type: String , default : ""},
+    role: { type: String , default : ""},    
     create_date: Date,
     modify_date: Date
 });

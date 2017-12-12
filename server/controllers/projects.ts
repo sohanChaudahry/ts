@@ -36,6 +36,14 @@ export default class ProjectsCtrl  {
     var successData = {
         successData : []
     }
+
+    var successAssign = {
+      successAssign : []
+    }
+
+    var failedAssign = {
+      failedAssign : []
+    }
     var failedData = {
         failedData : []
     }
@@ -70,7 +78,7 @@ export default class ProjectsCtrl  {
                            
                           //if project_id is exist then update project.
                           var flag = 0;
-                          model.findOneAndUpdate({ "_id": project_id}, { "$set": { "project_name": project.project_name }}).exec(function (err, data2) {
+                          model.findOneAndUpdate({ "_id": project_id}, { "$set": { "project_name": project.project_name,"desc" :project.desc ? project.desc:data1[0].doc.desc}}).exec(function (err, data2) {
                             if (err) {
                                    count = length; 
                                    sendstatus = 1;   
@@ -80,7 +88,8 @@ export default class ProjectsCtrl  {
                                    callback();
                             }
                             else {
-                              followers.findOneAndUpdate({ "email": email,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data6) {
+                             followers.find({ "email": email,"project_id":project_id}, function (err, data10) {                           
+                              followers.findOneAndUpdate({ "email": email,"project_id":project_id}, { "$set": { "role" : project.role ? project.role : data10[0]._doc.role,"modify_date": current_date }}).exec(function (err, data6) {
                                  var cnt = 0;
                                  var actlength = project.activities.length ? project.activities.length : 0;
                                 async.forEach(project.activities, function (activity, callback) {
@@ -195,13 +204,78 @@ export default class ProjectsCtrl  {
                                   if(flag != 1){
                                     dt.success = "true";
                                     successData.successData.push(project);
+                                    var assignto = project.assign_to;
+                                    if(assignto && assignto.length > 0){
+                                        var assigncount = 0;
+                                        async.forEach(assignto, function (assignee, callback) {
+                                          empmodel.find({ "email": assignee.to_email }, function (err, data) {                   
+                                           //Check whether email is registered or not.
+                                           if(data && data.length > 0){
+                                            // If registered
+                                          followers.find({ "email": assignee.to_email,"project_id":project_id}, function (err, data11) {                           
+                                            if (data11 && data11.length > 0){
+                                              followers.findOneAndUpdate({ "email": assignee.to_email,"project_id":project_id}, { "$set": { "role" : assignee.role ? assignee.role : data11[0]._doc.role,"modify_date": current_date }}).exec(function (err, data6) {
+                                                if (err) {
+                                                  assignee.error = err;
+                                                  failedAssign.failedAssign.push(assignee);
+                                                  callback();      
+                                                }
+                                                else{
+                                                  successAssign.successAssign.push(assignee);
+                                                  callback();
+                                                }
+                                              })  
+                                            }
+                                            else{
+                                              var obj = new followers();
+                                              obj.email = assignee.to_email;
+                                              obj.project_id = project_id;
+                                              obj.role = assignee.role ? assignee.role : "";                                                                                              
+                                              obj.create_date = current_date;
+                                              obj.modify_date = current_date;
+                                              obj.save(function (err) {
+                                                 if (err) {
+                                                      assignee.error = err;
+                                                      failedAssign.failedAssign.push(assignee);
+                                                      callback();      
+                                                  }
+                                                  else{
+                                                   successAssign.successAssign.push(assignee);
+                                                   callback();
+                                                 }
+                                              }) 
+                                            }
+                                            
+                                            })
+                                           }
+                                           else{
+                                                assignee.error = "Assignee email is not registered";
+                                                failedAssign.failedAssign.push(assignee);
+                                                callback();  
+                               
+                                            }
+                                          
+                                          }) 
+                                             assigncount = assigncount + 1; 
+                                          }, function (err, cb) {
+                                              if(assigncount >= assignto.length){
+                                                callback();
+                                              }  
+                                        });
+                                                                      
                                     }
+                                    else{
+                                      callback();
+                                    }
+                                   }
+                                   else{
                                     callback();
+                                   }
                               
                               });
                                
                              })
-                        
+                            })
                               }
                             });
                           }
@@ -210,6 +284,7 @@ export default class ProjectsCtrl  {
                             var flag = 0;                           
                             var obj = new model();
                             obj.project_name = project.project_name;
+                            obj.desc = project.desc ? project.desc : "";                            
                             obj.save(function (err,projectdata) {
                               if (err && err.code === 11000) {
                                count = length;
@@ -232,6 +307,7 @@ export default class ProjectsCtrl  {
                               var prtempid = mongoose.Types.ObjectId(projectdata.id);
                               var obj = new followers();
                               obj.email = project.email;
+                              obj.role = project.role ? project.role : "";
                               obj.create_date = current_date;
                               obj.modify_date = current_date;
                               obj.project_id = prtempid
@@ -284,9 +360,56 @@ export default class ProjectsCtrl  {
                                        if(flag != 1){
                                         dt.success = "true";
                                         successData.successData.push(project);
+                                        var assignto = project.assign_to;
+                                        if(assignto && assignto.length > 0){
+                                            var assigncount = 0;
+                                            async.forEach(assignto, function (assignee, callback) {
+                                              empmodel.find({ "email": assignee.to_email }, function (err, data) {                   
+                                               //Check whether email is registered or not.
+                                               if(data && data.length > 0){
+                                                // If registered
+                                                var obj = new followers();
+                                                obj.email = assignee.to_email;
+                                                obj.role = assignee.role ? assignee.role : "";                                                
+                                                obj.project_id = prtempid;
+                                                obj.create_date = current_date;
+                                                obj.modify_date = current_date;
+                                                obj.save(function (err) {
+                                                   if (err) {
+                                                        assignee.error = err;
+                                                        failedAssign.failedAssign.push(assignee);
+                                                        callback();      
+                                                   }
+                                                   else{
+                                                       successAssign.successAssign.push(assignee);
+                                                       callback();
+                                                   }
+                                                })             
+                                               }
+                                               else{
+                                                    assignee.error = "Assignee email is not registered";
+                                                    failedAssign.failedAssign.push(assignee);
+                                                    callback();  
+                                   
+                                                }
+                                              
+                                              }) 
+                                                 assigncount = assigncount + 1; 
+                                              }, function (err, cb) {
+                                                  if(assigncount >= assignto.length){
+                                                    callback();
+                                                  }  
+                                            });
+                                                                          
+                                        }
+                                        else{
+                                          callback();
+                                        }
+                                       
                                       }
-                                     callback();
-    
+                                      else{
+                                      callback();
+                                      }
                                   
                                      });
                                      
@@ -307,6 +430,7 @@ export default class ProjectsCtrl  {
                           var flag = 0;                          
                           var obj = new model();
                           obj.project_name = project.project_name;
+                          obj.desc = project.desc ? project.desc : "";
                           obj.save(function (err,projectdata1) {
                             if (err && err.code === 11000) {
                              count = length;
@@ -329,6 +453,7 @@ export default class ProjectsCtrl  {
                             var prtempid = mongoose.Types.ObjectId(projectdata1.id);
                             var obj = new followers();
                             obj.email = project.email;
+                            obj.role = project.role ? project.role : "";                                                                                                                          
                             obj.create_date = current_date;
                             obj.modify_date = current_date;
                             obj.project_id = prtempid
@@ -381,8 +506,56 @@ export default class ProjectsCtrl  {
                                      if(flag != 1){
                                       dt.success = "true";
                                       successData.successData.push(project);
+                                      var assignto = project.assign_to;
+                                      if(assignto && assignto.length > 0){
+                                          var assigncount = 0;
+                                          async.forEach(assignto, function (assignee, callback) {
+                                            empmodel.find({ "email": assignee.to_email }, function (err, data) {                   
+                                             //Check whether email is registered or not.
+                                             if(data && data.length > 0){
+                                              // If registered
+                                              var obj = new followers();
+                                              obj.email = assignee.to_email;
+                                              obj.project_id = prtempid;
+                                              obj.role = assignee.role ? assignee.role : "";                                                                                              
+                                              obj.create_date = current_date;
+                                              obj.modify_date = current_date;
+                                              obj.save(function (err) {
+                                                 if (err) {
+                                                      assignee.error = err;
+                                                      failedAssign.failedAssign.push(assignee);
+                                                      callback();      
+                                                 }
+                                                 else{
+                                                     successAssign.successAssign.push(assignee);
+                                                     callback();
+                                                 }
+                                              })             
+                                             }
+                                             else{
+                                                  assignee.error = "Assignee email is not registered";
+                                                  failedAssign.failedAssign.push(assignee);
+                                                  callback();  
+                                 
+                                              }
+                                            
+                                            }) 
+                                               assigncount = assigncount + 1; 
+                                            }, function (err, cb) {
+                                                if(assigncount >= assignto.length){
+                                                  callback();
+                                                }  
+                                          });
+                                                                        
+                                      }
+                                      else{
+                                        callback();
+                                      }
+                                     
                                     }
-                                   callback();                              
+                                    else{
+                                          callback();
+                                    }                              
                                    });
                                    
                                  // })
@@ -411,6 +584,8 @@ export default class ProjectsCtrl  {
         result['successProjects'] = successData;
         result['failedProjects'] = failedData;
         result['failedActivities'] = failedactivity;
+        result['successAssign'] = successAssign;
+        result['failedAssign'] = failedAssign;        
       //  result['errors'] = errorData;
           if(count >= length){
             res.send(result);
