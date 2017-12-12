@@ -595,24 +595,26 @@ export default class ProjectsCtrl  {
   };
 
   
-/*
+   /*
   @author : Vaibhav Mali 
   @date : 12 Dec 2017
   @API : getProjectDetails
-  @desc :Get project details.
+  @desc :Get project details by project Id.
   */
-  getProjectDetails = (req, res) => {   
+   getProjectDetails = (req, res) => {   
     const current_date = new Date();
     var projectid = req.params.id;
     var model = projectsmodel;
     var tempactivities = {activities: []};
     var project = {};
+    var followertemp = {followers:[]}
     var project_id = mongoose.Types.ObjectId(projectid);
     model.find({ "_id": project_id }, function (err, data2) {
       if(data2 && data2.length > 0){
-          project["_id"] = data2[0]._doc._id;                              
-          project["project_name"] = data2[0]._doc.project_name;
-          activities.find({ "pid": project_id }, function (err, data3) {
+        followers.find({ "project_id":project_id}, function (err, data4) {                         
+             project["_id"] = data2[0]._doc._id;                              
+             project["project_name"] = data2[0]._doc.project_name;
+             activities.find({ "pid": project_id }, function (err, data3) {
               if(data3 && data3.length > 0){
                   var count = 0;
                   async.forEach(data3, function (activity, callback) {
@@ -621,19 +623,56 @@ export default class ProjectsCtrl  {
                         tempdata["activity_name"] = activity._doc.activity_name;
                         tempactivities.activities.push(tempdata)
                         count = count + 1;
-                        callback();                                
-                    }, function (err, cb) {
+                        if(count >= data3.length){
+                          var count1 = 0;
+                          async.forEach(data4, function (follower, callback) {
+                            followertemp.followers.push(follower._doc)
+                            count1 = count1 + 1;
+                            callback();
+                           }, function (err, cb) {
+                             if(count1 >= data4.length){
+                               callback();
+                             } 
+                           });  
+                        }
+                        else{
+                        callback();
+                        }                                
+                        }, function (err, cb) {
                           if(count >= data3.length){
-                            project["activities"] = tempactivities.activities;
-                            res.send(project);                                                      
-                          }
+                             count = 0; 
+                             project["activities"] = tempactivities.activities;
+                             project["followers"] = followertemp.followers;
+                             res.send(project);  
+
+                         }
+                         return;        
                      });
-              } 
-              else{
-                  project["activities"] = tempactivities.activities;
-                  res.send(project);                                    
-              }
-          })                   
+                    
+            } 
+            else{
+                 count = 0;
+                 if(data4 && data4.length > 0 ){
+                    async.forEach(data4, function (follower, callback) {
+                        followertemp.followers.push(follower._doc)
+                        count = count + 1;
+                        callback();
+                    }, function (err, cb) {
+                        if(count > data4.length){
+                           project["activities"] = tempactivities.activities;
+                           project["followers"] = followertemp.followers;
+                           res.send(project);  
+                          } 
+                      });  
+                   } 
+                 else{
+                       project["activities"] = tempactivities.activities;
+                       project["followers"] = followertemp.followers;
+                       res.send(project);  
+                 }                                    
+             }
+           }) 
+         })                  
         }
        else{
            project["error"] = "Incorrect Project Id";

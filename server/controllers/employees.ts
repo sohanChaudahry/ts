@@ -312,6 +312,39 @@ getEmployeeDetailsByEmail = (req, res) => {
   
 };
 
+
+/*
+  @author : Vaibhav Mali 
+  @date : 12 Dec 2017
+  @API : getAllEmployeeDetails
+  @desc : Get all employee details.
+  */
+getAllEmployeeDetails = (req, res) => {   
+  var model = this.model;
+  var employees = {};
+  var employeetemp = {employees:[]};
+  var count = 0;
+  model.find({}, function (err, data) {
+    if(data && data.length){
+     async.forEach(data, function (employee, callback) {
+          employeetemp.employees.push(employee._doc);
+          count = count + 1;
+          callback();
+     }, function (err, cb) {
+        if(count >= data.length){
+          employees['employees'] = employeetemp.employees;
+          res.send(employees);
+        }  
+        return;
+     });  
+   } 
+   else{
+       employees['employees'] = employeetemp.employees;
+       res.send(employees);
+   }          
+  });
+};
+
 success = (req, res) => {  
  console.log("Success");
 }

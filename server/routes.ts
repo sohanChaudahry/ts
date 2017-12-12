@@ -47,7 +47,9 @@ export default function setRoutes(app) {
   router.route('/employees/save_update_Employees').post(employeesCtrl.save_update_Employees);
   router.route('/employees/getdetailsById/:id').get(employeesCtrl.getEmployeeDetails); 
   router.route('/employees/getdetailsByEmail').post(employeesCtrl.getEmployeeDetailsByEmail); 
+  router.route('/employees/getAllEmployeeDetails/').get(employeesCtrl.getAllEmployeeDetails); 
   
+
   //Tasks
   router.route('/tasks/save_update_Tasks').post(tasksCtrl.save_update_Tasks);
   router.route('/tasks/getdetails/:id').get(tasksCtrl.getTaskDetails); 
