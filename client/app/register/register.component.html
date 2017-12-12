@@ -1,0 +1,75 @@
+<app-toast [message]="toast.message"></app-toast>
+
+<div class="card">
+  <h4 class="card-header">Register</h4>
+  <div class="card-block">
+    <form [formGroup]="registerForm" (ngSubmit)="register()">
+      <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-10">
+            <div class="input-group" [ngClass]="setClassUsername()">
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <input class="form-control" type="text" name="username" formControlName="username" placeholder="Username" autofocus>
+            </div>
+          </div>
+          <div class="col-md-1"></div>
+      </div>
+      <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-10">  
+          <div class="input-group" [ngClass]="setClassEmail()">
+            <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+            <input class="form-control" type="email" name="email" formControlName="email" placeholder="Email">
+          </div>
+          </div>
+          <div class="col-md-1"></div>
+      </div>
+      <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-10">  
+          <div class="input-group" [ngClass]="setClassPhone()">
+            <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+            <div class="col-md-1" style="padding-left:0;padding-right:0;">
+              <input class="form-control" [attr.disabled]="true" type="text" placeholder="91">
+            </div>
+            <div class="col-md-6" style="padding-left:0;">
+            <input class="form-control" type="number" name="phone" formControlName="phone" placeholder="phone">
+            </div>
+          </div>
+           </div>
+          <div class="col-md-1"></div>
+      </div>
+      <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-10">  
+          <div class="input-group" [ngClass]="setClassPassword()">
+            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+            <input class="form-control" type="password" name="password" formControlName="password" placeholder="Password">
+          </div>
+          </div>
+          <div class="col-md-1"></div>
+      </div>
+      <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-10">  
+          <div class="input-group" formGroupName="role">
+            <span class="input-group-addon"><i class="fa fa-black-tie"></i></span>
+            <select class="form-control" name="type" formControlName="type">
+              <option value="" selected >Role</option>
+              <option value="admin">Admin</option>
+              <option value="supervisor">Supervisor</option>
+            </select>
+          </div>
+          </div>
+          <div class="col-md-1"></div>
+      </div>
+      <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-10">  
+            <button class="btn btn-primary" type="submit" [disabled]="!registerForm.valid"><i class="fa fa-user-plus"></i> Register</button>
+          </div>
+          <div class="col-md-1"></div>
+      </div>
+    </form>
+  </div>
+</div>

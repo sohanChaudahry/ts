@@ -1,0 +1,24 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ]
+  },
+
+  "OAUTH2_CLIENT_ID": "1079197674548-fj3r0o8v23pkg6v22itao1n5ncmeod5c.apps.googleusercontent.com",
+  "OAUTH2_CLIENT_SECRET": "3-nFn8QTeWdTBJKYeGXSVVSi",
+  "OAUTH2_CALLBACK": "http://localhost:4200/auth/google/callback",
+  "MEMCACHE_URL": ""
+}

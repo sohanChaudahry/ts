@@ -1,0 +1,214 @@
+<div>
+  <app-loading [condition]="isLoading"></app-loading>
+  <app-toast [message]="toast.message"></app-toast>
+  <div class="card" *ngIf="!isLoading">
+    <h5 class="card-header">Current Gereen Houses ({{greenHouses.length}})</h5>
+    <div class="card-block">
+      <div class="table-responsive custom_table">
+      <table class="table table-bordered" style="height: 200px;">
+        <thead class="thead-default">
+          <tr>
+            <th width="20%">Name</th>
+            <!--<th width="10%">Owner</th>-->
+            <!--<th width="15%">Address</th>-->
+            <th width="20%">User</th>
+            <th width="15%">Start Date</th>
+            <th width="20%">GreenHouse Type</th>
+            <th width="25%">Action</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="greenHouses.length== 0">
+          <tr>
+            <td colspan="7">There are no greenHouse in the DB. Add a new greenHouse below.</td>
+          </tr>  
+        </tbody>
+        <tbody>
+          <tr *ngFor="let greenHouse of greenHouses">
+            <td>
+                <span>{{greenHouse.name}}</span>
+            </td>
+            <!--<td>
+                <span>{{greenHouse.owner}}</span>
+            </td>-->
+            <!--<td>
+              <span>{{greenHouse.address}}</span>
+            </td>-->
+            <td>
+              <span>{{greenHouse.users.username}}</span>
+            </td>
+            <td>
+               <span> {{greenHouse.start_date | date}}</span>
+            </td>
+            <td>
+               <span>{{greenHouse.greenHouseType.type}}</span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-warning" (click)="ClickButton(greenHouse);checkIdAvaiable=greenHouse._id;"><i class="fa fa-pencil"></i> Edit</button> 
+              <!--<button class="btn btn-sm btn-primary" *ngIf="greenHouse.isEditing==true" (click)="editGreenHouse(greenHouse)"><i class="fa fa-floppy-o"></i> Save</button>-->
+              <button class="btn btn-sm btn-danger" (click)="deleteGreenHouse(greenHouse)"><i class="fa fa-trash"></i> Delete</button>
+              <button class="btn btn-sm btn-info" (click)="editActivityBtn(greenHouse);"><i class="fa fa-pencil"></i>Activites</button> 
+              <!--<button class="btn btn-sm btn-warning" *ngIf="greenHouse.isEditing==true" (click)="greenHouse.isEditing=false;"><i class="fa fa-times"></i> Cancel</button>-->
+            </td>
+          </tr> 
+          <popup>
+            <div class="card-block" style="padding: 0;">
+              <div class="col-md-12">
+                <div>
+                    <div class="chatbox" *ngIf="message_list.length!=0">
+                        <div id="cust_message_div" class="chatmessages">
+                        <div *ngFor="let msg_list of message_list">
+                            <!--response msg-->
+                            <div class="tech-box usera-box">
+                                <div class="col-md-2">
+                                    <div class="chat-user-profile-imgA" style="background-image:url('../assets/avtar.png')"></div>
+                                </div>
+                                <div class="col-md-10 text-text-box">{{msg_list.comment}}</div>
+                            </div>
+                            <!--request msg-->
+                            <div class="tech-box userb-box">
+                                <div class="col-md-10 textb-text-box">{{msg_list.comment}}</div>
+                                <div class="col-md-2">
+                                    <div class="chat-user-profile-imgB" style="background-image:url('../assets/avtar.png')"></div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div *ngIf="message_list.length==0">
+                        <span>No activity comments available</span>
+                    </div>
+                    <!--<div class="tech-box usera-box tech_box_send_input">
+                        <div class="col-md-10 signup-formgroup chat_notification_input">
+                            <input class="form-control custom-input" [(ngModel)]="sendMessage" type="text" placeholder="Write a Comment">
+                        </div>
+                        <div class="col-md-2 send_btn_div">
+                            <div (click)="sendCommnet(sendMessage)" class="userb-img-box playbox chat_send_btn"><img src="../assets/send-button.png" class="chat_send_img"></div>
+                        </div>
+                    </div>-->
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+          </div>
+        </popup> 
+      </tbody>  
+      </table>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="background: #eee;" *ngIf="!isEditActivity">
+    <h5 class="card-header">Add green house</h5>
+    <div class="card-block">
+      <form [formGroup]="addGreenHouseForm" (ngSubmit)=" checkIdAvaiable ? editGreenHouse() : addGreenHouse()">
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-5">
+                <div class="form-group">
+                  <label for="exampleFormControlTextarea1">Name</label>
+                  <input class="form-control" type="text" name="name" formControlName="name" placeholder="Name">
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group">
+                  <label for="exampleFormControlTextarea1">Owner</label>
+                  <input class="form-control" type="text" name="owner" formControlName="owner" placeholder="Owner">
+                </div>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-10">
+                  <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Address</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" name="address" formControlName="address"></textarea>
+                  </div>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-5">
+                <div class="form-group">
+                  <label for="exampleFormControlTextarea1">User</label>
+                  <select class="form-control" name="userId" formControlName="users">
+                  <option [ngValue]="" selected="selected">Select User</option>
+                  <option [ngValue]="user._id" *ngFor="let user of userIds">{{user.username}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group">{{addGreenHouseForm.greenHouseType}}
+                    <label for="exampleFormControlTextarea1">Green house type</label>
+                    <select class="form-control" name="greenHouseType" formControlName="greenHouseType">
+                    <option [value]="" >Select green house type</option>
+                    <option [ngValue]="type._id" *ngFor="let type of greenHouseTypes">{{type.type}}</option>
+                    </select>
+                </div>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-10">
+              <div class="form-group">
+                  <label for="exampleFormControlTextarea1">Start Date</label>
+                  <input class="form-control" type="date" name="registerDate" formControlName="start_date" placeholder="Start Date">
+              </div>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-6">
+                <button class="btn btn-primary" type="submit" [disabled]="!addGreenHouseForm.valid"><i class="fa fa-floppy-o"></i>Save</button>
+                <button class="btn btn-primary" type="button" (click)="removeEditData()"><i class="fa fa-floppy-o"></i>Cancel</button>
+              </div>
+            </div>
+      </form>
+    </div>
+    </div>
+     <div class="card" *ngIf="isEditActivity">
+        <h5 class="card-header">Add Activities</h5>
+        <div class="card-block">
+            <div class="col-md-12 activity_table_hearder">
+              <span class="col-md-4">Green house : {{greenHousesActivities.name}}</span>
+              <!--<span class="col-md-3">User : {{greenHousesActivities.users.username}}</span>-->
+              <span class="col-md-4">Green house type : {{greenHousesActivities.greenHouseType.type}}</span>
+              <span class="col-md-4">Start date : {{greenHousesActivities.start_date | date}}</span>
+            </div>
+            <div class="table-responsive custom_table" style="max-height:400px;">
+                <table class="table table-bordered">
+                    <thead class="thead-default">
+                        <tr>
+                          <th width="5%">Day</th>
+                          <th width="10%">Name</th>
+                          <th width="35%">Description</th>
+                          <th width="15%">Date</th>
+                          <th width="15%">Status</th>
+                          <th width="20%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let act of activityData">
+                          <td>{{act.day}}</td>
+                          <td>{{act.name}} </td>
+                          <td>{{act.description}} </td>
+                          <td>{{act.start_date | date}} </td>
+                          <td>{{act.status}}</td>
+                          <td><button class="btn btn-sm btn-info" (click)="viewCommnetsFunction(act)"><i class="fa fa-info-circle" aria-hidden="true"></i>Commments</button></td>
+                        </tr> 
+                    </tbody>  
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-md-9"></div>
+                <div class="col-md-3">
+                  <button class="btn btn-sm btn-warning" (click)="cancelEditActivity()"><i class="fa fa-pencil"></i>Cancel</button> 
+                  <button class="btn btn-sm btn-primary"><i class="fa fa-floppy-o"></i>Save</button> 
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,27 @@
+{
+    "MSG001":"OTP Sent to mobile number",
+    "ERR001":" field is required",
+    "ERR002":"Value is too small, required length is {val}",
+    "ERR003":"Value is to large, required maximum length is {val}",
+    "ERR004":"Field must be type of {type}",
+    "ERR005":"Amount to acceptable",
+    "ERR006":"Identifier field is required",
+    "ERR007":"Entity not exit",
+    "ERR008":"Email already exist",
+    "ERR009":"Mobile already exist",
+    "ERR010":"User profile not exist",
+    "ERR011":"Invalid password",
+    "ERR012":"User not exist with this mobile",
+    "ERR013":"User is blocked by admin, contact administrator of shout",
+    "ERR018":"Access token is not valid",
+    "ERR019":"Access token is expired",
+    "ERR020":"Access token is blocked",
+    "ERR021":"Invalid access token",
+    "ERR022":"Unauthorized user",
+    "ERR023":"Access denied",
+    "ERR024":"Activity is already avalible for this day.",
+    "ERR026":"Type is already exist.",
+    "ERR028":"Name is already exist.",
+    "ERR029":"This email has not authorized."
+    
+  }
