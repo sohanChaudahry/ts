@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 export class UserService {
 
   // private headers = new Headers({ 'Content-Type': 'application/json', 'charset': 'UTF-8' });
-  private headers = new Headers({ 'Content-Type': 'application/json', 'charset': 'UTF-8','authorization':localStorage.getItem('token') });
+  private headers = new Headers({ 'Content-Type': 'application/json', 'charset': 'UTF-8','Access-Control-Allow-Origin': '*','authorization':localStorage.getItem('token') });
 
   private options = new RequestOptions({ headers: this.headers });
 
@@ -21,7 +21,10 @@ export class UserService {
   login(credentials): Observable<any> {
     return this.http.post('/api/login', JSON.stringify(credentials), this.options);
   }
-
+  
+  loginGoogle(): Observable<any> {
+    return this.http.get('http://localhost:3000/auth/google', this.options);
+  }
   getUsers(): Observable<any> {
     return this.http.get('/api/users').map(res => res.json());
   }

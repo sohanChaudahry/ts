@@ -1,0 +1,74 @@
+<div class="cointaner">
+    <app-loading [condition]="isLoading"></app-loading>
+
+    <app-toast [message]="toast.message"></app-toast>
+
+    <div class="card" *ngIf="!isLoading">
+      <div class="card-header">
+        <span class="custom_span_header">Current Green HouseTypes ({{greenHouseTypes.length}})</span>
+     </div>
+      <div class="card-block">
+        <div class="table-responsive custom_table">
+        <table class="table table-bordered">
+            <thead class="thead-default">
+              <tr>
+                <th width="60%">Type</th>
+                <th width="15%">Days</th>
+                <th width="25%">Action</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="greenHouseTypes.length == 0">
+              <tr>
+                <td colspan="4">There are no green house type in the DB. Add a new green house type below.</td>
+              </tr>  
+            </tbody>
+            <tbody>
+              <tr *ngFor="let greenHouseType of greenHouseTypes">
+                <td>
+                    <span>{{greenHouseType.type}}</span>
+                </td>
+                <td>
+                    <span>{{greenHouseType.days}}</span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-warning" *ngIf="greenHouseType.isEditing!=true" (click)="editGreenHouseTypeBtn(greenHouseType);checkIdAvaiable=greenHouseType._id;"><i class="fa fa-pencil"></i></button> 
+                </td>
+              </tr> 
+            </tbody>  
+        </table>
+        </div>
+      </div>
+    </div>
+    <div class="card " *ngIf="false" style="background: #eee;">
+       <div class="card-header">
+        <span class="custom_span_header">Add green house type</span>
+       </div>
+        <form class="ctm_form" [formGroup]="addGreenHouseTypeForm" (ngSubmit)="checkIdAvaiable ? updateGreenHouseType() : addGreenHouseType()">
+          <br>
+          <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-5">
+                 <div class="form-group">
+                   <label for="exampleFormControlTextarea1">Type</label>
+                   <input class="form-control" type="text" name="type" formControlName="type" placeholder="Type">
+                  </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group">
+                   <label for="exampleFormControlTextarea1">Days</label>
+                   <input class="form-control" type="number" name="age" formControlName="days" placeholder="Days" min="1">
+                </div>
+              </div>
+              <div class="col-md-1"></div>
+          </div>
+          <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-6">
+                <button class="btn btn-sm btn-primary" type="submit" [disabled]="!addGreenHouseTypeForm.valid"><i class="fa fa-floppy-o"></i> Save</button>
+                <button class="btn btn-sm btn-primary" type="button" (click)="removeEditData()"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
+              </div>
+          </div>
+          <br>
+        </form>
+     </div>
+</div>

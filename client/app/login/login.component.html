@@ -3,31 +3,8 @@
 <div class="card" style="background: #eee;">
   <h4 class="card-header">Login</h4>
   <div class="card-block">
-    <form [formGroup]="loginForm" (ngSubmit)="login()">
-      <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-6">
-          <div class="input-group" >
-            <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-            <input class="form-control" type="text" name="email" formControlName="username" placeholder="User Name" autofocus>
-          </div>
-        </div>
+      <div>
+          <button class="loginBtn loginBtn--google" (click)="loginGoogle()">Login with Google</button>
       </div>
-      <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-6">
-          <div class="input-group" [ngClass]="setClassPassword()">
-            <span class="input-group-addon"><i class="fa fa-key"></i></span>
-            <input class="form-control" type="password" name="password" formControlName="password" placeholder="Password">
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-6">
-          <button class="btn btn-primary" type="submit" [disabled]="!loginForm.valid"><i class="fa fa-sign-in"></i> Login</button>
-        </div>
-      </div>
-    </form>
   </div>
 </div>

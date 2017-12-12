@@ -153,11 +153,13 @@ function(req, res) {
 
 app.get('/success', function(req, res) {
   console.log("Login success");
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.send("Login Success");
 });  
 
 app.get('/fail', function(req, res) {
   console.log("Login fail");
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.send("Login Failed");  
 });  
 

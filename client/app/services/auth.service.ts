@@ -11,59 +11,17 @@ export class AuthService {
 
   jwtHelper: JwtHelper = new JwtHelper();
 
-  currentUser = { _id: '', username: '', role: '' };
+  // currentUser = { _id: '', username: '', role: '' };
 
   constructor(private userService: UserService,
               private router: Router) {
-        const token = localStorage.getItem('token');
-        if (token && token!=undefined) {
-          const decodedUser = this.decodeUserFromToken(token);
-          this.setCurrentUser(decodedUser);
-        }
+       
   }
-
-  login(emailAndPassword) {
-    
-    //return this.userService.login(emailAndPassword).map(res => res.json())
-     return this.userService.login(emailAndPassword).map(
+    login_google() {
+     return this.userService.loginGoogle().map(
       res => {
-        res=res.json();
-        localStorage.setItem('token', res.responseData.token);
-        const decodedUser = this.decodeUserFromToken(res.responseData.token);
-        this.setCurrentUser(decodedUser);
-        return this.loggedIn;
+        return res;
       }
     );
-    //  return this.userService.login(emailAndPassword).map(res => res.responseData.json()).map(
-    //   res => {
-    //     localStorage.setItem('token', res.responseData.token);
-    //     const decodedUser = this.decodeUserFromToken(res.responseData);
-    //     this.setCurrentUser(decodedUser);
-    //     return this.loggedIn;
-    //   }
-    // );
   }
-
-  logout() {
-    localStorage.removeItem('token');
-    this.loggedIn = false;
-    this.isAdmin = false;
-    this.currentUser = { _id: '', username: '', role: '' };
-    this.router.navigate(['/login']);
-  }
-
-  decodeUserFromToken(token) {
-   // return this.jwtHelper.decodeToken(token).user;
-    return this.jwtHelper.decodeToken(token);
-  }
-
-  setCurrentUser(decodedUser) {
-    this.loggedIn = true;
-    this.currentUser._id = decodedUser._id;
-    this.currentUser.username = decodedUser.username;
-    this.currentUser.role = decodedUser.role;
-    decodedUser.role === 'admin' ? this.isAdmin = true : this.isAdmin = false;
-    delete decodedUser.role;
-  }
-
 }

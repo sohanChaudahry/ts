@@ -7,18 +7,11 @@ import { ToastComponent } from '../shared/toast/toast.component';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
 
-  loginForm: FormGroup;
-  username = new FormControl('', [
-    Validators.required
-  ]);
-  password = new FormControl('', [
-    Validators.required,
-    Validators.minLength(6)
-  ]);
 
   constructor(private auth: AuthService,
               private formBuilder: FormBuilder,
@@ -27,25 +20,15 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     if (this.auth.loggedIn) {
-      this.router.navigate(['/']);
+      this.router.navigate(['']);
     }
-    this.loginForm = this.formBuilder.group({
-      username: this.username,
-      password: this.password
-    });
   }
-
-  // setClassEmail() {
-  //   return { 'has-danger': !this.username.pristine && !this.username.valid };
-  // }
-  setClassPassword() {
-    return { 'has-danger': !this.password.pristine && !this.password.valid };
-  }
-
-  login() {
-    this.auth.login({reqData:this.loginForm.value}).subscribe(
-      res => this.router.navigate(['/']),
-      error => this.toast.setMessage('invalid email or password!', 'danger')
-    );
+  loginGoogle(){
+       this.auth.login_google().subscribe(
+        data =>{ 
+          console.log(data);
+        },
+        error => console.log(error)
+      );
   }
 }
