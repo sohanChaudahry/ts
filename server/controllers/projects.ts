@@ -658,7 +658,7 @@ export default class ProjectsCtrl  {
                         count = count + 1;
                         callback();
                     }, function (err, cb) {
-                        if(count > data4.length){
+                        if(count >= data4.length){
                            project["activities"] = tempactivities.activities;
                            project["followers"] = followertemp.followers;
                            res.send(project);  
