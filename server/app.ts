@@ -11,9 +11,9 @@ var express = require('express');
 
 const app = express();
 
-const cors = require('cors')
+//const cors = require('cors')
 
-app.use(cors());
+//app.use(cors());
 
 var followers = mongoose.model('followers');
 var empmodel = mongoose.model('employees');
