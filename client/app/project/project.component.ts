@@ -22,7 +22,8 @@ export class ProjectComponent implements OnInit {
   roleList=["Manager","Developer","Tester"];
   addAssignUserList=[{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"}];
   activityData=[{"name":""}];
-  
+  isProjectList=true;
+  iscreateProject=false;
   getProjectForm: FormGroup;
   project_id = new FormControl('');
   project_name = new FormControl('', Validators.required);
@@ -94,6 +95,8 @@ export class ProjectComponent implements OnInit {
       }
   }
   cancel(){
+    this.isProjectList=true;
+    this.iscreateProject=false;
     this.activityData=[{"name":""}];
     this.getProjectForm.reset();
   }
@@ -114,13 +117,22 @@ export class ProjectComponent implements OnInit {
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
+  projectEditBtm(selectedProject){
+      this.isProjectList=false;
+      this.iscreateProject=true;
+      this.projectDetail=selectedProject;
+  }
+  craeteProjectBtn(){
+    this.isProjectList=true;
+    this.iscreateProject=false;
+  }
   getEmployeeDetailByEmail(){
     let reqData={
         "email":"sc205@enovate-it.com"
     }
     this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
         res => {
-           this.projectList=res;
+           this.projectList=res.details.projects;
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );

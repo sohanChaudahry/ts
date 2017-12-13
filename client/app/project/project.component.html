@@ -2,8 +2,8 @@
     <app-loading [condition]="isLoading"></app-loading>
 
     <app-toast [message]="toast.message"></app-toast>
-
-    <div class="card" *ngIf="false">
+    <button class="btn btn-sm btn-warning" (click)="craeteProjectBtn()">Create Project</button> 
+    <div class="card" *ngIf="isProjectList && !iscreateProject">
       <div class="card-header">
         <span class="custom_span_header">Projects</span>
       </div>
@@ -12,26 +12,22 @@
         <table class="table table-bordered">
             <thead class="thead-default">
               <tr>
-                <th width="70%">Project Name</th>
-                <th width="20%">Days</th>
-                <th width="10%">Action</th>
+                <th width="72%">Project Name</th>
+                <th width="8%">Action</th>
               </tr>
             </thead>
-            <tbody *ngIf="greenHouseTypes.length == 0">
+            <tbody *ngIf="projectList.length == 0">
               <tr>
-                <td colspan="4">There are no green house type in the DB. Add a new green house type below.</td>
+                <td colspan="2">There are no project in the DB. Add a new project.</td>
               </tr>  
             </tbody>
             <tbody>
-              <tr *ngFor="let greenHouseType of greenHouseTypes">
+              <tr *ngFor="let project of projectList">
                 <td>
-                    <span>{{greenHouseType.type}}</span>
+                    <span>{{project.project_name}}</span>
                 </td>
                 <td>
-                    <span>{{greenHouseType.days}}</span>
-                </td>
-                <td>
-                    <button class="btn btn-sm btn-warning" *ngIf="greenHouseType.isEditing!=true" (click)="editGreenHouseTypeBtn(greenHouseType);checkIdAvaiable=greenHouseType._id;"><i class="fa fa-pencil"></i></button> 
+                    <button class="btn btn-sm btn-warning" (click)="projectEditBtm(project)"><i class="fa fa-pencil"></i></button> 
                 </td>
               </tr> 
             </tbody>  
@@ -39,9 +35,9 @@
         </div>
       </div>
     </div>
-    <div class="card " *ngIf="true">
+    <div class="card " *ngIf="iscreateProject && !isProjectList">
        <div class="card-header">
-        <span class="custom_span_header">Create Project</span>
+        <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
        </div>
         <div class="ctm_form">
           <br>
