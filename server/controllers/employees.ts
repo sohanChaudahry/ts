@@ -166,11 +166,13 @@ export default class EmployeesCtrl  {
                                                           if(count >= data3.length){
                                                             project["activities"] = tempactivities.activities;
                                                             tempprojects.projects.push(project); 
+                                                            projectcount = projectcount + 1;                                                                                                                
                                                             callback();                                                            
                                                           }
                                                       });
                                                   } 
                                                   else{
+                                                    projectcount = projectcount + 1;                                                    
                                                     tempprojects.projects.push(project);
                                                     callback();                                                      
                                                   }
@@ -178,16 +180,16 @@ export default class EmployeesCtrl  {
                                        
                                      }
                                      else{
+                                      projectcount = projectcount + 1;                                      
                                       callback();
                                      }
                                })
 
                             }  
                             else{
+                              projectcount = projectcount + 1;                              
                               callback();
-                            }
-                            projectcount = projectcount + 1;
-                          
+                            }                          
                             
                           }, function (err, cb) {
                             var result = {};
@@ -265,12 +267,14 @@ getEmployeeDetailsByEmail = (req, res) => {
                                                       }, function (err, cb) {
                                                         if(count >= data3.length){
                                                           project["activities"] = tempactivities.activities;
-                                                          tempprojects.projects.push(project); 
+                                                          tempprojects.projects.push(project);
+                                                          projectcount = projectcount + 1;                                                                                                              
                                                           callback();                                                            
                                                         }
                                                     });
                                                 } 
                                                 else{
+                                                  projectcount = projectcount + 1;                                                                                                      
                                                   tempprojects.projects.push(project);
                                                   callback();                                                      
                                                 }
@@ -278,16 +282,16 @@ getEmployeeDetailsByEmail = (req, res) => {
                                      
                                    }
                                    else{
+                                    projectcount = projectcount + 1;                                                                                        
                                     callback();
                                    }
                              })
 
                           }  
                           else{
+                            projectcount = projectcount + 1;                                                                                
                             callback();
-                          }
-                          projectcount = projectcount + 1;
-                        
+                          }                        
                           
                         }, function (err, cb) {
                           var result = {};
