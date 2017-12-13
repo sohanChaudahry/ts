@@ -53,6 +53,10 @@ export default function setRoutes(app) {
   //Tasks
   router.route('/tasks/save_update_Tasks').post(tasksCtrl.save_update_Tasks);
   router.route('/tasks/getdetails/:id').get(tasksCtrl.getTaskDetails); 
+  router.route('/tasks/getDetailsByAssignFrom/:id').get(tasksCtrl.getTaskDetailsByAssignFrom);
+  router.route('/tasks/getDetailsByAssignTo/:id').get(tasksCtrl.getTaskDetailsByAssignTo); 
+  
+  
   
 
  //Request to join
@@ -60,7 +64,6 @@ export default function setRoutes(app) {
  router.route('/employees/request/getprojectrequests').get(userAcceptCtrl.getprojectrequests);
  router.route('/employees/request/accept/:id').get(userAcceptCtrl.request_accept); 
  router.route('/employees/request/cancel/:id').get(userAcceptCtrl.request_cancel); 
- 
  
  
 

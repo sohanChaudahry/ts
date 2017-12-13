@@ -56,7 +56,7 @@ export default class TasksCtrl  {
                      "select": task.select ? task.select : data[0]._doc.select,
                      "estimate_hrs": task.estimate_hrs ? task.estimate_hrs : data[0]._doc.estimate_hrs,
                      "actual_hrs": task.actual_hrs ? task.actual_hrs : data[0]._doc.actual_hrs,
-                     "role": task.role ? task.role : data[0]._doc.role,
+                     "priority": task.priority ? task.priority : data[0]._doc.priority,
                      "status": task.status ? task.status : data[0]._doc.status,
                      "start_date_time": task.start_date_time ? task.start_date_time : data[0]._doc.start_date_time,
                      "end_date_time":task.end_date_time ? task.end_date_time : data[0]._doc.end_date_time } }).exec(function (err, data3) {
@@ -85,10 +85,8 @@ export default class TasksCtrl  {
                     obj.due_date = task.due_date ? task.due_date : "";
                     obj.estimate_hrs = task.estimate_hrs ? task.estimate_hrs : 0;
                     obj.actual_hrs = task.actual_hrs ? task.actual_hrs : 0;
-                    obj.role = task.role ? task.role : "" ;
+                    obj.priority = task.priority ? task.priority : "" ;
                     obj.status = task.status ? task.status : 0;
-                    obj.start_date = task.start_date ? task.start_date : "";
-                    obj.end_date = task.end_date ? task.end_date : "";  
                     obj.start_date_time = task.start_date_time ? task.start_date_time : "";
                     obj.end_date_time = task.end_date_time ? task.end_date_time : "";  
                     obj.save(function (err) {
@@ -120,7 +118,7 @@ export default class TasksCtrl  {
                 obj.due_date = task.due_date ? task.due_date : "";
                 obj.estimate_hrs = task.estimate_hrs ? task.estimate_hrs : 0;
                 obj.actual_hrs = task.actual_hrs ? task.actual_hrs : 0;
-                obj.role = task.role ? task.role : "" ;
+                obj.priority = task.priority ? task.priority : "" ;
                 obj.status = task.status ? task.status : 0;
                 obj.start_date_time = task.start_date_time ? task.start_date_time : "";
                 obj.end_date_time = task.end_date_time ? task.end_date_time : ""; 
@@ -186,7 +184,93 @@ export default class TasksCtrl  {
  }
 
 
+/*
+  @author : Vaibhav Mali 
+  @date : 13 Dec 2017
+  @API : getTaskDetailsByAssignFrom
+  @desc :Get Task details by Assign From (Assign task from me).
+  */
+ getTaskDetailsByAssignFrom = (req, res) => {   
+  var model = this.model;
+  var tasks = {};
+  var tasktemp = {tasks:[]};
+  var count = 0;
+  var assign_from = req.params.id;
+  var resdata = { };
+  var _idstatus = mongoose.Types.ObjectId.isValid(assign_from);
+  if (_idstatus == false) {
+    var resData = {};
+    var err = assign_from + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
+  else{
+      var assign_from = mongoose.Types.ObjectId(assign_from);
+      model.find({"assign_from": assign_from}, function (err, data) {
+      if(data && data.length){
+       async.forEach(data, function (task, callback) {
+          tasktemp.tasks.push(task._doc);
+          count = count + 1;
+          callback();
+        }, function (err, cb) {
+        if(count >= data.length){
+          tasks['tasks'] = tasktemp.tasks;
+          res.send(tasks);
+        }  
+        return;
+      });  
+    } 
+    else{
+       tasks['tasks'] = tasktemp.tasks;
+       res.send(tasks);
+    }          
+   });
+ };
+}
  
+/*
+  @author : Vaibhav Mali 
+  @date : 13 Dec 2017
+  @API : getTaskDetailsByAssignTo
+  @desc :Get Task details by Assign To (Assign task to me).
+  */
+getTaskDetailsByAssignTo = (req, res) => {   
+  var model = this.model;
+  var tasks = {};
+  var tasktemp = {tasks:[]};
+  var count = 0;
+  var assign_to = req.params.id;
+  var resdata = { };
+  var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
+  if (_idstatus == false) {
+    var resData = {};
+    var err = assign_to + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
+  else{
+      var assign_to = mongoose.Types.ObjectId(assign_to);
+      model.find({"assign_to": assign_to}, function (err, data) {
+      if(data && data.length){
+       async.forEach(data, function (task, callback) {
+          tasktemp.tasks.push(task._doc);
+          count = count + 1;
+          callback();
+        }, function (err, cb) {
+        if(count >= data.length){
+          tasks['tasks'] = tasktemp.tasks;
+          res.send(tasks);
+        }  
+        return;
+      });  
+    } 
+    else{
+       tasks['tasks'] = tasktemp.tasks;
+       res.send(tasks);
+    }          
+   });
+ };
+}
 
 
 

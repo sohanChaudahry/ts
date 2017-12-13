@@ -11,7 +11,7 @@ var taskSchema = new mongoose.Schema({
     due_date : Date,
     estimate_hrs : Number,
     actual_hrs : Number,
-    role : String,
+    priority : String,
     status : Number,
     start_date_time: Date,
     end_date_time: Date
