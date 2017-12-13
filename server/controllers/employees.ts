@@ -151,7 +151,9 @@ export default class EmployeesCtrl  {
                                           if(data2 && data2.length > 0){
                                              project["_id"] = data2[0]._doc._id;                              
                                              project["project_name"] = data2[0]._doc.project_name;
-                                               activities.find({ "pid": project_id }, function (err, data3) {
+                                             project["desc"] = data2[0]._doc.desc; 
+                                             project["role"] = follower._doc.role;                                                                                                                                     
+                                             activities.find({ "pid": project_id }, function (err, data3) {
                                                   if(data3 && data3.length > 0){
                                                      var count = 0;
                                                      async.forEach(data3, function (activity, callback) {
@@ -253,6 +255,8 @@ getEmployeeDetailsByEmail = (req, res) => {
                                         if(data2 && data2.length > 0){
                                            project["_id"] = data2[0]._doc._id;                              
                                            project["project_name"] = data2[0]._doc.project_name;
+                                           project["desc"] = data2[0]._doc.desc; 
+                                           project["role"] = follower._doc.role;                                               
                                              activities.find({ "pid": project_id }, function (err, data3) {
                                                 if(data3 && data3.length > 0){
                                                    var count = 0;
