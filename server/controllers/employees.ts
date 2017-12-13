@@ -332,7 +332,8 @@ getAllEmployeeDetails = (req, res) => {
   var employees = {};
   var employeetemp = {employees:[]};
   var count = 0;
-  model.find({}, function (err, data) {
+  if(req && req.user){
+   model.find({email:{"$ne":req.user.emails[0].value}}, function (err, data) {
     if(data && data.length){
      async.forEach(data, function (employee, callback) {
           employeetemp.employees.push(employee._doc);
@@ -351,6 +352,11 @@ getAllEmployeeDetails = (req, res) => {
        res.send(employees);
    }          
   });
+ }
+ else{
+    employees['error'] = "Please login and continue";
+    res.send(employees);
+ }
 };
 
 success = (req, res) => {  
