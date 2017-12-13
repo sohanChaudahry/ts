@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { ProjectService } from '../services/project.service';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-project',
@@ -10,29 +11,53 @@ import { ProjectService } from '../services/project.service';
 export class ProjectComponent implements OnInit {
 
 
-  public items:Array<string> = ['Amsterdam', 'Antwerp', 'Athens', 'Barcelona',
-    'Berlin', 'Birmingham', 'Bradford', 'Bremen', 'Brussels', 'Bucharest',
-    'Budapest', 'Cologne', 'Copenhagen', 'Dortmund', 'Dresden', 'Dublin',
-    'Düsseldorf', 'Essen', 'Frankfurt', 'Genoa', 'Glasgow', 'Gothenburg',
-    'Hamburg', 'Hannover', 'Helsinki', 'Kraków', 'Leeds', 'Leipzig', 'Lisbon',
-    'London', 'Madrid', 'Manchester', 'Marseille', 'Milan', 'Munich', 'Málaga',
-    'Naples', 'Palermo', 'Paris', 'Poznań', 'Prague', 'Riga', 'Rome',
-    'Rotterdam', 'Seville', 'Sheffield', 'Sofia', 'Stockholm', 'Stuttgart',
-    'The Hague', 'Turin', 'Valencia', 'Vienna', 'Vilnius', 'Warsaw', 'Wrocław',
-    'Zagreb', 'Zaragoza', 'Łódź'];
+  public items:Array<string> = [];
+  public employeesToshow  :Array<string>=[];
   private value:any = {};
   private _disabledV:string = '0';
   private disabled:boolean = false;
   isLoading=false;
+  employeesList=[];
+  projectList=[];
   roleList=["Manager","Developer","Tester"];
   addAssignUserList=[{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"}];
-  activityData=[{"role":"","name":""}];
+  activityData=[{"name":""}];
+  
+  getProjectForm: FormGroup;
+  project_id = new FormControl('');
+  project_name = new FormControl('', Validators.required);
+  role = new FormControl('', Validators.required);
+  desc = new FormControl('', Validators.required);
+  email = new FormControl('');
+  activities = new FormControl([]);
+  assign_to = new FormControl([]);
+
+  projectDetail={
+      "project_id":"",
+      "project_name":"",
+      "role":"",
+      "desc":"",
+      "email":"",
+      "activities":[],
+      "assign_to":[]
+  };
 
   constructor(public toast:ToastComponent,
-  private projectService:ProjectService) { }
+  private projectService:ProjectService,
+  private formBuilder:FormBuilder) { }
   
   ngOnInit() {
       this.getAllEmployeeList();
+      this.getEmployeeDetailByEmail();
+      this.getProjectForm = this.formBuilder.group({
+        project_id: this.project_id,
+        project_name:this.project_name,
+        role: this.role,
+        desc:this.desc,
+        email:this.email,
+        activities:this.activities,
+        assign_to:this.assign_to,
+     });
   }
   private get disabledV():string {
     return this._disabledV;
@@ -60,7 +85,7 @@ export class ProjectComponent implements OnInit {
   }
 
   addActivity(){
-    this.activityData.push({"role":"","name":""});
+    this.activityData.push({"name":""});
   }
   removeActivity(index){   
       this.activityData.splice(index,1);
@@ -68,11 +93,34 @@ export class ProjectComponent implements OnInit {
           this.addActivity();
       }
   }
-
+  cancel(){
+    this.activityData=[{"name":""}];
+    this.getProjectForm.reset();
+  }
+  sendProjectFormData(Data){
+    this.projectDetail.activities=this.activityData;
+    console.log(this.projectDetail);
+  }
   getAllEmployeeList() {
       this.projectService.getAllEmployee().subscribe(
         res => {
            let data=res;
+           this.employeesList=res.employees;
+           for(var i=0;i<this.employeesList.length;i++){
+               this.employeesToshow.push(this.employeesList[i].name);
+               this.items.push(this.employeesList[i].name);
+           }
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
+  }
+  getEmployeeDetailByEmail(){
+    let reqData={
+        "email":"sc205@enovate-it.com"
+    }
+    this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
+        res => {
+           this.projectList=res;
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );

@@ -5,7 +5,7 @@ import { SharedModule } from './shared/shared.module';
 
 import {PopupModule} from 'ng2-opd-popup';
 // import {DatePickerModule} from 'ng2-datepicker-bootstrap';
-// import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
 import { UserService } from './services/user.service';
 import { ProjectService } from './services/project.service';
@@ -31,9 +31,9 @@ import {SelectModule} from 'ng2-select';
     RoutingModule,
     SharedModule,
     PopupModule.forRoot(),
-    SelectModule
+    SelectModule,
      // DatePickerModule,
-    // FormsModule
+     FormsModule
   ],
   declarations: [
     AppComponent,

@@ -7,7 +7,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class ProjectService {
 
-  private headers = new Headers({ 'Content-Type': 'application/json', 'charset': 'UTF-8','Access-Control-Allow-Origin': '*'});
+  private headers = new Headers({ 'Content-Type': 'application/json', 'charset': 'UTF-8'});
 
   private options = new RequestOptions({ headers: this.headers });
 
@@ -15,5 +15,8 @@ export class ProjectService {
 
   getAllEmployee(): Observable<any> {
     return this.http.get('/api/employees/getAllEmployeeDetails/',this.options).map(res => res.json());
+  }
+  getEmpDetailApi(reqData): Observable<any> {
+    return this.http.post('/api/employees/getdetailsByEmail', JSON.stringify(reqData), this.options).map(res => res.json());
   }
 }

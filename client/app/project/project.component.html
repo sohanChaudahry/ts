@@ -43,21 +43,23 @@
        <div class="card-header">
         <span class="custom_span_header">Create Project</span>
        </div>
-        <form class="ctm_form">
+        <div class="ctm_form">
           <br>
           <div class="row">
               <div class="col-md-1"></div>
               <div class="col-md-5">
                  <div class="form-group">
-                   <label for="exampleFormControlTextarea1">Project Name</label>
-                   <input class="form-control" type="text" name="type" placeholder="Project Name">
+                   <label>Project Name</label>
+                   <input class="form-control" type="text" name="project_name" [(ngModel)]="projectDetail.project_name" placeholder="Project Name">
                   </div>
               </div>
               <div class="col-md-5">
-                <div class="form-group">
-                   <label for="exampleFormControlTextarea1">Email</label>
-                   <input class="form-control" type="email" name="type" placeholder="Email">
-                </div>
+                 <div class="form-group">
+                   <label>Role</label>
+                   <select class="form-control" name="role" [(ngModel)]="projectDetail.role">
+                        <option [ngValue]="role" *ngFor="let role of roleList;"  placeholder="Role">{{role}}</option>
+                   </select>
+                  </div>
               </div>
               <div class="col-md-1"></div>
           </div>
@@ -65,8 +67,8 @@
               <div class="col-md-1"></div>
               <div class="col-md-10">
                  <div class="form-group">
-                   <label for="exampleFormControlTextarea1">Project Description</label>
-                   <textarea class="form-control" rows="2" placeholder="Project Description" ></textarea>
+                   <label>Project Description</label>
+                   <textarea class="form-control" rows="2" name="desc" [(ngModel)]="projectDetail.desc" placeholder="Project Description" ></textarea>
                   </div>
               </div>
               <div class="col-md-1"></div>
@@ -91,7 +93,7 @@
                             </td>
                             <td class="col-md-9">
                                 <div class="form-group ctm_input">
-                                  <input class="form-control" type="text" placeholder="Name">
+                                  <input class="form-control" type="text" [(ngModel)]="act.name" placeholder="Name">
                                 </div>
                             </td>
                             <td class="col-md-2">
@@ -106,14 +108,10 @@
               <div class="col-md-1"></div>
           </div>
           <div class="row">
-             <!--<label>Activities</label>-->
              <br>
               <div class="col-md-1"></div>
               <div class="col-md-6">
                   <span class="Assign">Assign To</span>
-                  <!--<select class="form-control">
-                      <option  *ngFor="let DAYEND of roleList;" [ngValue]="DAYEND" placeholder="Employee">{{DAYEND}}</option>
-                  </select>-->
                   <ng-select [allowClear]="true"
                         [items]="items"
                         [disabled]="disabled"
@@ -122,7 +120,7 @@
                         (removed)="removed($event)"
                         (typed)="typed($event)"
                         placeholder="No employee selected">
-                </ng-select>
+                  </ng-select>
               </div>
               <div class="col-md-3">
                    <span class="Assign">Role</span>
@@ -158,11 +156,11 @@
           <div class="row">
               <div class="col-md-1"></div>
               <div class="col-md-6">
-                <button class="btn btn-sm btn-primary" type="submit"><i class="fa fa-floppy-o"></i> Save</button>
-                <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
+                <button class="btn btn-sm btn-primary" type="button" (click)="sendProjectFormData(myForm)"><i class="fa fa-floppy-o"></i> Save</button>
+                <button class="btn btn-sm btn-primary" (click)="cancel()" type="button"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
               </div>
           </div>
           <br>
-        </form>
+        </div>
      </div>
 </div>
