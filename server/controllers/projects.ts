@@ -614,6 +614,7 @@ export default class ProjectsCtrl  {
         followers.find({ "project_id":project_id}, function (err, data4) {                         
              project["_id"] = data2[0]._doc._id;                              
              project["project_name"] = data2[0]._doc.project_name;
+             project["desc"] = data2[0]._doc.desc; 
              activities.find({ "pid": project_id }, function (err, data3) {
               if(data3 && data3.length > 0){
                   var count = 0;
@@ -625,10 +626,29 @@ export default class ProjectsCtrl  {
                         count = count + 1;
                         if(count >= data3.length){
                           var count1 = 0;
-                          async.forEach(data4, function (follower, callback) {
-                            followertemp.followers.push(follower._doc)
-                            count1 = count1 + 1;
-                            callback();
+                          async.forEach(data4, function (follower, callback) { 
+                            empmodel.find({ "email": follower._doc.email}, function (err, data8) {
+                              if(req && req.user && req.user.emails[0].value == follower._doc.email){
+                                  project["employee_id"] = data8[0]._id;
+                                  project["name"] = data8[0].name;
+                                  project["act_status"] = data8[0].act_status;
+                                  project["type"] = data8[0].type;
+                                  project["role"] = follower._doc.role;
+                                  project["create_date"] = follower._doc.create_date;
+                                  project["modify_date"] = follower._doc.modify_date;  
+                                  count1 = count1 + 1;                                  
+                                  callback();                                                   
+                              }
+                              else{
+                                follower._doc.employee_id = data8[0]._id;
+                                follower._doc.name = data8[0].name;
+                                follower._doc.act_status = data8[0].act_status;
+                                follower._doc.type = data8[0].type;
+                                followertemp.followers.push(follower._doc)
+                                count1 = count1 + 1;
+                                callback();
+                              }
+                            })
                            }, function (err, cb) {
                              if(count1 >= data4.length){
                                callback();
@@ -654,9 +674,28 @@ export default class ProjectsCtrl  {
                  count = 0;
                  if(data4 && data4.length > 0 ){
                     async.forEach(data4, function (follower, callback) {
+                      empmodel.find({ "email": follower._doc.email}, function (err, data8) {
+                        if(req && req.user && req.user.emails[0].value == follower._doc.email){
+                          project["employee_id"] = data8[0]._id;
+                          project["name"] = data8[0].name;
+                          project["act_status"] = data8[0].act_status;
+                          project["type"] = data8[0].type;
+                          project["role"] = follower._doc.role;
+                          project["create_date"] = follower._doc.create_date;
+                          project["modify_date"] = follower._doc.modify_date; 
+                          count = count + 1;                          
+                          callback();                                                   
+                      }
+                      else{
+                        follower._doc.employee_id = data8[0]._id;
+                        follower._doc.name = data8[0].name;
+                        follower._doc.act_status = data8[0].act_status;
+                        follower._doc.type = data8[0].type;
                         followertemp.followers.push(follower._doc)
                         count = count + 1;
                         callback();
+                      }
+                      })
                     }, function (err, cb) {
                         if(count >= data4.length){
                            project["activities"] = tempactivities.activities;
@@ -672,7 +711,7 @@ export default class ProjectsCtrl  {
                  }                                    
              }
            }) 
-         })                  
+         }).sort({ "modify_date" : -1});  
         }
        else{
            project["error"] = "Incorrect Project Id";
