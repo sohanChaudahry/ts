@@ -14,6 +14,6 @@ export class ProjectService {
   constructor(private http: Http) { }
 
   getAllEmployee(): Observable<any> {
-    return this.http.get('http://192.168.12.135:3000/api/employees/getAllEmployeeDetails/',this.options).map(res => res.json());
+    return this.http.get('/api/employees/getAllEmployeeDetails/',this.options).map(res => res.json());
   }
 }
