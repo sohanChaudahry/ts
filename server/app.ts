@@ -11,6 +11,10 @@ var express = require('express');
 
 const app = express();
 
+const cors = require('cors')
+
+app.use(cors());
+
 var followers = mongoose.model('followers');
 var empmodel = mongoose.model('employees');
 var user_accept = mongoose.model('user_accept');
@@ -18,6 +22,51 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 dotenv.load({ path: '.env' });
 app.set('port', (process.env.PORT || 3000));
+// Add headers
+
+/*app.use(function (req, res, next) {
+  
+  res.header("Access-Control-Allow-Origin", "*");
+  // Website you wish to allow to connect
+     // res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+  
+      // Request methods you wish to allow
+      res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  
+      // Request headers you wish to allow
+      //res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+      res.header('Access-Control-Max-Age', '86400');
+      res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  
+      // Set to true if you need the website to include cookies in the requests sent
+      // to the API (e.g. in case you use sessions)
+      res.header('Access-Control-Allow-Credentials', true);
+  
+      // Pass to next layer of middleware
+      next();
+  });
+  app.all('/*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    next();
+  });*/
+
+  /*app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+    //res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    
+    //intercepts OPTIONS method
+    if ('OPTIONS' == req.method) {
+      //respond with 200
+      res.send(200);
+     //res.redirect("/auth/google")
+    }
+    else {
+    //move on
+      next();
+    }
+});*/
 
 app.use('/', express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
@@ -153,7 +202,6 @@ function(req, res) {
 
 app.get('/success', function(req, res) {
   console.log("Login success");
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.send("Login Success");
 });  
 
