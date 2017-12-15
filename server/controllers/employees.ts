@@ -141,7 +141,8 @@ export default class EmployeesCtrl  {
                       dt['type'] = data[0]._doc.type; 
                       var projectcount = 0;
                       var projectslength = data1.length ? data1.length : 0;
-                      var tempprojects = {projects: []};                                              
+                      var tempprojects = {projects: []};    
+                      var tempprojects1 = {projects: []};                                                                    
                       async.forEach(data1, function (follower, callback) {
                         var tempactivities = {activities: []};
                         var project = {}
@@ -167,7 +168,11 @@ export default class EmployeesCtrl  {
                                                         }, function (err, cb) {
                                                           if(count >= data3.length){
                                                             project["activities"] = tempactivities.activities;
-                                                            tempprojects.projects.push(project); 
+                                                            if(follower._doc.ismanager == 1){
+                                                              tempprojects1.projects.push(project);                                                              
+                                                            }else{
+                                                              tempprojects.projects.push(project);
+                                                            }
                                                             projectcount = projectcount + 1;                                                                                                                
                                                             callback();                                                            
                                                           }
@@ -175,7 +180,11 @@ export default class EmployeesCtrl  {
                                                   } 
                                                   else{
                                                     projectcount = projectcount + 1;                                                    
-                                                    tempprojects.projects.push(project);
+                                                    if(follower._doc.ismanager == 1){
+                                                      tempprojects1.projects.push(project);                                                              
+                                                    }else{
+                                                      tempprojects.projects.push(project);
+                                                    }
                                                     callback();                                                      
                                                   }
                                             })
@@ -196,7 +205,8 @@ export default class EmployeesCtrl  {
                           }, function (err, cb) {
                             var result = {};
                               if(projectcount >= projectslength){
-                                dt["projects"] = tempprojects.projects;
+                                dt["MyProjects"] = tempprojects1.projects;
+                                dt["AssignedProjects"] = tempprojects.projects;
                                 var resData = {};
                                 resData['details'] = dt;
                                 res.send(resData);
@@ -245,7 +255,8 @@ getEmployeeDetailsByEmail = (req, res) => {
                     dt['type'] = data[0]._doc.type; 
                     var projectcount = 0;
                     var projectslength = data1.length ? data1.length : 0;
-                    var tempprojects = {projects: []};                                              
+                    var tempprojects = {projects: []};        
+                    var tempprojects1 = {projects: []};                                              
                     async.forEach(data1, function (follower, callback) {
                       var tempactivities = {activities: []};
                       var project = {}
@@ -271,7 +282,11 @@ getEmployeeDetailsByEmail = (req, res) => {
                                                       }, function (err, cb) {
                                                         if(count >= data3.length){
                                                           project["activities"] = tempactivities.activities;
-                                                          tempprojects.projects.push(project);
+                                                          if(follower._doc.ismanager == 1){
+                                                            tempprojects1.projects.push(project);                                                              
+                                                          }else{
+                                                            tempprojects.projects.push(project);
+                                                          }
                                                           projectcount = projectcount + 1;                                                                                                              
                                                           callback();                                                            
                                                         }
@@ -279,7 +294,11 @@ getEmployeeDetailsByEmail = (req, res) => {
                                                 } 
                                                 else{
                                                   projectcount = projectcount + 1;                                                                                                      
-                                                  tempprojects.projects.push(project);
+                                                  if(follower._doc.ismanager == 1){
+                                                    tempprojects1.projects.push(project);                                                              
+                                                  }else{
+                                                    tempprojects.projects.push(project);
+                                                  }
                                                   callback();                                                      
                                                 }
                                           })
@@ -300,7 +319,8 @@ getEmployeeDetailsByEmail = (req, res) => {
                         }, function (err, cb) {
                           var result = {};
                             if(projectcount >= projectslength){
-                              dt["projects"] = tempprojects.projects;
+                              dt["MyProjects"] = tempprojects1.projects;
+                              dt["AssignedProjects"] = tempprojects.projects;
                               var resData = {};
                               resData['details'] = dt;
                               res.send(resData);
