@@ -211,7 +211,7 @@ export default class TasksCtrl  {
   else{
       var assign_from = mongoose.Types.ObjectId(assign_from);
       model.find({"assign_from": assign_from}, function (err, data) {
-      if(data && data.length){
+      if(data && data.length > 0){
        async.forEach(data, function (task, callback) {
         var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
         var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
@@ -219,12 +219,12 @@ export default class TasksCtrl  {
         var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
         empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
         empmodel.find({ "_id": employee_id }, function (err, data1) {
-          projectsmodel.find({ "_id": project_id }, function (err, data2) {
+          projectsmodel.find({ "_id": task._doc.project_id }, function (err, data2) {
             activities.find({ "_id": act_id }, function (err, data3) {     
               task._doc.assign_from = data4[0]._doc;              
               task._doc.assign_to = data1[0]._doc;
-              task._doc.project_id = data2[0]._doc;
-              task._doc.activity_id = data3[0]._doc;              
+               task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id ;
+              task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;               
               tasktemp.tasks.push(task._doc);
               count = count + 1;
               callback();
@@ -271,7 +271,7 @@ getTaskDetailsByAssignTo = (req, res) => {
   else{
       var assign_to = mongoose.Types.ObjectId(assign_to);
       model.find({"assign_to": assign_to}, function (err, data) {
-      if(data && data.length){
+      if(data && data.length > 0){
        async.forEach(data, function (task, callback) {
         var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
         var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
@@ -279,12 +279,12 @@ getTaskDetailsByAssignTo = (req, res) => {
         var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
         empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
         empmodel.find({ "_id": employee_id }, function (err, data1) {
-          projectsmodel.find({ "_id": project_id }, function (err, data2) {
+          projectsmodel.find({ "_id": task._doc.project_id }, function (err, data2) {
             activities.find({ "_id": act_id }, function (err, data3) {     
               task._doc.assign_from = data4[0]._doc;              
               task._doc.assign_to = data1[0]._doc;
-              task._doc.project_id = data2[0]._doc;
-              task._doc.activity_id = data3[0]._doc;              
+              task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id ;
+              task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;              
               tasktemp.tasks.push(task._doc);
               count = count + 1;
               callback();
