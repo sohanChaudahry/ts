@@ -19,9 +19,10 @@ export default class UserAcceptCtrl  {
   @API : request_join
   @desc : Send request to join projects or join invoice status.
   */
-  request_join = (req, res) => {
+  request_join = (req, cb) => {
     var model = User_accept;
-    var req_data = req.body.reqData;
+   // var req_data = req.body.reqData;
+    var req_data = req;    
     const current_date = new Date();
     var tempfrom = "";
     var tempto = "";
@@ -39,7 +40,9 @@ export default class UserAcceptCtrl  {
                       if(data3 && data3.length > 0){
                          //Request is already there.
                            result['error'] = "Your request is already there please wait to accept";
-                          res.send(result);
+                         // res.send(result);
+                        // return result;
+                        cb(null,result)
                       }
                       else{
                            empmodel.find({ "email": req_data.to_email}, function (err, data2){  
@@ -52,11 +55,17 @@ export default class UserAcceptCtrl  {
                                    if (err){
                                        console.log("Error: " + err);
                                        result['error'] = err;
+                                      // return result;
+                                      cb(null,result)
+                                      
                                    }
                                    else {
                                          if(data2[0].act_status == 1){
                                             //If user is active then please get requested projects.
                                             result['status'] = 1;
+                                            //return result;
+                                            cb(null,result)
+                                            
                                          } 
                                          else{
                                             // Send mail with message
@@ -88,14 +97,20 @@ export default class UserAcceptCtrl  {
                                           // send mail with defined transport object
                                          transporter.sendMail(mailOptions, (error, info) => {
                                           if (error) {
-                                            return console.log(error);
+                                            result['error'] = error;
+                                            // return console.log(error);
+                                            cb(null,result)
+                                            
                                           }
                                           console.log('Message sent: %s', info.messageId);
                                           // Preview only available when sending through an Ethereal account
                                           console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
                                           result["status"] = 2;// status = 2 means requested user is not active.
                                           result["message"] = "Request has been sent successfully"
-                                          res.send(result);
+                                         // res.send(result);
+                                        // return result;
+                                        cb(null,result)
+                                        
                                           });
                                           })
                                       }
@@ -105,7 +120,10 @@ export default class UserAcceptCtrl  {
                               else{
                                   //Requested email is not registered
                                   result['error'] = "Requested email is not registered please request to join invoice status first";
-                                  res.send(result);
+                                 // res.send(result);
+                                // return result;
+                                cb(null,result)
+                                
                               }
                            })
                       }
@@ -115,7 +133,10 @@ export default class UserAcceptCtrl  {
                   else{
                       //Requested project is not present.
                       result['error'] = "Requested project is not present";
-                      res.send(result);
+                    //  res.send(result);
+                   // return result;
+                   cb(null,result)
+                   
                   }
                  })
 
@@ -150,14 +171,20 @@ export default class UserAcceptCtrl  {
                      // send mail with defined transport object
                       transporter.sendMail(mailOptions, (error, info) => {
                       if (error) {
-                          return console.log(error);
+                        result['error'] = error;
+                         // return console.log(error);
+                         cb(null,result)
+                         
                       }
                          console.log('Message sent: %s', info.messageId);
                          // Preview only available when sending through an Ethereal account
                          console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
                          result["status"] = true;
                          result["message"] = "Request has been sent successfully"
-                         res.send(result);      
+                         //res.send(result);      
+                         //return result;
+                         cb(null,result)
+                         
                         });
                      }); 
                 }
@@ -165,7 +192,10 @@ export default class UserAcceptCtrl  {
           }
           else{
                result['error'] = "You are not member of status,please register first";
-               res.send(result);
+             //  res.send(result);
+             //return result;
+             cb(null,result)
+             
           }
        
     }) 
