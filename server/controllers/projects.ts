@@ -136,11 +136,11 @@ export default class ProjectsCtrl  {
                                                                                    //Check whether email is registered or not.
                                                                                    if(data && data.length > 0){
                                                                                     // If registered
-                                                                                    User_accept.find({ "from_email": email,"to_email": assignee.to_email,"project_id": project_id,"accept" : 0 }, function (err, data3) {
-                                                                                      User_accept.find({ "from_email": email,"to_email": assignee.to_email,"project_id": project_id,"accept" : 1 }, function (err, data4) {
+                                                                                    User_accept.find({ "from_email": req.user.emails[0].value,"to_email": assignee.to_email,"project_id": project_id,"accept" : 0 }, function (err, data3) {
+                                                                                      User_accept.find({ "from_email": req.user.emails[0].value,"to_email": assignee.to_email,"project_id": project_id,"accept" : 1 }, function (err, data4) {
                                                                                             if((data3 && data3.length == 0) || (data4 && data4.length == 0)){
                                                                                               var reqData = {};
-                                                                                              reqData["from_email"] = email;
+                                                                                              reqData["from_email"] = req.user.emails[0].value;
                                                                                               reqData["to_email"] = assignee.to_email;
                                                                                               reqData["project_id"] = project.project_id;
                                                                                               var userAcceptCtrl = new UserAcceptCtrl();

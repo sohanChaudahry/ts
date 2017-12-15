@@ -11,17 +11,19 @@ import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms'
 export class ProjectComponent implements OnInit {
 
 
-  public items:Array<string> = [];
-  public employeesToshow  :Array<string>=[];
+  public employeesToshow  :Array<any>=[];
   private value:any = {};
   private _disabledV:string = '0';
   private disabled:boolean = false;
   isLoading=false;
   employeesList=[];
   projectList=[];
+  isEmpAutoSelect=[];
+  AssignedProjectsList=[];
+  MyProjectsList=[];
   roleList=["Manager","Developer","Tester"];
-  addAssignUserList=[{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"},{"name":"sohan","role":"Manager"}];
-  activityData=[{"name":""}];
+  addAssignUserList=[];
+  activityData=[{"name":"","activity_id":""}];
   isProjectList=true;
   iscreateProject=false;
   getProjectForm: FormGroup;
@@ -34,6 +36,7 @@ export class ProjectComponent implements OnInit {
   assign_to = new FormControl([]);
 
   projectDetail={
+      "_id":"",
       "project_id":"",
       "project_name":"",
       "role":"",
@@ -42,7 +45,11 @@ export class ProjectComponent implements OnInit {
       "activities":[],
       "assign_to":[]
   };
-
+  searchEmpDetail={
+    "name":"",
+    "role":"",
+    "to_email":""
+  }
   constructor(public toast:ToastComponent,
   private projectService:ProjectService,
   private formBuilder:FormBuilder) { }
@@ -71,6 +78,7 @@ export class ProjectComponent implements OnInit {
  
   public selected(value:any):void {
     console.log('Selected value is: ', value);
+    this.searchEmpDetail.name=value.text;
   }
  
   public removed(value:any):void {
@@ -86,7 +94,7 @@ export class ProjectComponent implements OnInit {
   }
 
   addActivity(){
-    this.activityData.push({"name":""});
+    this.activityData.push({"name":"","activity_id":""});
   }
   removeActivity(index){   
       this.activityData.splice(index,1);
@@ -97,12 +105,30 @@ export class ProjectComponent implements OnInit {
   cancel(){
     this.isProjectList=true;
     this.iscreateProject=false;
-    this.activityData=[{"name":""}];
-    this.getProjectForm.reset();
+    this.activityData=[{"name":"","activity_id":""}];
   }
   sendProjectFormData(Data){
+    //test
+    this.projectDetail.email="sc205@enovate-it.com";
     this.projectDetail.activities=this.activityData;
+   
+    this.projectDetail.assign_to=this.addAssignUserList;
     console.log(this.projectDetail);
+    if(this.projectDetail._id){
+        this.projectDetail.project_id=this.projectDetail._id;
+    }
+    for(var i=0;i<this.projectDetail.activities.length;i++){
+        this.projectDetail.activities[i].activity_name=this.projectDetail.activities[i].name;
+    }
+    this.projectService.saveProjectDetails({"reqData":[this.projectDetail]}).subscribe(
+      res => {
+         console.log(res);
+         this.isProjectList=true;
+         this.iscreateProject=false;
+         this.getEmployeeDetailByEmail();
+      },
+      error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
   }
   getAllEmployeeList() {
       this.projectService.getAllEmployee().subscribe(
@@ -111,7 +137,6 @@ export class ProjectComponent implements OnInit {
            this.employeesList=res.employees;
            for(var i=0;i<this.employeesList.length;i++){
                this.employeesToshow.push(this.employeesList[i].name);
-               this.items.push(this.employeesList[i].name);
            }
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
@@ -120,11 +145,53 @@ export class ProjectComponent implements OnInit {
   projectEditBtm(selectedProject){
       this.isProjectList=false;
       this.iscreateProject=true;
-      this.projectDetail=selectedProject;
+      this.getProjectDetailById(selectedProject._id)
   }
   craeteProjectBtn(){
-    this.isProjectList=true;
-    this.iscreateProject=false;
+    this.isProjectList=false;
+    this.iscreateProject=true;
+    this.projectDetail={
+      "_id":"",
+      "project_id":"",
+      "project_name":"",
+      "role":"",
+      "desc":"",
+      "email":"",
+      "activities":[],
+      "assign_to":[]
+    };
+    this.activityData=[{"name":"","activity_id":""}];
+  }
+  addSelectedEmp(){
+    if(this.searchEmpDetail.name && this.searchEmpDetail.role){
+        for(var i=0;i<this.employeesList.length;i++){
+            if(this.employeesList[i].name==this.searchEmpDetail.name){
+                this.searchEmpDetail.to_email=this.employeesList[i].email;
+                break;
+            }
+        }
+        this.addAssignUserList.push(this.searchEmpDetail);
+        this.searchEmpDetail={
+          "name":"",
+          "role":"",
+          "to_email":""
+        }
+        this.isEmpAutoSelect=[];
+    }
+  }
+  getProjectDetailById(ProdId){
+      this.projectService.getProjectDetailById(ProdId).subscribe(
+        res => {
+           this.projectDetail=res;
+           if(this.projectDetail.activities.length!=0){
+              this.activityData=[];
+              for(var i=0;i<this.projectDetail.activities.length;i++){
+                this.activityData.push({"name":this.projectDetail.activities[i].activity_name,"activity_id":this.projectDetail.activities[i]._id});
+              }
+           }
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
   }
   getEmployeeDetailByEmail(){
     let reqData={
@@ -133,8 +200,10 @@ export class ProjectComponent implements OnInit {
     this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
         res => {
            this.projectList=res.details.projects;
+           this.MyProjectsList=res.details.MyProjects;
+           this.AssignedProjectsList=res.details.AssignedProjects;
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
-      );
+    );
   }
 }

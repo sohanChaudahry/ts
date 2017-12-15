@@ -1,0 +1,251 @@
+<div class="cointaner">
+    <app-loading [condition]="isLoading"></app-loading>
+    <app-toast [message]="toast.message"></app-toast>
+    <div class="card" *ngIf="isListTask && !isEditTask && !isEditOtherTask">
+      <div class="card-header">
+        <span class="custom_span_header">Assiged To Other</span>
+         <button class="btn btn-sm btn-primary header_btn" (click)="taskEditBtm()">Create Task</button> 
+      </div>
+      <div class="card-block">
+        <div class="table-responsive custom_table">
+            <table class="table table-bordered">
+              <thead class="thead-default">
+                <tr>
+                  <th width="22%">Task Name</th>
+                  <th width="55%">Task Description</th>
+                  <th width="15%">Start Date</th>
+                  <th width="8%">Action</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="false">
+                <tr>
+                  <td colspan="4">There are no task in the DB. Add a new task.</td>
+                </tr>  
+              </tbody>
+              <tbody>
+                <tr *ngFor="let task of AssigedToOtherList">
+                  <td>
+                      <span>{{task.task_title}}</span>
+                  </td>
+                  <td>
+                      <span>{{task.task_description}}</span>
+                  </td>
+                   <td>
+                      <span>{{task.due_date | date}}</span>
+                  </td>
+                  <td>
+                      <button class="btn btn-sm btn-warning" (click)="editAssignedTaskBtn(task)"><i class="fa fa-pencil"></i></button> 
+                  </td>  
+                </tr> 
+              </tbody>  
+            </table>
+        </div>
+      </div>
+    </div>
+    <div class="card" *ngIf="isListTask && !isEditTask && !isEditOtherTask">
+      <div class="card-header">
+        <span class="custom_span_header">Assigned Task</span>
+      </div>
+      <div class="card-block">
+        <div class="table-responsive custom_table">
+            <table class="table table-bordered">
+              <thead class="thead-default">
+                <tr>
+                    <th width="22%">Task Name</th>
+                    <th width="55%">Task Description</th>
+                    <th width="15%">Start Date</th>
+                    <th width="8%">Action</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="false">
+                <tr>
+                  <td colspan="3">There are no task in the DB. Add a new task.</td>
+                </tr>  
+              </tbody>
+              <tbody>
+                <tr *ngFor="let task of getTaskAssigedToUsList">
+                  <td>
+                      <span>{{task.task_title}}</span>
+                  </td>
+                  <td>
+                      <span>{{task.task_description}}</span>
+                  </td>
+                   <td>
+                      <span>{{task.due_date | date}}</span>
+                  </td>
+                  <td>
+                      <button class="btn btn-sm btn-warning" (click)="editAssignTaskOtherBtn(task)"><i class="fa fa-pencil"></i></button> 
+                  </td>  
+                </tr> 
+              </tbody>  
+            </table>
+        </div>
+      </div>
+    </div>
+   <!--view for update task assigned to other-->
+    <div class="card" *ngIf="!isListTask && isEditTask && !isEditOtherTask">
+      <div class="card-header">
+        <span class="custom_span_header">{{taskFormDetail._id ? "Update Task":"Create Task"}}</span>
+      </div>
+      <div class="card-block">
+        <div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-10">
+                  <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Task Title</label>
+                    <input class="form-control" type="text" [(ngModel)]="taskFormDetail.task_title" placeholder="Task Title">
+                  </div>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-5">
+                    <label class="Assign">Assign To</label>
+                    <ng-select [allowClear]="true"
+                          [items]="employeesToshow"
+                          [disabled]="disabled"
+                          [active]="isEmpAutoSelect"
+                          (data)="refreshValue($event)"
+                          (selected)="selected($event)"
+                          (removed)="removed($event)"
+                          (typed)="typed($event)"
+                          placeholder="No employee selected">
+                    </ng-select>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                      <label for="exampleFormControlTextarea1">Estimate Hours</label>
+                      <input class="form-control" type="number" min="0.1" [(ngModel)]="taskFormDetail.estimate_hrs" placeholder="Estimate Hours">
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+                <div class="col-md-5">
+                  <div class="form-group">
+                    <label>Projects</label>
+                      <select class="form-control" (change)="changeProjectOption(taskFormDetail.project_id)" [(ngModel)]="taskFormDetail.project_id">
+                        <option [ngValue]="project._id" *ngFor="let project of projectList;"  placeholder="Select Project">{{project.project_name}}</option>
+                      </select>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-group">
+                    <label>Activities</label>
+                      <select class="form-control" [(ngModel)]="taskFormDetail.activity_id">
+                        <option [ngValue]="act._id" *ngFor="let act of activityList;"  placeholder="Select Activities">{{act.activity_name}}</option>
+                      </select>
+                  </div>
+                </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-5">
+                  <div class="form-group">
+                    <label>Priority</label>
+                      <select class="form-control" name="role" [(ngModel)]="taskFormDetail.priority">
+                        <option [ngValue]="priority" *ngFor="let priority of priorityList;" placeholder="Select Priority">{{priority}}</option>
+                      </select>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-group">
+                    <label>Due Date</label>
+                        <input class="form-control" type="date" [(ngModel)]="taskFormDetail.due_date">
+                        <!--<angular2-date-picker [(ngModel)]="date" [settings]="settings"></angular2-date-picker>-->
+                    </div>      
+                </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+                <div class="col-md-10">
+                  <div class="form-group">
+                    <label>Task Description</label>
+                    <textarea class="form-control" rows="3" name="desc" [(ngModel)]="taskFormDetail.task_description" placeholder="Task Description" ></textarea>
+                    </div>
+                </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-6">
+                <button class="btn btn-sm btn-primary" (click)="saveTaskDetail()" type="button"><i class="fa fa-floppy-o"></i> Save</button>
+                <button class="btn btn-sm btn-primary" type="button" (click)="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <!--view for update task assigned by other-->
+    <div class="card" *ngIf="!isListTask && !isEditTask && isEditOtherTask">
+      <div class="card-header">
+        <span class="custom_span_header">Update Task</span>
+      </div>
+      <div class="card-block">
+        <div>
+            <div class="row">
+              <div class="col-md-1"></div>
+               <div class="col-md-5">
+                  <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Start Date</label>
+                      <!--<input class="form-control" 
+                        a2e-datetimepicker
+                        [date]="date"
+                        [options]="a2eOptions"
+                        (onChange)="dateChange($event)"
+                        (onClick)="dateClick()"
+                        />-->
+                    <input class="form-control" type="date" [(ngModel)]="taskFormDetail.start_date_time" placeholder="Task Title">
+                  </div>
+              </div>
+                <div class="col-md-5">
+                  <div class="form-group">
+                    <label for="exampleFormControlTextarea1">End Date</label>
+                    <input class="form-control" type="date" [(ngModel)]="taskFormDetail.end_date_time" placeholder="Task Title">
+                  </div>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+                <div class="col-md-5">
+                  <div class="form-group">
+                    <label>Status</label>
+                    <select class="form-control" [(ngModel)]="taskFormDetail.status">
+                        <option [ngValue]="status.val" *ngFor="let status of statusList;">{{status.name}}</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Actual Hours</label>
+                    <input class="form-control" type="number" [(ngModel)]="taskFormDetail.actual_hrs" min="0.1" placeholder="Actual Hours">
+                  </div>
+              </div>
+              <div class="col-md-1"></div>
+            </div> 
+            <div class="row">
+              <div class="col-md-1"></div>
+               <div class="col-md-5">
+                  <div class="form-group">
+                   <label class="checkbox-inline"><input type="checkbox" value="" [(ngModel)]="taskFormDetail.select"> Select</label>
+                  </div>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-6">
+                <button class="btn btn-sm btn-primary" (click)="saveOthersTask()" type="button"><i class="fa fa-floppy-o"></i> Save</button>
+                <button class="btn btn-sm btn-primary" type="button" (click)="cancelOther()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>

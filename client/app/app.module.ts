@@ -9,10 +9,15 @@ import { FormsModule } from '@angular/forms';
 
 import { UserService } from './services/user.service';
 import { ProjectService } from './services/project.service';
+import { TaskService } from './services/task.service';
+
+import { ProfileService } from './services/profile.service';
 
 import { AuthService } from './services/auth.service';
 import { AuthGuardLogin } from './services/auth-guard-login.service';
 import { AuthGuardAdmin } from './services/auth-guard-admin.service';
+//import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
+// import {A2Edatetimepicker} from 'ng2-eonasdan-datetimepicker';
 
  
 import { AppComponent } from './app.component';
@@ -25,6 +30,8 @@ import { AdminComponent } from './admin/admin.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ProjectComponent } from './project/project.component';
 import {SelectModule} from 'ng2-select';
+import { TaskComponent } from './task/task.component';
+import { ProfileComponent } from './profile/profile.component';
 
  @NgModule({
   imports: [
@@ -33,7 +40,9 @@ import {SelectModule} from 'ng2-select';
     PopupModule.forRoot(),
     SelectModule,
      // DatePickerModule,
-     FormsModule
+     FormsModule,
+    //  AngularDateTimePickerModule,
+    //  A2Edatetimepicker
   ],
   declarations: [
     AppComponent,
@@ -44,14 +53,18 @@ import {SelectModule} from 'ng2-select';
     AccountComponent,
     AdminComponent,
     NotFoundComponent,
-    ProjectComponent
+    ProjectComponent,
+    TaskComponent,
+    ProfileComponent
   ],
   providers: [
     AuthService,
     AuthGuardLogin,
     AuthGuardAdmin,
     UserService,
-    ProjectService
+    ProjectService,
+    TaskService,
+    ProfileService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]

@@ -1,11 +1,10 @@
 <div class="cointaner">
     <app-loading [condition]="isLoading"></app-loading>
-
     <app-toast [message]="toast.message"></app-toast>
-    <button class="btn btn-sm btn-warning" (click)="craeteProjectBtn()">Create Project</button> 
     <div class="card" *ngIf="isProjectList && !iscreateProject">
       <div class="card-header">
-        <span class="custom_span_header">Projects</span>
+        <span class="custom_span_header">My Project</span>
+        <button class="btn btn-sm btn-primary header_btn" (click)="craeteProjectBtn()">Create Project</button> 
       </div>
       <div class="card-block">
         <div class="table-responsive custom_table">
@@ -16,18 +15,50 @@
                 <th width="8%">Action</th>
               </tr>
             </thead>
-            <tbody *ngIf="projectList.length == 0">
+            <tbody *ngIf="MyProjectsList.length == 0">
               <tr>
                 <td colspan="2">There are no project in the DB. Add a new project.</td>
               </tr>  
             </tbody>
             <tbody>
-              <tr *ngFor="let project of projectList">
+              <tr *ngFor="let project of MyProjectsList">
                 <td>
                     <span>{{project.project_name}}</span>
                 </td>
                 <td>
                     <button class="btn btn-sm btn-warning" (click)="projectEditBtm(project)"><i class="fa fa-pencil"></i></button> 
+                </td>
+              </tr> 
+            </tbody>  
+        </table>
+        </div>
+      </div>
+    </div>
+    <div class="card" *ngIf="isProjectList && !iscreateProject">
+      <div class="card-header">
+        <span class="custom_span_header">Assigned Project</span>
+      </div>
+      <div class="card-block">
+        <div class="table-responsive custom_table">
+        <table class="table table-bordered">
+            <thead class="thead-default">
+              <tr>
+                <th width="72%">Project Name</th>
+                <th width="8%">Action</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="AssignedProjectsList.length == 0">
+              <tr>
+                <td colspan="2">There are no project in the DB. Add a new project.</td>
+              </tr>  
+            </tbody>
+            <tbody>
+              <tr *ngFor="let project of AssignedProjectsList">
+                <td>
+                    <span>{{project.project_name}}</span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-warning"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
                 </td>
               </tr> 
             </tbody>  
@@ -109,8 +140,9 @@
               <div class="col-md-6">
                   <span class="Assign">Assign To</span>
                   <ng-select [allowClear]="true"
-                        [items]="items"
+                        [items]="employeesToshow"
                         [disabled]="disabled"
+                        [active]="isEmpAutoSelect"
                         (data)="refreshValue($event)"
                         (selected)="selected($event)"
                         (removed)="removed($event)"
@@ -120,13 +152,13 @@
               </div>
               <div class="col-md-3">
                    <span class="Assign">Role</span>
-                   <select class="form-control">
+                   <select class="form-control" [(ngModel)]="searchEmpDetail.role">
                         <option *ngFor="let role of roleList;" [ngValue]="role" placeholder="Role">{{role}}</option>
                    </select>
               </div>
               <div class="col-md-1">
                   <span class="Assign">&nbsp;</span>
-                  <button class="btn btn-sm btn-danger">Add</button>
+                  <button class="btn btn-sm btn-danger" (click)="addSelectedEmp()">Add</button>
               </div>
               <div class="col-md-1"></div>
           </div>
@@ -140,11 +172,17 @@
                           <div class="col-md-5">Role</div>
                           <div class="col-md-2" style="text-align:right">Action</div>
                     </div>
+                     <div *ngIf="addAssignUserList.length==0" class="city-data-div user_table">
+                         <div class="col-md-4"></div>
+                        <div class="col-md-8">No record availble in DB.</div>
+                    </div> 
+                    <div *ngIf="addAssignUserList.length!=0" >
                     <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
                         <div class="col-md-5">{{user.name}}</div>
                         <div class="col-md-5">{{user.role}}</div>
                         <div class="col-md-2" class="ctm_close"><i class="fa fa-times" aria-hidden="true"></i></div>
-                    </div>    
+                    </div>   
+                    </div> 
                 </div>
             </div>
             <div class="col-md-1"></div>

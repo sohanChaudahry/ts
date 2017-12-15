@@ -1,0 +1,62 @@
+<div class="cointaner">
+    <app-loading [condition]="isLoading"></app-loading>
+    <app-toast [message]="toast.message"></app-toast>
+    <div class="card">
+      <div class="card-header">
+        <span class="custom_span_header">Profile</span>
+      </div>
+      <div class="card-block">
+        <form [formGroup]="profileFormData" (ngSubmit)="saveProfile()">
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-10">
+                  <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Name</label>
+                    <input class="form-control" type="text" formControlName="name" placeholder="Task Title">
+                  </div>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+                <div class="col-md-10">
+                  <div class="form-group">
+                    <label>Email</label>
+                     <input class="form-control" type="email" formControlName="email" placeholder="Task Title">
+                    </div>
+                </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+                <div class="col-md-10">
+                  <div class="form-group">
+                    <label>Address</label>
+                    <textarea class="form-control" rows="2" name="desc" formControlName="address" placeholder="Project Description" ></textarea>
+                    </div>
+                </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-5">
+                 <div class="form-group">
+                   <label>Type</label>
+                   <select class="form-control" name="role" formControlName="type">
+                        <option [ngValue]="type.val" *ngFor="let type of typeList;"  placeholder="Role">{{type.name}}</option>
+                   </select>
+                  </div>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-6">
+                <button class="btn btn-sm btn-primary" [disabled]="!profileFormData.valid" type="submit"><i class="fa fa-floppy-o"></i> Save</button>
+                <button class="btn btn-sm btn-primary" type="button" (click)="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+              </div>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
