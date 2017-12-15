@@ -219,12 +219,18 @@ export default class UserAcceptCtrl  {
     var result = {
       requests:[]
     };
-    user_accept.find({ "to_email": email,"accept" : 0 }, function (err, data) {
+    user_accept.find({ "to_email": email,"accept" : 0,"flag":0 }, function (err, data) {
         if(data && data.length > 0){
             //If project requests are present for users.
             count = 0;
             var length = data.length ? data.length : 0;
             async.forEach(data, function (request, callback) {
+            followers.find({ "email": req.user.emails[0].value,"project_id":request.project_id  }, function (err, data4) {
+             if(data4 && data4.length > 0){
+                 count = count + 1;
+                 callback();
+             }
+             else{
               empmodel.find({ "email": request.from_email }, function (err, data2) {
                   var dt = {};
                   dt["employee_id"] = data2[0]._id;
@@ -234,11 +240,15 @@ export default class UserAcceptCtrl  {
                   projects.find({ "_id": project_id}, function (err, data3) {
                       dt["project_id"] = request.project_id;  
                       dt["project_name"] = data3[0].project_name;
-                      result.requests.push(dt);
-                      count = count + 1;
-                      callback();
+                      user_accept.findOneAndUpdate({  "to_email": email,"accept" : 0,"project_id" : request.project_id,"flag":0 }, { "$set": { "flag":1 }}).exec(function (err, data2) {
+                        result.requests.push(dt);
+                        count = count + 1;
+                        callback();
+                      })
                   })
               })
+            }
+            })
             }, function (err, cb) {
                    if(count >= length){
                        res.send(result);
@@ -258,6 +268,170 @@ export default class UserAcceptCtrl  {
         res.send(result1);
     } 
   };
+
+
+ /*
+  @author : Vaibhav Mali 
+  @date : 15 Dec 2017
+  @API : getaccept_cancel_projectrequests
+  @desc : Get accepted and canceled our projects requests from someone.
+  */
+  getaccept_cancel_projectrequests = (req, res) => {   
+    var model = this.model;
+   // var email = req.body.reqData.email;
+    var email ;
+    var result1 = {};
+    if(req && req.user){
+    email = req.user.emails[0].value;
+    var count = 0;
+    var result = {
+      accepts:[],
+      cancels:[]
+    };
+  user_accept.find({ "from_email": email,"accept" : 1,"$or":[{"flag":0},{"flag": 1}] }, function (err, data) {
+     user_accept.find({ "from_email": email,"accept" : -1,"$or":[{"flag":0},{"flag": 1}] }, function (err, data1) {      
+        if(data && data.length > 0){
+            //If project requests are present for users.
+            count = 0;
+            var length = data.length ? data.length : 0;
+            async.forEach(data, function (request, callback) {
+              empmodel.find({ "email": data[0]._doc.to_email }, function (err, data2) {
+                  var dt = {};
+                  dt["employee_id"] = data2[0]._id;
+                  dt["name"] = data2[0].name;
+                  dt["email"] = data2[0].email;
+                  var project_id = mongoose.Types.ObjectId(request.project_id);
+                  projects.find({ "_id": project_id}, function (err, data3) {
+                      dt["project_id"] = request.project_id;  
+                      dt["project_name"] = data3[0].project_name;
+                      dt["message"] = data3[0].project_name + " Project accepted succssfully by " + dt["name"];
+                      user_accept.findOneAndUpdate({  "from_email": email,"accept" : 1,"project_id" : request.project_id,"$or":[{"flag":0},{"flag": 1}]}, { "$set": { "flag":2 }}).exec(function (err, data2) {
+                        result.accepts.push(dt);
+                        count = count + 1;
+                        callback();
+                      })
+                  })
+              })
+            }, function (err, cb) {
+                   if(count >= data.length){
+                    count = 0;
+                    if(data1 && data1.length > 0){                      
+                    var length = data1.length ? data1.length : 0;
+                    async.forEach(data1, function (request, callback) {
+                      empmodel.find({ "email": data1[0]._doc.to_email }, function (err, data2) {
+                          var dt = {};
+                          dt["employee_id"] = data2[0]._id;
+                          dt["name"] = data2[0].name;
+                          dt["email"] = data2[0].email;
+                          var project_id = mongoose.Types.ObjectId(request.project_id);
+                          projects.find({ "_id": project_id}, function (err, data3) {
+                              dt["project_id"] = request.project_id;  
+                              dt["project_name"] = data3[0].project_name;
+                              dt["message"] = data3[0].project_name + " Project canceled by " + dt["name"];
+                              user_accept.findOneAndUpdate({  "from_email": email,"accept" : -1,"project_id" : request.project_id,"$or":[{"flag":0},{"flag": 1}] }, { "$set": { "flag":2 }}).exec(function (err, data2) {
+                                result.cancels.push(dt);
+                                count = count + 1;
+                                callback();
+                              })
+                          })
+                      })
+                      }, function (err, cb) {
+                           if(count >= data1.length){
+                               
+                               res.send(result);
+                           }  
+                           return;
+                       });
+                      }
+                      else{
+                        res.send(result);
+                      }
+                 }  
+                   return;
+            });
+        }
+        else if (data1 && data1.length > 0){
+            //If project requests are present for users.
+            count = 0;
+            var length = data1.length ? data1.length : 0;
+            async.forEach(data1, function (request, callback) {
+              empmodel.find({ "email": data1[0]._doc.to_email }, function (err, data2) {
+                  var dt = {};
+                  dt["employee_id"] = data2[0]._id;
+                  dt["name"] = data2[0].name;
+                  dt["email"] = data2[0].email;
+                  var project_id = mongoose.Types.ObjectId(request.project_id);
+                  projects.find({ "_id": project_id}, function (err, data3) {
+                      dt["project_id"] = request.project_id;  
+                      dt["project_name"] = data3[0].project_name;
+                      dt["message"] = data3[0].project_name + " Project canceled by " + dt["name"];
+                      user_accept.findOneAndUpdate({  "from_email": email,"accept" : -1,"project_id" : request.project_id,"$or":[{"flag":0},{"flag": 1}] }, { "$set": { "flag":2 }}).exec(function (err, data2) {
+                        result.cancels.push(dt);
+                        count = count + 1;
+                        callback();
+                      })
+                    
+                  })
+              })
+            }, function (err, cb) {
+                   if(count >= data1.length){
+                    count = 0;
+                    if(data && data.length > 0){                      
+                    var length = data.length ? data.length : 0;
+                    async.forEach(data, function (request, callback) {
+                      empmodel.find({ "email": data[0]._doc.to_email }, function (err, data2) {
+                          var dt = {};
+                          dt["employee_id"] = data2[0]._id;
+                          dt["name"] = data2[0].name;
+                          dt["email"] = data2[0].email;
+                          var project_id = mongoose.Types.ObjectId(request.project_id);
+                          projects.find({ "_id": project_id}, function (err, data3) {
+                              dt["project_id"] = request.project_id;  
+                              dt["project_name"] = data3[0].project_name;
+                              dt["message"] = data3[0].project_name + " Project accepted succssfully by " + dt["name"];
+                              user_accept.findOneAndUpdate({  "from_email": email,"accept" : 1,"project_id" : request.project_id,"$or":[{"flag":0},{"flag": 1}] }, { "$set": { "flag":2 }}).exec(function (err, data2) {
+                                result.accepts.push(dt);
+                                count = count + 1;
+                                callback();
+                              })
+                          })
+                      })
+                      }, function (err, cb) {
+                           if(count >= data.length){
+                               
+                               res.send(result);
+                           }  
+                           return;
+                       });
+                      }
+                      else{
+                        res.send(result);
+                      }
+                 }  
+                   return;
+            });
+        
+        }
+        else{
+            //If no any project request for user.
+             res.send(result);
+        } 
+      })  
+    })
+   }
+   else{
+        result1['success'] = false;
+        result1['error'] = "You are not member of status please login with google first";
+        res.send(result1);
+    } 
+  };
+
+
+  
+
+
+
+
 
 
    /*

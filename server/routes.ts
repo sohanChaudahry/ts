@@ -62,6 +62,7 @@ export default function setRoutes(app) {
  //Request to join
  router.route('/employees/request/join').post(userAcceptCtrl.request_join); 
  router.route('/employees/request/getprojectrequests').get(userAcceptCtrl.getprojectrequests);
+ router.route('/employees/request/getAccept_Cancel_Projectrequests').get(userAcceptCtrl.getaccept_cancel_projectrequests); 
  router.route('/employees/request/accept/:id').get(userAcceptCtrl.request_accept); 
  router.route('/employees/request/cancel/:id').get(userAcceptCtrl.request_cancel); 
  
