@@ -1,6 +1,9 @@
 import Employees from '../models/employees';
 import followers from '../models/followers';
 import projects from '../models/projects';
+import user_accept from '../models/user_accept';
+
+
 var async = require("async");
 var moment=require("moment");
 const mongoose = require('mongoose');
@@ -8,10 +11,12 @@ var Followers = mongoose.model('followers');
 var empmodel = mongoose.model('employees');
 var projectsmodel = mongoose.model('projects');
 var activities = mongoose.model('activities');
+//var User_accept = mongoose.model('user_accept');
 export default class EmployeesCtrl  {
   followers = followers;
   projects = projects;
   model = Employees;
+  User_accept = user_accept;
 
 
   /*
@@ -111,10 +116,12 @@ export default class EmployeesCtrl  {
   @API : getEmployeeDetails
   @desc : Get employee details by Id.
   */
-  getEmployeeDetails = (req, res) => {   
+  getEmployeeDetails = (req, res) => {  
+    var User_accept = this.User_accept; 
     var model = this.model;
     var empid = req.params.id;
     var projects = projectsmodel;
+    if(req && req.user){
     var _idstatus = mongoose.Types.ObjectId.isValid(empid);
     if (_idstatus == false) {
         var resData = {};
@@ -153,7 +160,8 @@ export default class EmployeesCtrl  {
                                              project["_id"] = data2[0]._doc._id;                              
                                              project["project_name"] = data2[0]._doc.project_name;
                                              project["desc"] = data2[0]._doc.desc; 
-                                             project["role"] = follower._doc.role;                                                                                                                                     
+                                             project["role"] = follower._doc.role;     
+                                             project["accept"] = 1;                                                                                                                                
                                              activities.find({ "pid": project_id }, function (err, data3) {
                                                   if(data3 && data3.length > 0){
                                                      var count = 0;
@@ -185,7 +193,7 @@ export default class EmployeesCtrl  {
                                                     }else{
                                                       tempprojects.projects.push(project);
                                                     }
-                                                    callback();                                                      
+                                                   callback();                                                    callback();                                                      
                                                   }
                                             })
                                        
@@ -205,11 +213,72 @@ export default class EmployeesCtrl  {
                           }, function (err, cb) {
                             var result = {};
                               if(projectcount >= projectslength){
-                                dt["MyProjects"] = tempprojects1.projects;
-                                dt["AssignedProjects"] = tempprojects.projects;
-                                var resData = {};
-                                resData['details'] = dt;
-                                res.send(resData);
+                                projectcount = 0;
+                                var tempactivities = {activities: []};
+                                var project = {}
+                                User_accept.find({ "to_email": req.user.emails[0].value}, function (err, data9) {                                   
+                                  if(data9 && data9.length > 0) {
+                                    async.forEach(data9, function (requestuser, callback) { 
+                                      var project_id = mongoose.Types.ObjectId(requestuser._doc.project_id);
+                                      projects.find({ "_id": project_id }, function (err, data2) {
+                                       if(data2 && data2.length > 0){
+                                          project["_id"] = data2[0]._doc._id;                              
+                                          project["project_name"] = data2[0]._doc.project_name;
+                                          project["desc"] = data2[0]._doc.desc; 
+                                          project["accept"] = 0;
+                                          activities.find({ "pid": project_id }, function (err, data3) {
+                                               if(data3 && data3.length > 0){
+                                                  var count = 0;
+                                                  async.forEach(data3, function (activity, callback) {
+                                                      var tempdata = {};
+                                                      tempdata["_id"] = activity._doc._id;
+                                                      tempdata["activity_name"] = activity._doc.activity_name;
+                                                      tempactivities.activities.push(tempdata)
+                                                      count = count + 1;
+                                                      callback();
+                                                    
+                                                     }, function (err, cb) {
+                                                       if(count >= data3.length){
+                                                         project["activities"] = tempactivities.activities;
+                                                         tempprojects.projects.push(project);
+                                                         projectcount = projectcount + 1;                                                                                                                
+                                                         callback();                                                            
+                                                       }
+                                                   });
+                                               } 
+                                               else{
+                                                 projectcount = projectcount + 1;                                                    
+                                                tempprojects.projects.push(project);
+                                                callback();                                                                                                         
+                                               }
+                                         })
+                                    
+                                  }
+                                  else{
+                                   projectcount = projectcount + 1;                                      
+                                   callback();
+                                  }
+                                  })
+      
+                                    }, function (err, cb) {
+                                      if(projectcount >= data9.length){ 
+                                        dt["MyProjects"] = tempprojects1.projects;
+                                        dt["AssignedProjects"] = tempprojects.projects;
+                                        var resData = {};
+                                        resData['details'] = dt;
+                                        res.send(resData);
+                                      } 
+                                    });  
+      
+                                  }
+                                  else{
+                                    dt["MyProjects"] = tempprojects1.projects;
+                                    dt["AssignedProjects"] = tempprojects.projects;
+                                    var resData = {};
+                                    resData['details'] = dt;
+                                    res.send(resData);
+                                  }
+                                }) 
                               }  
                             return;
                         });
@@ -224,6 +293,13 @@ export default class EmployeesCtrl  {
                   }
        });
     }
+  }
+  else{
+    var resData = {};    
+    resData["res_status"] = 404;
+    resData["error"] = "Please login and continue";
+    res.send(resData);
+  }
 };
 
 
@@ -234,10 +310,12 @@ export default class EmployeesCtrl  {
   @desc : Get employee details by Email.
   */
 getEmployeeDetailsByEmail = (req, res) => {   
+  var User_accept = this.User_accept;   
   var model = this.model;
   var empid = req.params.id;
   var projects = projectsmodel;
   var empemail = req.body.reqData.email;  
+  if(req && req.user){    
   model.find({ "email": empemail }, function (err, data) {
                 if(err){
                   var resData = {};
@@ -267,7 +345,8 @@ getEmployeeDetailsByEmail = (req, res) => {
                                            project["_id"] = data2[0]._doc._id;                              
                                            project["project_name"] = data2[0]._doc.project_name;
                                            project["desc"] = data2[0]._doc.desc; 
-                                           project["role"] = follower._doc.role;                                               
+                                           project["role"] = follower._doc.role; 
+                                           project["accept"] = 1;                                              
                                              activities.find({ "pid": project_id }, function (err, data3) {
                                                 if(data3 && data3.length > 0){
                                                    var count = 0;
@@ -319,11 +398,72 @@ getEmployeeDetailsByEmail = (req, res) => {
                         }, function (err, cb) {
                           var result = {};
                             if(projectcount >= projectslength){
-                              dt["MyProjects"] = tempprojects1.projects;
-                              dt["AssignedProjects"] = tempprojects.projects;
-                              var resData = {};
-                              resData['details'] = dt;
-                              res.send(resData);
+                              projectcount = 0;
+                              var tempactivities = {activities: []};
+                              var project = {}
+                              User_accept.find({ "to_email": req.user.emails[0].value}, function (err, data9) {                                   
+                                if(data9 && data9.length > 0) {
+                                  async.forEach(data9, function (requestuser, callback) { 
+                                    var project_id = mongoose.Types.ObjectId(requestuser._doc.project_id);
+                                    projects.find({ "_id": project_id }, function (err, data2) {
+                                     if(data2 && data2.length > 0){
+                                        project["_id"] = data2[0]._doc._id;                              
+                                        project["project_name"] = data2[0]._doc.project_name;
+                                        project["desc"] = data2[0]._doc.desc; 
+                                        project["accept"] = 0;
+                                        activities.find({ "pid": project_id }, function (err, data3) {
+                                             if(data3 && data3.length > 0){
+                                                var count = 0;
+                                                async.forEach(data3, function (activity, callback) {
+                                                    var tempdata = {};
+                                                    tempdata["_id"] = activity._doc._id;
+                                                    tempdata["activity_name"] = activity._doc.activity_name;
+                                                    tempactivities.activities.push(tempdata)
+                                                    count = count + 1;
+                                                    callback();
+                                                  
+                                                   }, function (err, cb) {
+                                                     if(count >= data3.length){
+                                                       project["activities"] = tempactivities.activities;
+                                                       tempprojects.projects.push(project);
+                                                       projectcount = projectcount + 1;                                                                                                                
+                                                       callback();                                                            
+                                                     }
+                                                 });
+                                             } 
+                                             else{
+                                               projectcount = projectcount + 1;                                                    
+                                              tempprojects.projects.push(project);
+                                              callback();                                                                                                         
+                                             }
+                                       })
+                                  
+                                }
+                                else{
+                                 projectcount = projectcount + 1;                                      
+                                 callback();
+                                }
+                                })
+    
+                                  }, function (err, cb) {
+                                    if(projectcount >= data9.length){ 
+                                      dt["MyProjects"] = tempprojects1.projects;
+                                      dt["AssignedProjects"] = tempprojects.projects;
+                                      var resData = {};
+                                      resData['details'] = dt;
+                                      res.send(resData);
+                                    } 
+                                  });  
+    
+                                }
+                                else{
+                                  dt["MyProjects"] = tempprojects1.projects;
+                                  dt["AssignedProjects"] = tempprojects.projects;
+                                  var resData = {};
+                                  resData['details'] = dt;
+                                  res.send(resData);
+                                }
+                              }) 
                             }  
                           return;
                       });
@@ -337,7 +477,14 @@ getEmployeeDetailsByEmail = (req, res) => {
                   res.send(resData);
                 }
    });
-  
+
+  }
+  else{
+    var resData = {};    
+    resData["res_status"] = 404;
+    resData["error"] = "Please login and continue";
+    res.send(resData);
+  } 
 };
 
 

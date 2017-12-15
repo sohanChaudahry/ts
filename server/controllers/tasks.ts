@@ -3,6 +3,10 @@ import Tasks from '../models/tasks';
 var async = require("async");
 var moment=require("moment");
 const mongoose = require('mongoose');
+var empmodel = mongoose.model('employees');
+var projectsmodel = mongoose.model('projects');
+var activities = mongoose.model('activities');
+
 export default class TasksCtrl  {
 
   model = Tasks;
@@ -209,9 +213,25 @@ export default class TasksCtrl  {
       model.find({"assign_from": assign_from}, function (err, data) {
       if(data && data.length){
        async.forEach(data, function (task, callback) {
-          tasktemp.tasks.push(task._doc);
-          count = count + 1;
-          callback();
+        var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
+        var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
+        var project_id = mongoose.Types.ObjectId(task._doc.project_id);
+        var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
+        empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
+        empmodel.find({ "_id": employee_id }, function (err, data1) {
+          projectsmodel.find({ "_id": project_id }, function (err, data2) {
+            activities.find({ "_id": act_id }, function (err, data3) {     
+              task._doc.assign_from = data4[0]._doc;              
+              task._doc.assign_to = data1[0]._doc;
+              task._doc.project_id = data2[0]._doc;
+              task._doc.activity_id = data3[0]._doc;              
+              tasktemp.tasks.push(task._doc);
+              count = count + 1;
+              callback();
+            })
+          })
+        })
+       })
         }, function (err, cb) {
         if(count >= data.length){
           tasks['tasks'] = tasktemp.tasks;
@@ -253,9 +273,25 @@ getTaskDetailsByAssignTo = (req, res) => {
       model.find({"assign_to": assign_to}, function (err, data) {
       if(data && data.length){
        async.forEach(data, function (task, callback) {
-          tasktemp.tasks.push(task._doc);
-          count = count + 1;
-          callback();
+        var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
+        var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
+        var project_id = mongoose.Types.ObjectId(task._doc.project_id);
+        var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
+        empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
+        empmodel.find({ "_id": employee_id }, function (err, data1) {
+          projectsmodel.find({ "_id": project_id }, function (err, data2) {
+            activities.find({ "_id": act_id }, function (err, data3) {     
+              task._doc.assign_from = data4[0]._doc;              
+              task._doc.assign_to = data1[0]._doc;
+              task._doc.project_id = data2[0]._doc;
+              task._doc.activity_id = data3[0]._doc;              
+              tasktemp.tasks.push(task._doc);
+              count = count + 1;
+              callback();
+            })
+          })
+        })
+       })
         }, function (err, cb) {
         if(count >= data.length){
           tasks['tasks'] = tasktemp.tasks;
