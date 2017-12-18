@@ -40,6 +40,10 @@ export class UserService {
     return this.http.post('/api/user', JSON.stringify(user), this.options);
   }
 
+  getLogedinUser(): Observable<any> {
+    return this.http.get('/api/employees/getCurrentLoginDetails/', this.options).map(res => res.json());
+  }
+ 
   getUser(user): Observable<any> {
     return this.http.get(`/api/user/${user._id}`).map(res => res.json());
   }

@@ -192,7 +192,7 @@ export class TaskComponent implements OnInit {
   // }
   getEmployeeDetailByEmail() {
       let reqData={
-          "email":"sc205@enovate-it.com"
+          "email":localStorage.getItem("email") ? localStorage.getItem("email") : ""
          // "email":"sohanchaudhary8080@gmail.com"
       }
       this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
@@ -218,8 +218,7 @@ export class TaskComponent implements OnInit {
   }
   //apne bija ne assign kariye 
   getTaskAssigedFrom(){
-      let id="5a2f9e69d261962aff5725c7";
-      //let id="5a310ca5dda25c977b36587f";
+      let id=localStorage.getItem("_id") ? localStorage.getItem("_id") : "";
       this.taskService.getTaskAssigedFrom(id).subscribe(
           res => {
             this.AssigedToOtherList=res.tasks;
@@ -228,8 +227,7 @@ export class TaskComponent implements OnInit {
       );
   }
   getTaskAssigedToUs(){  
-      let id="5a2f9e69d261962aff5725c7";
-      //let id="5a310ca5dda25c977b36587f";
+      let id=localStorage.getItem("_id") ? localStorage.getItem("_id") : "";
       this.taskService.getTaskAssigedToUs(id).subscribe(
           res => {
             this.getTaskAssigedToUsList=res.tasks;
@@ -262,10 +260,7 @@ export class TaskComponent implements OnInit {
       );
   }
   saveTaskDetail(){
-    //test
-    this.taskFormDetail.assign_from="5a2f9e69d261962aff5725c7";
-    //this.taskFormDetail.assign_from="5a310ca5dda25c977b36587f";
-    
+    let id=localStorage.getItem("_id") ? localStorage.getItem("_id") : "";
     if(this.taskFormDetail.assign_to){
         let selectAssignId="";
         for(var i=0;i<this.employeesList.length;i++){
@@ -290,8 +285,7 @@ export class TaskComponent implements OnInit {
     );
   }
   saveOthersTask(selectedData){
-      //test
-      console.log(this.taskFormDetail);
+      
       this.taskService.saveTaskDetail({reqData:[this.taskFormDetail]}).subscribe(
         res => {
             this.toast.setMessage('Task add successfully!', 'success');

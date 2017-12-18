@@ -21,11 +21,13 @@ export class ProjectComponent implements OnInit {
   isEmpAutoSelect=[];
   AssignedProjectsList=[];
   MyProjectsList=[];
+  AssignedProjectView={};
   roleList=["Manager","Developer","Tester"];
   addAssignUserList=[];
   activityData=[{"name":"","activity_id":""}];
   isProjectList=true;
   iscreateProject=false;
+  isAssignProjView=false;
   getProjectForm: FormGroup;
   project_id = new FormControl('');
   project_name = new FormControl('', Validators.required);
@@ -105,11 +107,17 @@ export class ProjectComponent implements OnInit {
   cancel(){
     this.isProjectList=true;
     this.iscreateProject=false;
+    this.isAssignProjView=false;
     this.activityData=[{"name":"","activity_id":""}];
+  }
+   cancelView(){
+    this.isProjectList=true;
+    this.iscreateProject=false;
+    this.isAssignProjView=false;
   }
   sendProjectFormData(Data){
     //test
-    this.projectDetail.email="sc205@enovate-it.com";
+    this.projectDetail.email=localStorage.getItem("email") ? localStorage.getItem("email") : "";
     //this.projectDetail.email="sohanchaudhary8080@gmail.com"
     this.projectDetail.activities=this.activityData;
    
@@ -146,9 +154,16 @@ export class ProjectComponent implements OnInit {
   projectEditBtm(selectedProject){
       this.isProjectList=false;
       this.iscreateProject=true;
+      this.isAssignProjView=false;
       this.addAssignUserList=[];
       this.activityData=[];
       this.getProjectDetailById(selectedProject._id)
+  }
+  showAssignedProjectView(selected_data){
+      this.isProjectList=false;
+      this.iscreateProject=false;
+      this.isAssignProjView=true;
+      this.AssignedProjectView=selected_data;
   }
   craeteProjectBtn(){
       this.isProjectList=false;
@@ -174,12 +189,12 @@ export class ProjectComponent implements OnInit {
                 break;
             }
         }
-        for(var i=0;i<this.employeesList.length;i++){
-            if(this.employeesList[i].email==this.searchEmpDetail.to_email){
-                this.toast.setMessage('Employee already selected', 'danger')
-                return;
-            }
-        }
+        // for(var i=0;i<this.employeesList.length;i++){
+        //     if(this.employeesList[i].email==this.searchEmpDetail.to_email){
+        //         this.toast.setMessage('Employee already selected', 'danger')
+        //         return;
+        //     }
+        // }
         this.addAssignUserList.push(this.searchEmpDetail);
         this.searchEmpDetail={
           "name":"",
@@ -189,6 +204,7 @@ export class ProjectComponent implements OnInit {
         this.isEmpAutoSelect=[];
     }
   }
+  
   getProjectDetailById(ProdId){
       this.projectService.getProjectDetailById(ProdId).subscribe(
         res => {
@@ -235,8 +251,7 @@ export class ProjectComponent implements OnInit {
   }
   getEmployeeDetailByEmail(){
     let reqData={
-       "email":"sc205@enovate-it.com"
-       //"email":"sohanchaudhary8080@gmail.com"
+       "email":localStorage.getItem("email") ? localStorage.getItem("email") : ""
     }
     this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
         res => {

@@ -1,7 +1,7 @@
 <div class="cointaner">
     <app-loading [condition]="isLoading"></app-loading>
     <app-toast [message]="toast.message"></app-toast>
-    <div class="card" *ngIf="isProjectList && !iscreateProject">
+    <div class="card" *ngIf="isProjectList && !iscreateProject  && !isAssignProjView">
       <div class="card-header">
         <span class="custom_span_header">My Project</span>
         <button class="btn btn-sm btn-primary header_btn" (click)="craeteProjectBtn()">Create Project</button> 
@@ -34,7 +34,7 @@
         </div>
       </div>
     </div>
-    <div class="card" *ngIf="isProjectList && !iscreateProject">
+    <div class="card" *ngIf="isProjectList && !iscreateProject && !isAssignProjView">
       <div class="card-header">
         <span class="custom_span_header">Assigned Project</span>
       </div>
@@ -58,7 +58,7 @@
                     <span>{{project.project_name}}</span>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-primary"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
+                    <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
                     <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button> 
                     <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
                     <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
@@ -69,7 +69,7 @@
         </div>
       </div>
     </div>
-    <div class="card " *ngIf="iscreateProject && !isProjectList">
+    <div class="card " *ngIf="iscreateProject && !isProjectList && !isAssignProjView">
        <div class="card-header">
         <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
        </div>
@@ -198,6 +198,37 @@
               </div>
           </div>
           <br>
+        </div>
+     </div>
+
+      <div class="card " *ngIf="!iscreateProject && !isProjectList && isAssignProjView">
+       <div class="card-header">
+        <span class="custom_span_header">View Project Detail</span>
+       </div>
+        <div class="ctm_form">
+          <br>
+          <div class="row" style="padding-bottom: 14px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                  <span>Project Name : {{AssignedProjectView.project_name}}</span>
+            </div>
+            <div class="col-md-1"></div>
+          </div>
+          <div class="row" style="padding-bottom: 14px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                  <span>Project Description : {{AssignedProjectView.desc}}</span>
+            </div>
+            <div class="col-md-1"></div>
+          </div>
+           <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-6">
+                  <!--<button class="btn btn-sm btn-primary" type="button" (click)="sendProjectFormData(myForm)"><i class="fa fa-floppy-o"></i> Save</button>-->
+                  <button class="btn btn-sm btn-primary" (click)="cancelView()" type="button"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
+                </div>
+            </div>
+            <br>
         </div>
      </div>
 </div>
