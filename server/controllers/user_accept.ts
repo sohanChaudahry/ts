@@ -38,11 +38,13 @@ export default class UserAcceptCtrl  {
                    if(data4 && data4.length > 0){
                   user_accept.find({ "from_email": req_data.from_email,"to_email": req_data.to_email,"project_id": req_data.project_id,"accept" : 0 }, function (err, data3) {
                       if(data3 && data3.length > 0){
-                         //Request is already there.
-                           result['error'] = "Your request is already there please wait to accept";
-                         // res.send(result);
-                        // return result;
-                        cb(null,result)
+                        user_accept.findOneAndUpdate({  "to_email": req_data.to_email,"project_id": req_data.project_id,"accept" : 0 }, { "$set": { "role" : req_data.role }}).exec(function (err, data2) {
+                            //Request is already there.
+                            result['error'] = "Your request is already there please wait to accept";
+                            // res.send(result);
+                           // return result;
+                           cb(null,result)
+                        })
                       }
                       else{
                            empmodel.find({ "email": req_data.to_email}, function (err, data2){  
@@ -51,6 +53,7 @@ export default class UserAcceptCtrl  {
                                   obj.from_email = req_data.from_email;
                                   obj.to_email = req_data.to_email;
                                   obj.project_id = req_data.project_id;
+                                  obj.role = req_data.role;                                  
                                   obj.save(function (err) {
                                    if (err){
                                        console.log("Error: " + err);
@@ -446,6 +449,7 @@ export default class UserAcceptCtrl  {
     var result = {};
     var project_id = mongoose.Types.ObjectId(req.params.id); 
     if(req && req.user){
+    user_accept.find({ "to_email": req.user.emails[0].value,"project_id" : project_id,"accept":0  }, function (err, data3) {
      followers.find({ "email": req.user.emails[0].value,"project_id":project_id  }, function (err, data) {
            //Get project Id of requested mail and save it.
            if(data && data.length > 0){
@@ -457,6 +461,7 @@ export default class UserAcceptCtrl  {
            var obj = new followers();
            obj.email = req.user.emails[0].value;
            obj.project_id = req.params.id;
+           obj.role = data3[0]._doc.role;           
            obj.create_date = current_date;
            obj.modify_date = current_date;
            obj.save(function (err) {
@@ -489,6 +494,7 @@ export default class UserAcceptCtrl  {
         }
             
       }) 
+    })
     }
     else{
         result['success'] = false;

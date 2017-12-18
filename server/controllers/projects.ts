@@ -143,6 +143,7 @@ export default class ProjectsCtrl  {
                                                                                               reqData["from_email"] = req.user.emails[0].value;
                                                                                               reqData["to_email"] = assignee.to_email;
                                                                                               reqData["project_id"] = project.project_id;
+                                                                                              reqData["role"] = assignee.role;
                                                                                               var userAcceptCtrl = new UserAcceptCtrl();
                                                                                               userAcceptCtrl.request_join(reqData,function cb(err,resData){
                                                                                             //  var assignresult = me.request_join(reqData);                                                                        
@@ -310,6 +311,7 @@ export default class ProjectsCtrl  {
                                                                        reqData["from_email"] = req.user.emails[0].value;
                                                                        reqData["to_email"] = assignee.to_email;
                                                                        reqData["project_id"] = projectdata1.id;
+                                                                       reqData["role"] = assignee.role;
                                                                        var userAcceptCtrl = new UserAcceptCtrl();
                                                                        userAcceptCtrl.request_join(reqData,function cb(err,resData){
                                                                      //  var assignresult = me.request_join(reqData);                                                                        
@@ -457,7 +459,7 @@ export default class ProjectsCtrl  {
                                         var followert = {};
                                         followert["employee_id"] = data11[0]._id;
                                         followert["name"] = data11[0].name;
-                                        followert["role"] = data11[0].role;
+                                        followert["role"] = requestuser._doc.role;
                                         followert["email"] = data11[0].email;                                                                             
                                         followert["act_status"] = data11[0].act_status;
                                         followert["type"] = data11[0].type;
@@ -470,7 +472,7 @@ export default class ProjectsCtrl  {
                                       {
                                         followert["employee_id"] = data11[0]._id;
                                         followert["name"] = data11[0].name;
-                                        followert["role"] = data11[0].role;
+                                        followert["role"] = requestuser._doc.role;
                                         followert["email"] = data11[0].email;  
                                         followert["act_status"] = data11[0].act_status;
                                         followert["type"] = data11[0].type;
