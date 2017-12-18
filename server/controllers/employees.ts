@@ -533,14 +533,22 @@ getAllEmployeeDetails = (req, res) => {
   @desc : Get details of current logged in employee.
   */
 getCurrentLoginDetails = (req, res) => { 
+  var model = this.model;  
   var resData = {}
   if(req && req.user){
-    resData["email"] = req.user.emails[0].value;
+    model.find({ "email": req.user.emails[0].value }, function (err, data) {
+      resData["_id"] = data[0]._doc._id;
+      resData["name"] = data[0]._doc.name;
+      resData["login_status"] = 1;
+      resData["email"] = req.user.emails[0].value;
+      res.send(resData);      
+    })
   }
   else{
+    resData["login_status"] = 0;    
     resData["error"] = "Please login and continue";
+    res.send(resData);          
   }
-  res.send(resData);
 }
   
 
