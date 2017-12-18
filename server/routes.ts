@@ -48,6 +48,7 @@ export default function setRoutes(app) {
   router.route('/employees/getdetailsById/:id').get(employeesCtrl.getEmployeeDetails); 
   router.route('/employees/getdetailsByEmail').post(employeesCtrl.getEmployeeDetailsByEmail); 
   router.route('/employees/getAllEmployeeDetails/').get(employeesCtrl.getAllEmployeeDetails); 
+  router.route('/employees/getCurrentLoginDetails/').get(employeesCtrl.getCurrentLoginDetails); 
   
 
   //Tasks
