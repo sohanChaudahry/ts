@@ -43,8 +43,8 @@
         <table class="table table-bordered">
             <thead class="thead-default">
               <tr>
-                <th width="72%">Project Name</th>
-                <th width="8%">Action</th>
+                <th width="78%">Project Name</th>
+                <th width="22%">Action</th>
               </tr>
             </thead>
             <tbody *ngIf="AssignedProjectsList.length == 0">
@@ -58,7 +58,10 @@
                     <span>{{project.project_name}}</span>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-warning"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
+                    <button class="btn btn-sm btn-primary"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
+                    <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button> 
+                    <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
+                    <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
                 </td>
               </tr> 
             </tbody>  

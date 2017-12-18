@@ -193,9 +193,26 @@ export class ProjectComponent implements OnInit {
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
+  acceptProjectReq(ProdId){
+      this.projectService.accpetProject(ProdId).subscribe(
+        res => {
+           this.getEmployeeDetailByEmail();
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
+  }
+  rejectProjectReq(ProdId){
+      this.projectService.rejectProject(ProdId).subscribe(
+        res => {
+           this.getEmployeeDetailByEmail();
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
+  }
   getEmployeeDetailByEmail(){
     let reqData={
-        "email":"sc205@enovate-it.com"
+       // "email":"sc205@enovate-it.com"
+        "email":"sohanchaudhary8080@gmail.com"
     }
     this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
         res => {

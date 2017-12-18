@@ -99,30 +99,7 @@
               </div>
               <div class="col-md-1"></div>
             </div>
-            <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-5">
-                    <label class="Assign">Assign To</label>
-                    <ng-select [allowClear]="true"
-                          [items]="employeesToshow"
-                          [disabled]="disabled"
-                          [active]="isEmpAutoSelect"
-                          (data)="refreshValue($event)"
-                          (selected)="selected($event)"
-                          (removed)="removed($event)"
-                          (typed)="typed($event)"
-                          placeholder="No employee selected">
-                    </ng-select>
-                </div>
-                <div class="col-md-5">
-                    <div class="form-group">
-                      <label for="exampleFormControlTextarea1">Estimate Hours</label>
-                      <input class="form-control" type="number" min="0.1" [(ngModel)]="taskFormDetail.estimate_hrs" placeholder="Estimate Hours">
-                    </div>
-                </div>
-                <div class="col-md-1"></div>
-            </div>
-            <div class="row">
+             <div class="row">
               <div class="col-md-1"></div>
                 <div class="col-md-5">
                   <div class="form-group">
@@ -142,6 +119,33 @@
                 </div>
               <div class="col-md-1"></div>
             </div>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-5">
+                    <label class="Assign">Assign To</label>
+                     <select class="form-control" [(ngModel)]="taskFormDetail.project_id">
+                        <option [ngValue]="emp" *ngFor="let emp of employeesToshow;"  placeholder="Select Project">{{emp}}</option>
+                      </select>
+                    <!--<ng-select [allowClear]="true"
+                          [items]="employeesToshow"
+                          [disabled]="disabled"
+                          [active]="isEmpAutoSelect"
+                          (data)="refreshValue($event)"
+                          (selected)="selected($event)"
+                          (removed)="removed($event)"
+                          (typed)="typed($event)"
+                          placeholder="No employee selected">
+                    </ng-select>-->
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                      <label for="exampleFormControlTextarea1">Estimate Hours</label>
+                      <input class="form-control" type="number" min="0.1" [(ngModel)]="taskFormDetail.estimate_hrs" placeholder="Estimate Hours">
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+           
             <div class="row">
               <div class="col-md-1"></div>
               <div class="col-md-5">

@@ -85,7 +85,7 @@ export class TaskComponent implements OnInit {
 
   ngOnInit() {
      this.getEmployeeDetailByEmail();
-     this.getAllEmployeeList();
+     //this.getAllEmployeeList();
      this.getTaskAssigedFrom();
      this.getTaskAssigedToUs();
     //  this.getTaskForm = this.formBuilder.group({
@@ -178,25 +178,38 @@ export class TaskComponent implements OnInit {
       this.isEditTask=false;
       this.isEditOtherTask=false;
   }
-  getAllEmployeeList() {
-      this.projectService.getAllEmployee().subscribe(
-        res => {
-           let data=res;
-           this.employeesList=res.employees;
-           for(var i=0;i<this.employeesList.length;i++){
-               this.employeesToshow.push(this.employeesList[i].name);
-           }
-        },
-        error => this.toast.setMessage('Some thing wrong!', 'danger')
-      );
-  }
+  // getAllEmployeeList() {
+  //     this.projectService.getAllEmployee().subscribe(
+  //       res => {
+  //          let data=res;
+  //          this.employeesList=res.employees;
+  //          for(var i=0;i<this.employeesList.length;i++){
+  //              this.employeesToshow.push(this.employeesList[i].name);
+  //          }
+  //       },
+  //       error => this.toast.setMessage('Some thing wrong!', 'danger')
+  //     );
+  // }
   getEmployeeDetailByEmail() {
       let reqData={
           "email":"sc205@enovate-it.com"
       }
       this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
           res => {
-            this.projectList=res.details.projects;
+            let project_list=[];
+            if(res.details.MyProjects.length!=0){
+                for(var i=0;i<res.details.MyProjects.length;i++){
+                    project_list.push(res.details.MyProjects[i]);
+                }
+            }
+            if(res.details.AssignedProjects.length!=0){
+                for(var i=0;i<res.details.AssignedProjects.length;i++){
+                  if(res.details.AssignedProjects[i].accept==1){
+                     project_list.push(res.details.AssignedProjects[i]);
+                  }
+                }
+            }   
+             this.projectList=project_list;
           },
           error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
@@ -224,13 +237,22 @@ export class TaskComponent implements OnInit {
      console.log(data);
      this.taskFormDetail.activity_id="";
      this.activityList=[];
+     this.employeesList=[];
+     this.employeesToshow=[];
      this.getProjectDetailById(data);
    }
    getProjectDetailById(ProdId){
       this.taskService.getProjectDetailById(ProdId).subscribe(
         res => {
-           this.activityList=res.activities;
-           console.log(this.activityList);
+          if(res){
+              this.activityList=res.activities;
+              console.log(this.activityList);
+              this.employeesList=res.followers;
+              for(var i=0;i<this.employeesList.length;i++){
+                  this.employeesToshow.push(this.employeesList[i].name);
+              }
+              console.log(this.employeesToshow);
+          }
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );

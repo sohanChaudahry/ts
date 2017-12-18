@@ -22,6 +22,12 @@ export class ProjectService {
   getProjectDetailById(prodID): Observable<any> {
     return this.http.get(`/api/projects/getdetails/${prodID}`,this.options).map(res => res.json());
   }
+  accpetProject(prodID): Observable<any> {
+    return this.http.get(`/api/employees/request/accept/${prodID}`,this.options).map(res => res.json());
+  }
+  rejectProject(prodID): Observable<any> {
+    return this.http.get(`/api/employees/request/cancel/${prodID}`,this.options).map(res => res.json());
+  }
   saveProjectDetails(reqData): Observable<any> {
     return this.http.post('/api/projects/save', JSON.stringify(reqData), this.options).map(res => res.json());
   }
