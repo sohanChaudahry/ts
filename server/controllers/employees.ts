@@ -81,7 +81,7 @@ export default class EmployeesCtrl  {
               }
               else{
                     count = length; 
-                    employee.error = "Please login with google.";                                       
+                    employee.error = "Employee Id is invalid.";                                       
                     failedData.failedData.push(employee);
                     callback();  
                }
@@ -91,7 +91,7 @@ export default class EmployeesCtrl  {
          else{
            //If employee is new
             count = length; 
-            employee.error = "Please login with google.";                                       
+            employee.error = "Employee Id is invalid.";                                       
             failedData.failedData.push(employee);
             callback();  
          }
@@ -216,7 +216,7 @@ export default class EmployeesCtrl  {
                                 projectcount = 0;
                                 var tempactivities = {activities: []};
                                 var project = {}
-                                User_accept.find({ "to_email": req.user.emails[0].value}, function (err, data9) {                                   
+                                User_accept.find({ "to_email": req.user.emails[0].value,"accept":0}, function (err, data9) {                                   
                                   if(data9 && data9.length > 0) {
                                     async.forEach(data9, function (requestuser, callback) { 
                                       var project_id = mongoose.Types.ObjectId(requestuser._doc.project_id);
@@ -401,7 +401,7 @@ getEmployeeDetailsByEmail = (req, res) => {
                               projectcount = 0;
                               var tempactivities = {activities: []};
                               var project = {}
-                              User_accept.find({ "to_email": req.user.emails[0].value}, function (err, data9) {                                   
+                              User_accept.find({ "to_email": req.user.emails[0].value,"accept":0}, function (err, data9) {                                   
                                 if(data9 && data9.length > 0) {
                                   async.forEach(data9, function (requestuser, callback) { 
                                     var project_id = mongoose.Types.ObjectId(requestuser._doc.project_id);

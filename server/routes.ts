@@ -66,8 +66,10 @@ export default function setRoutes(app) {
  router.route('/employees/request/accept/:id').get(userAcceptCtrl.request_accept); 
  router.route('/employees/request/cancel/:id').get(userAcceptCtrl.request_cancel); 
  
- 
+//Followers 
+router.route('/followers/delete').post(followersCtrl.deleteFollowerByprojectId); 
 
+ 
 /*
   passport.use(new GoogleStrategy({
     clientID: '1079197674548-fj3r0o8v23pkg6v22itao1n5ncmeod5c.apps.googleusercontent.com',
