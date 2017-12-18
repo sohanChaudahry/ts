@@ -31,5 +31,8 @@ export class ProjectService {
   saveProjectDetails(reqData): Observable<any> {
     return this.http.post('/api/projects/save', JSON.stringify(reqData), this.options).map(res => res.json());
   }
+  removeAssignUser(reqData): Observable<any> {
+    return this.http.post('/api/followers/delete', JSON.stringify(reqData), this.options).map(res => res.json());
+  }
   
 }

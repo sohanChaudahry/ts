@@ -123,7 +123,7 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-5">
                     <label class="Assign">Assign To</label>
-                     <select class="form-control" [(ngModel)]="taskFormDetail.project_id">
+                     <select class="form-control" [(ngModel)]="taskFormDetail.assign_to">
                         <option [ngValue]="emp" *ngFor="let emp of employeesToshow;"  placeholder="Select Project">{{emp}}</option>
                       </select>
                     <!--<ng-select [allowClear]="true"

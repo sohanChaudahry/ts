@@ -25,6 +25,9 @@ export class UserService {
   loginGoogle(): Observable<any> {
     return this.http.get('http://localhost:3000/auth/google', this.options);
   }
+  logOutGoogle(): Observable<any> {
+    return this.http.get('http://localhost:3000/logout', this.options);
+  }
   getUsers(): Observable<any> {
     return this.http.get('/api/users').map(res => res.json());
   }

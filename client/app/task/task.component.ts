@@ -193,10 +193,12 @@ export class TaskComponent implements OnInit {
   getEmployeeDetailByEmail() {
       let reqData={
           "email":"sc205@enovate-it.com"
+         // "email":"sohanchaudhary8080@gmail.com"
       }
       this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
           res => {
             let project_list=[];
+            
             if(res.details.MyProjects.length!=0){
                 for(var i=0;i<res.details.MyProjects.length;i++){
                     project_list.push(res.details.MyProjects[i]);
@@ -217,6 +219,7 @@ export class TaskComponent implements OnInit {
   //apne bija ne assign kariye 
   getTaskAssigedFrom(){
       let id="5a2f9e69d261962aff5725c7";
+      //let id="5a310ca5dda25c977b36587f";
       this.taskService.getTaskAssigedFrom(id).subscribe(
           res => {
             this.AssigedToOtherList=res.tasks;
@@ -226,6 +229,7 @@ export class TaskComponent implements OnInit {
   }
   getTaskAssigedToUs(){  
       let id="5a2f9e69d261962aff5725c7";
+      //let id="5a310ca5dda25c977b36587f";
       this.taskService.getTaskAssigedToUs(id).subscribe(
           res => {
             this.getTaskAssigedToUsList=res.tasks;
@@ -260,6 +264,17 @@ export class TaskComponent implements OnInit {
   saveTaskDetail(){
     //test
     this.taskFormDetail.assign_from="5a2f9e69d261962aff5725c7";
+    //this.taskFormDetail.assign_from="5a310ca5dda25c977b36587f";
+    
+    if(this.taskFormDetail.assign_to){
+        let selectAssignId="";
+        for(var i=0;i<this.employeesList.length;i++){
+            if(this.taskFormDetail.assign_to==this.employeesList[i].name){
+                selectAssignId=this.employeesList[i].employee_id;
+            }
+        }
+        this.taskFormDetail.assign_to=selectAssignId;
+    }   
     console.log(this.taskFormDetail);
     this.taskService.saveTaskDetail({reqData:[this.taskFormDetail]}).subscribe(
       res => {

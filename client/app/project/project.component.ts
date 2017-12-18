@@ -110,6 +110,7 @@ export class ProjectComponent implements OnInit {
   sendProjectFormData(Data){
     //test
     this.projectDetail.email="sc205@enovate-it.com";
+    //this.projectDetail.email="sohanchaudhary8080@gmail.com"
     this.projectDetail.activities=this.activityData;
    
     this.projectDetail.assign_to=this.addAssignUserList;
@@ -145,22 +146,25 @@ export class ProjectComponent implements OnInit {
   projectEditBtm(selectedProject){
       this.isProjectList=false;
       this.iscreateProject=true;
+      this.addAssignUserList=[];
+      this.activityData=[];
       this.getProjectDetailById(selectedProject._id)
   }
   craeteProjectBtn(){
-    this.isProjectList=false;
-    this.iscreateProject=true;
-    this.projectDetail={
-      "_id":"",
-      "project_id":"",
-      "project_name":"",
-      "role":"",
-      "desc":"",
-      "email":"",
-      "activities":[],
-      "assign_to":[]
-    };
-    this.activityData=[{"name":"","activity_id":""}];
+      this.isProjectList=false;
+      this.iscreateProject=true;
+      this.projectDetail={
+        "_id":"",
+        "project_id":"",
+        "project_name":"",
+        "role":"",
+        "desc":"",
+        "email":"",
+        "activities":[],
+        "assign_to":[]
+      };
+      this.activityData=[{"name":"","activity_id":""}];
+      this.addAssignUserList=[];
   }
   addSelectedEmp(){
     if(this.searchEmpDetail.name && this.searchEmpDetail.role){
@@ -168,6 +172,12 @@ export class ProjectComponent implements OnInit {
             if(this.employeesList[i].name==this.searchEmpDetail.name){
                 this.searchEmpDetail.to_email=this.employeesList[i].email;
                 break;
+            }
+        }
+        for(var i=0;i<this.employeesList.length;i++){
+            if(this.employeesList[i].email==this.searchEmpDetail.to_email){
+                this.toast.setMessage('Employee already selected', 'danger')
+                return;
             }
         }
         this.addAssignUserList.push(this.searchEmpDetail);
@@ -183,10 +193,16 @@ export class ProjectComponent implements OnInit {
       this.projectService.getProjectDetailById(ProdId).subscribe(
         res => {
            this.projectDetail=res;
+           this.addAssignUserList=[];
+           this.activityData=[];
            if(this.projectDetail.activities.length!=0){
-              this.activityData=[];
               for(var i=0;i<this.projectDetail.activities.length;i++){
                 this.activityData.push({"name":this.projectDetail.activities[i].activity_name,"activity_id":this.projectDetail.activities[i]._id});
+              }
+           }
+           if(res.followers.length!=0){
+              for(var i=0;i<res.followers.length;i++){
+                this.addAssignUserList.push(res.followers[i]);
               }
            }
         },
@@ -209,10 +225,18 @@ export class ProjectComponent implements OnInit {
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
+  removeAssignUser(ProdId){
+      this.projectService.removeAssignUser(ProdId).subscribe(
+        res => {
+           this.getEmployeeDetailByEmail();
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
+  }
   getEmployeeDetailByEmail(){
     let reqData={
-       // "email":"sc205@enovate-it.com"
-        "email":"sohanchaudhary8080@gmail.com"
+       "email":"sc205@enovate-it.com"
+       //"email":"sohanchaudhary8080@gmail.com"
     }
     this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
         res => {
