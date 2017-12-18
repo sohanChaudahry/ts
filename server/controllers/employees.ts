@@ -526,6 +526,24 @@ getAllEmployeeDetails = (req, res) => {
  }
 };
 
+/*
+  @author : Vaibhav Mali 
+  @date : 12 Dec 2017
+  @API : getCurrentLoginDetails
+  @desc : Get details of current logged in employee.
+  */
+getCurrentLoginDetails = (req, res) => { 
+  var resData = {}
+  if(req && req.user){
+    resData["email"] = req.user.emails[0].value;
+  }
+  else{
+    resData["error"] = "Please login and continue";
+  }
+  res.send(resData);
+}
+  
+
 success = (req, res) => {  
  console.log("Success");
 }
