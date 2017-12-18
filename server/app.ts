@@ -202,7 +202,9 @@ function(req, res) {
 
 app.get('/success', function(req, res) {
   console.log("Login success");
-  res.send("Login Success");
+  //res.send("Login Success");
+  res.redirect('http://localhost:4200');
+  
 });  
 
 app.get('/fail', function(req, res) {
@@ -221,7 +223,8 @@ app.get('/logout', function(req, res) {
   if(req && req.user){
   empmodel.findOneAndUpdate({ "email": req.user.emails[0].value}, { "$set": { "act_status": 0 }}).exec(function (err, data2) {
   req.session.destroy(function (err) {
-    res.redirect('https://accounts.google.com/logout');    
+   // res.redirect('https://accounts.google.com/logout');  
+    res.redirect('http://localhost:4200/login');  
   });   
   })
   }
