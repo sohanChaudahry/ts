@@ -85,7 +85,7 @@ export default class ProjectsCtrl  {
                                               followers.find({ "email": req.user.emails[0].value,"project_id":project_id}, function (err, data3) {                           
                                                   followers.findOneAndUpdate({ "email": req.user.emails[0].value,"project_id":project_id}, { "$set": { "role" : project.role ? project.role : data3[0]._doc.role,"modify_date": current_date }}).exec(function (err, data4) {
                                                         var cnt = 0;
-                                                       activities.remove({ project_id: project.project_id }, function(err) {
+                                                       activities.remove({ pid: project_id }, function(err) {
                                                            if (err) {
                                                               count = count + 1;
                                                               project.error = err;           
@@ -456,9 +456,9 @@ export default class ProjectsCtrl  {
                                       if(data10 && (data10.length == 0) && (requestuser._doc.accept == 0)){
                                         var followert = {};
                                         followert["employee_id"] = data11[0]._id;
-                                        followert["name"] = data11[0].email;
+                                        followert["name"] = data11[0].name;
                                         followert["role"] = data11[0].role;
-                                        followert["email"] = data11[0].name;                                                                             
+                                        followert["email"] = data11[0].email;                                                                             
                                         followert["act_status"] = data11[0].act_status;
                                         followert["type"] = data11[0].type;
                                         followert["accept"] = 0;
@@ -471,7 +471,7 @@ export default class ProjectsCtrl  {
                                         followert["employee_id"] = data11[0]._id;
                                         followert["name"] = data11[0].name;
                                         followert["role"] = data11[0].role;
-                                        followert["email"] = data11[0].name;  
+                                        followert["email"] = data11[0].email;  
                                         followert["act_status"] = data11[0].act_status;
                                         followert["type"] = data11[0].type;
                                         followert["accept"] = -1;
