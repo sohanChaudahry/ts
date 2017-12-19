@@ -49,15 +49,17 @@ export class ProfileComponent implements OnInit {
           email: this.email,
           address: this.address,
           type:this.type,
+          _id : localStorage.getItem("_id") ? localStorage.getItem("_id") : ""
       });
   }
   saveProfile(){
     console.log(this.profileFormData.value);
     this.profileService.saveProfile({"reqData":[this.profileFormData.value]}).subscribe(
         res => {
-          if(res.success){
+          if(res.success.successData.length!=0){
              this.profileFormData.patchValue(res.success);
-          }else if(res.error){
+             this.toast.setMessage("Profile successfully updated", 'success')
+          }else if(res.failed.failedData.length!=0){
              this.toast.setMessage(res.failed.failedData[0].error, 'danger')
           }
         },
@@ -66,7 +68,7 @@ export class ProfileComponent implements OnInit {
   }
   getEmployeeDetailByEmail(){
     let reqData={
-        "email":"sc205@enovate-it.com"
+        "email":localStorage.getItem("email") ? localStorage.getItem("email") : ""
     }
     this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
         res => {

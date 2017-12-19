@@ -17,7 +17,7 @@
                   <th width="8%">Action</th>
                 </tr>
               </thead>
-              <tbody *ngIf="false">
+              <tbody *ngIf="AssigedToOtherList.length==0">
                 <tr>
                   <td colspan="4">There are no task in the DB. Add a new task.</td>
                 </tr>  
@@ -57,7 +57,7 @@
                     <th width="8%">Action</th>
                 </tr>
               </thead>
-              <tbody *ngIf="false">
+              <tbody *ngIf="getTaskAssigedToUsList.length==0">
                 <tr>
                   <td colspan="3">There are no task in the DB. Add a new task.</td>
                 </tr>  

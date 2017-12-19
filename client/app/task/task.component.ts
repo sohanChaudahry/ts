@@ -270,6 +270,7 @@ export class TaskComponent implements OnInit {
         }
         this.taskFormDetail.assign_to=selectAssignId;
     }   
+    this.taskFormDetail.assign_from=id;
     console.log(this.taskFormDetail);
     this.taskService.saveTaskDetail({reqData:[this.taskFormDetail]}).subscribe(
       res => {

@@ -221,10 +221,33 @@
             </div>
             <div class="col-md-1"></div>
           </div>
+          <div class="row" style="padding-bottom: 14px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 cat_lable custom-div-margin">
+                <div class="form-group city-data">
+                    <div class="searc_head"> 
+                        <div class="col-md-5">Followers</div>
+                        <div class="col-md-5">Email</div>
+                        <div class="col-md-2">Role</div>
+                    </div>
+                     <div *ngIf="AssignedProjectView.followers.length==0" class="city-data-div user_table">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-8">No record availble in DB.</div>
+                    </div> 
+                    <div *ngIf="AssignedProjectView.followers.length!=0" >
+                    <div class="city-data-div user_table" *ngFor="let user of AssignedProjectView.followers">
+                        <div class="col-md-5">{{user.name}}</div>
+                        <div class="col-md-5">{{user.email}}</div>
+                        <div class="col-md-2">{{user.role}}</div>
+                    </div>   
+                    </div> 
+                </div>
+            </div>
+            <div class="col-md-1"></div>
+          </div>
            <div class="row">
                 <div class="col-md-1"></div>
                 <div class="col-md-6">
-                  <!--<button class="btn btn-sm btn-primary" type="button" (click)="sendProjectFormData(myForm)"><i class="fa fa-floppy-o"></i> Save</button>-->
                   <button class="btn btn-sm btn-primary" (click)="cancelView()" type="button"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
                 </div>
             </div>

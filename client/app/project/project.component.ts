@@ -163,7 +163,16 @@ export class ProjectComponent implements OnInit {
       this.isProjectList=false;
       this.iscreateProject=false;
       this.isAssignProjView=true;
-      this.AssignedProjectView=selected_data;
+      // this.AssignedProjectView=selected_data;
+      this.getAssignedProjectDetailById(selected_data._id);
+  }
+  getAssignedProjectDetailById(ProdId){
+      this.projectService.getProjectDetailById(ProdId).subscribe(
+        res => {
+          this.AssignedProjectView=res;
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
   }
   craeteProjectBtn(){
       this.isProjectList=false;
@@ -204,7 +213,7 @@ export class ProjectComponent implements OnInit {
         this.isEmpAutoSelect=[];
     }
   }
-  
+
   getProjectDetailById(ProdId){
       this.projectService.getProjectDetailById(ProdId).subscribe(
         res => {
