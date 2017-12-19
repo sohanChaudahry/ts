@@ -315,6 +315,7 @@ getEmployeeDetailsByEmail = (req, res) => {
   var empid = req.params.id;
   var projects = projectsmodel;
   var empemail = req.body.reqData.email;  
+  var dt = {};  
   if(req && req.user){    
   model.find({ "email": empemail }, function (err, data) {
                 if(err){
@@ -325,7 +326,6 @@ getEmployeeDetailsByEmail = (req, res) => {
                 else if (data && data.length > 0) {
                   Followers.find({ "email": data[0]._doc.email }, function (err, data1) {                 
                     var resData = {};
-                    var dt = {};
                     dt['name'] = data[0]._doc.name;
                     dt['act_status'] = data[0]._doc.act_status;
                     dt['email'] = data[0]._doc.email;
@@ -398,11 +398,11 @@ getEmployeeDetailsByEmail = (req, res) => {
                         }, function (err, cb) {
                           var result = {};
                             if(projectcount >= projectslength){
-                              projectcount = 0;
+                              var projectcount1 = 0;
                               var tempactivities = {activities: []};
                               var project = {}
-                              User_accept.find({ "to_email": req.user.emails[0].value,"accept":0}, function (err, data9) {                                   
-                                if(data9 && data9.length > 0) {
+                           //   User_accept.find({ "to_email": req.user.emails[0].value,"accept":0}, function (err, data9) {                                   
+                              /*  if(data9 && data9.length > 0) {
                                   async.forEach(data9, function (requestuser, callback) { 
                                     var project_id = mongoose.Types.ObjectId(requestuser._doc.project_id);
                                     projects.find({ "_id": project_id }, function (err, data2) {
@@ -426,13 +426,14 @@ getEmployeeDetailsByEmail = (req, res) => {
                                                      if(count >= data3.length){
                                                        project["activities"] = tempactivities.activities;
                                                        tempprojects.projects.push(project);
-                                                       projectcount = projectcount + 1;                                                                                                                
-                                                       callback();                                                            
+                                                       projectcount1 = projectcount1 + 1;                                                                                                                
+                                                       callback();   
+                                                      // return;                                                      
                                                      }
                                                  });
                                              } 
                                              else{
-                                               projectcount = projectcount + 1;                                                    
+                                               projectcount1 = projectcount1 + 1;                                                    
                                               tempprojects.projects.push(project);
                                               callback();                                                                                                         
                                              }
@@ -440,32 +441,34 @@ getEmployeeDetailsByEmail = (req, res) => {
                                   
                                 }
                                 else{
-                                 projectcount = projectcount + 1;                                      
+                                 projectcount1 = projectcount1 + 1;                                      
                                  callback();
                                 }
                                 })
     
                                   }, function (err, cb) {
-                                    if(projectcount >= data9.length){ 
+                                    if(projectcount1 >= data9.length){ 
                                       dt["MyProjects"] = tempprojects1.projects;
                                       dt["AssignedProjects"] = tempprojects.projects;
                                       var resData = {};
                                       resData['details'] = dt;
                                       res.send(resData);
+                                      return;    
                                     } 
                                   });  
     
                                 }
-                                else{
+                                else{*/
                                   dt["MyProjects"] = tempprojects1.projects;
                                   dt["AssignedProjects"] = tempprojects.projects;
                                   var resData = {};
                                   resData['details'] = dt;
                                   res.send(resData);
-                                }
-                              }) 
+                                  return;    
+                               // }
+                           //   }) 
                             }  
-                          return;
+                         // return;
                       });
                       
                   
@@ -487,6 +490,86 @@ getEmployeeDetailsByEmail = (req, res) => {
   } 
 };
 
+
+/*
+  @author : Vaibhav Mali 
+  @date : 19 Dec 2017
+  @API : getRequestDetails
+  @desc : Get requested projects details.
+  */
+getRequestDetails = (req, res) => { 
+  var User_accept = this.User_accept;   
+  var model = this.model;
+  var projects = projectsmodel;
+  var tempprojects = {projects: []};  
+  var dt = {};  
+  
+  //var empemail = req.body.reqData.email;  
+  var projectcount1 = 0;
+  if(req && req.user){
+  User_accept.find({ "to_email": req.user.emails[0].value,"accept":0}, function (err, data9) {                                   
+            async.forEach(data9, function (requestuser, callback) { 
+                var tempactivities = {activities: []};
+                var project = {} 
+                var project_id = mongoose.Types.ObjectId(requestuser._doc.project_id);
+                projects.find({ "_id": project_id }, function (err, data2) {
+                if(data2 && data2.length > 0){
+                      project["_id"] = data2[0]._doc._id;                              
+                      project["project_name"] = data2[0]._doc.project_name;
+                      project["desc"] = data2[0]._doc.desc; 
+                      project["accept"] = 0;
+                      activities.find({ "pid": project_id }, function (err, data3) {
+                      if(data3 && data3.length > 0){
+                          var count = 0;
+                         async.forEach(data3, function (activity, callback) {
+                              var tempdata = {};
+                              tempdata["_id"] = activity._doc._id;
+                              tempdata["activity_name"] = activity._doc.activity_name;
+                              tempactivities.activities.push(tempdata)
+                              count = count + 1;
+                              callback();
+                           }, function (err, cb) {
+                                  if(count >= data3.length){
+                                      project["activities"] = tempactivities.activities;
+                                      tempprojects.projects.push(project);
+                                      projectcount1 = projectcount1 + 1;                                                                                                                
+                                       callback();   
+                                                      // return;                                                      
+                                     }
+                            });
+                  } 
+                else{
+                     projectcount1 = projectcount1 + 1;                                                    
+                     tempprojects.projects.push(project);
+                     callback();                                                                                                         
+                }
+            })
+        }
+        else{
+           projectcount1 = projectcount1 + 1;                                      
+           callback();
+        }
+        })
+    }, function (err, cb) {
+             if(projectcount1 >= data9.length){ 
+                dt["RequestedProjects"] = tempprojects.projects;
+                var resData = {};
+                resData['details'] = dt;
+                res.send(resData);
+                return;    
+              } 
+      });  
+    
+ })
+    }
+    else{
+      var resData = {};    
+      resData["res_status"] = 404;
+      resData["error"] = "Please login and continue";
+      res.send(resData);
+    }
+}
+  
 
 /*
   @author : Vaibhav Mali 
