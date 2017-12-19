@@ -34,5 +34,4 @@ export class ProjectService {
   removeAssignUser(reqData): Observable<any> {
     return this.http.post('/api/followers/delete', JSON.stringify(reqData), this.options).map(res => res.json());
   }
-  
 }

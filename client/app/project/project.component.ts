@@ -234,9 +234,11 @@ export class ProjectComponent implements OnInit {
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
+
   acceptProjectReq(ProdId){
       this.projectService.accpetProject(ProdId).subscribe(
         res => {
+           this.toast.setMessage('Project request accepted successfully.', 'success')
            this.getEmployeeDetailByEmail();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
@@ -245,14 +247,57 @@ export class ProjectComponent implements OnInit {
   rejectProjectReq(ProdId){
       this.projectService.rejectProject(ProdId).subscribe(
         res => {
+           this.toast.setMessage('Project request rejected successfully.', 'success');
            this.getEmployeeDetailByEmail();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
-  removeAssignUser(ProdId){
-      this.projectService.removeAssignUser(ProdId).subscribe(
+  removeAssignUserFun(data,Prod_detail){
+      if(Prod_detail && Prod_detail._id && data.email && data._id){
+          console.log(data);
+          var reqData={
+            "reqData" : {
+                  project_id:Prod_detail._id,
+                  email:data.email
+            }
+          }
+          console.log(reqData);
+          this.projectService.removeAssignUser(reqData).subscribe(
+            res => {
+              if(res.success==true){
+                  for(var i=0;i<this.addAssignUserList.length;i++){
+                      if(this.addAssignUserList[i].name==data.name){
+                          this.addAssignUserList.splice(i,1);
+                          break;
+                      }
+                  }
+              }
+              this.toast.setMessage('Employee Removed from this project!', 'success')
+            },
+            error => this.toast.setMessage('Some thing wrong!', 'danger')
+          );
+      }else{
+          for(var i=0;i<this.addAssignUserList.length;i++){
+            if(this.addAssignUserList[i].name==data.name){
+                this.addAssignUserList.splice(i,1);
+                break;
+            }
+          }
+          this.toast.setMessage('Employee Removed from this project!', 'success')
+      }
+  }
+  exitProjectReq(ProdId){
+      let reqData={
+        "reqData":{
+            project_id:ProdId._id,
+            email:localStorage.getItem("email") ? localStorage.getItem("email") : ""
+        }
+      }
+      console.log(reqData);
+      this.projectService.removeAssignUser(reqData).subscribe(
         res => {
+           this.toast.setMessage('Exit project group successfully.', 'success')
            this.getEmployeeDetailByEmail();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')

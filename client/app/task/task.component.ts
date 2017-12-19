@@ -193,7 +193,6 @@ export class TaskComponent implements OnInit {
   getEmployeeDetailByEmail() {
       let reqData={
           "email":localStorage.getItem("email") ? localStorage.getItem("email") : ""
-         // "email":"sohanchaudhary8080@gmail.com"
       }
       this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
           res => {
