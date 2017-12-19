@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewContainerRef } from '@angular/core';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ProjectService } from '../services/project.service';
@@ -18,6 +18,13 @@ interface profileFormData {
 })
 export class ProfileComponent implements OnInit {
 
+  settings = {
+      bigBanner: true,
+      timePicker: true,
+      format: 'dd-MMM-yyyy hh:mm a',
+      defaultOpen: false,
+      closeOnSelect:false
+  }
 
   profileFormData: FormGroup;
   isLoading = false;
@@ -30,17 +37,13 @@ export class ProfileComponent implements OnInit {
   address = new FormControl('', [Validators.required]);
   type = new FormControl('', [ Validators.required]);
 
-  // profileFormData : profileFormData ={
-  //     name : "",
-  //     email : "",
-  //     address  : "",
-  //     type : ""
-  // }
   typeList=[{"val":"E","name":"Employee"}];
   constructor(private toast :ToastComponent,
   private formBuilder: FormBuilder,
   private projectService :ProjectService,
-  private profileService:ProfileService) { }
+  private profileService:ProfileService) { 
+    
+   }
 
   ngOnInit() {
     this.getEmployeeDetailByEmail();

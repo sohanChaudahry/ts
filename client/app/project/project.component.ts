@@ -59,6 +59,7 @@ export class ProjectComponent implements OnInit {
   ngOnInit() {
       this.getAllEmployeeList();
       this.getEmployeeDetailByEmail();
+     // this.getRequestedProjectsFun();
       this.getProjectForm = this.formBuilder.group({
         project_id: this.project_id,
         project_name:this.project_name,
@@ -118,9 +119,7 @@ export class ProjectComponent implements OnInit {
   sendProjectFormData(Data){
     //test
     this.projectDetail.email=localStorage.getItem("email") ? localStorage.getItem("email") : "";
-    //this.projectDetail.email="sohanchaudhary8080@gmail.com"
     this.projectDetail.activities=this.activityData;
-   
     this.projectDetail.assign_to=this.addAssignUserList;
     console.log(this.projectDetail);
     if(this.projectDetail._id){
@@ -135,6 +134,7 @@ export class ProjectComponent implements OnInit {
          this.isProjectList=true;
          this.iscreateProject=false;
          this.getEmployeeDetailByEmail();
+        // this.getRequestedProjectsFun();
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
@@ -240,6 +240,7 @@ export class ProjectComponent implements OnInit {
         res => {
            this.toast.setMessage('Project request accepted successfully.', 'success')
            this.getEmployeeDetailByEmail();
+          // this.getRequestedProjectsFun();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
@@ -249,6 +250,7 @@ export class ProjectComponent implements OnInit {
         res => {
            this.toast.setMessage('Project request rejected successfully.', 'success');
            this.getEmployeeDetailByEmail();
+          // this.getRequestedProjectsFun();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
@@ -257,10 +259,10 @@ export class ProjectComponent implements OnInit {
       if(Prod_detail && Prod_detail._id && data.email && data._id){
           console.log(data);
           var reqData={
-            "reqData" : {
+              "reqData" : {
                   project_id:Prod_detail._id,
                   email:data.email
-            }
+              }
           }
           console.log(reqData);
           this.projectService.removeAssignUser(reqData).subscribe(
@@ -299,6 +301,7 @@ export class ProjectComponent implements OnInit {
         res => {
            this.toast.setMessage('Exit project group successfully.', 'success')
            this.getEmployeeDetailByEmail();
+          // this.getRequestedProjectsFun();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
@@ -309,9 +312,23 @@ export class ProjectComponent implements OnInit {
     }
     this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
         res => {
-           this.projectList=res.details.projects;
+          //  this.projectList=res.details.projects;
            this.MyProjectsList=res.details.MyProjects;
            this.AssignedProjectsList=res.details.AssignedProjects;
+           this.getRequestedProjectsFun();
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
+  }
+  getRequestedProjectsFun(){
+    this.projectService.getrequestedProjects().subscribe(
+        res => {
+          console.log(res.details.RequestedProjects);
+          if(res.details.RequestedProjects.length!=0){
+              for(var i=0;i<res.details.RequestedProjects.length;i++){
+                  this.AssignedProjectsList.push(res.details.RequestedProjects[i]);
+              }
+          }
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
     );

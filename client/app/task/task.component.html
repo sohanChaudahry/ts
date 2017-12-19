@@ -13,7 +13,7 @@
                 <tr>
                   <th width="22%">Task Name</th>
                   <th width="55%">Task Description</th>
-                  <th width="15%">Start Date</th>
+                  <th width="15%">Due Date</th>
                   <th width="8%">Action</th>
                 </tr>
               </thead>
@@ -53,7 +53,7 @@
                 <tr>
                     <th width="22%">Task Name</th>
                     <th width="55%">Task Description</th>
-                    <th width="15%">Start Date</th>
+                    <th width="15%">Due Date</th>
                     <th width="8%">Action</th>
                 </tr>
               </thead>
@@ -99,7 +99,7 @@
               </div>
               <div class="col-md-1"></div>
             </div>
-             <div class="row">
+            <div class="row">
               <div class="col-md-1"></div>
                 <div class="col-md-5">
                   <div class="form-group">
@@ -126,16 +126,6 @@
                      <select class="form-control" [(ngModel)]="taskFormDetail.assign_to">
                         <option [ngValue]="emp" *ngFor="let emp of employeesToshow;"  placeholder="Select Project">{{emp}}</option>
                       </select>
-                    <!--<ng-select [allowClear]="true"
-                          [items]="employeesToshow"
-                          [disabled]="disabled"
-                          [active]="isEmpAutoSelect"
-                          (data)="refreshValue($event)"
-                          (selected)="selected($event)"
-                          (removed)="removed($event)"
-                          (typed)="typed($event)"
-                          placeholder="No employee selected">
-                    </ng-select>-->
                 </div>
                 <div class="col-md-5">
                     <div class="form-group">
@@ -159,8 +149,8 @@
                 <div class="col-md-5">
                   <div class="form-group">
                     <label>Due Date</label>
-                        <input class="form-control" type="date" [(ngModel)]="taskFormDetail.due_date">
-                        <!--<angular2-date-picker [(ngModel)]="date" [settings]="settings"></angular2-date-picker>-->
+                        <!--<input class="form-control" type="date" [(ngModel)]="taskFormDetail.due_date">-->
+                        <angular2-date-picker [(ngModel)]="taskFormDetail.due_date" placeholder="Due Date" [settings]="settings1"></angular2-date-picker>
                     </div>      
                 </div>
               <div class="col-md-1"></div>
@@ -192,32 +182,14 @@
       </div>
       <div class="card-block">
         <div>
-            <div class="row">
+             <div class="row">
               <div class="col-md-1"></div>
-               <div class="col-md-5">
+               <div class="col-md-3" style="margin-top: 30px;">
                   <div class="form-group">
-                    <label for="exampleFormControlTextarea1">Start Date</label>
-                      <!--<input class="form-control" 
-                        a2e-datetimepicker
-                        [date]="date"
-                        [options]="a2eOptions"
-                        (onChange)="dateChange($event)"
-                        (onClick)="dateClick()"
-                        />-->
-                    <input class="form-control" type="date" [(ngModel)]="taskFormDetail.start_date_time" placeholder="Task Title">
+                   <label class="checkbox-inline"><input type="checkbox" value="" [(ngModel)]="taskFormDetail.select"> Start Task</label>
                   </div>
-              </div>
-                <div class="col-md-5">
-                  <div class="form-group">
-                    <label for="exampleFormControlTextarea1">End Date</label>
-                    <input class="form-control" type="date" [(ngModel)]="taskFormDetail.end_date_time" placeholder="Task Title">
-                  </div>
-              </div>
-              <div class="col-md-1"></div>
-            </div>
-            <div class="row">
-              <div class="col-md-1"></div>
-                <div class="col-md-5">
+               </div>
+                <div class="col-md-3">
                   <div class="form-group">
                     <label>Status</label>
                     <select class="form-control" [(ngModel)]="taskFormDetail.status">
@@ -225,23 +197,35 @@
                     </select>
                     </div>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-2" style="margin-top: 30px;">
+                    <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-plus"></i> Add Row</button>
+                </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+               <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Start Date</label>
+                    <angular2-date-picker [(ngModel)]="taskFormDetail.start_date_time" placeholder="Start Date" [settings]="settings"></angular2-date-picker>
+                    <!--<input class="form-control" type="date" [(ngModel)]="taskFormDetail.start_date_time" placeholder="Task Title">-->
+                  </div>
+              </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="exampleFormControlTextarea1">End Date</label>
+                    <angular2-date-picker [(ngModel)]="taskFormDetail.end_date_time" placeholder="End Date" [settings]="settings"></angular2-date-picker>
+                    <!--<input class="form-control" type="date" [(ngModel)]="taskFormDetail.end_date_time" placeholder="Task Title">-->
+                  </div>
+              </div>
+               <div class="col-md-4">
                   <div class="form-group">
                     <label for="exampleFormControlTextarea1">Actual Hours</label>
                     <input class="form-control" type="number" [(ngModel)]="taskFormDetail.actual_hrs" min="0.1" placeholder="Actual Hours">
                   </div>
               </div>
               <div class="col-md-1"></div>
-            </div> 
-            <div class="row">
-              <div class="col-md-1"></div>
-               <div class="col-md-5">
-                  <div class="form-group">
-                   <label class="checkbox-inline"><input type="checkbox" value="" [(ngModel)]="taskFormDetail.select"> Select</label>
-                  </div>
-              </div>
-              <div class="col-md-1"></div>
-            </div>
+            </div><br>
             <div class="row">
               <div class="col-md-1"></div>
               <div class="col-md-6">
