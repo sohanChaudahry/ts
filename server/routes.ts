@@ -5,6 +5,7 @@ import ActivitiesCtrl from './models/activities';
  import FollowersCtrl from './controllers/followers';
  import ProjectsCtrl from './controllers/projects';
  import TasksCtrl from './controllers/tasks';
+ import TaskTimeCtrl from './controllers/tasktime'; 
  import UtilsCtrl from './controllers/utils'; 
  import UserCtrl from './controllers/user';
  import UserAcceptCtrl from './controllers/user_accept';
@@ -24,6 +25,7 @@ export default function setRoutes(app) {
   const projectsCtrl = new ProjectsCtrl();
   const activitiesCtrl = new ActivitiesCtrl();
   const tasksCtrl = new TasksCtrl();
+  const taskstimeCtrl = new TaskTimeCtrl();  
   const Util = new UtilsCtrl();
   const userAcceptCtrl = new UserAcceptCtrl();
   
