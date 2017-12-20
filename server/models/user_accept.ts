@@ -6,7 +6,7 @@ var reqJoinSchema = new mongoose.Schema({
     accept: { type: Number, default: 0 },
     role: { type: String , default : ""},        
     flag: { type: Number, default: 0 },    
-    project_id: { type: String, trim: true },
+    project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'projects' },
     create_date : Date,
     modify_date: Date
 });

@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 
 var followerSchema = new mongoose.Schema({
     email: { type: String, ref: 'employees' },
-    project_id: { type: String , default : ""},
+    project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'projects' },
     role: { type: String , default : ""},    
     ismanager:{ type: Number, default: 0 },
     create_date: Date,

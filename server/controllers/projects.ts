@@ -453,7 +453,7 @@ export default class ProjectsCtrl  {
                                var count2 = 0
                              if(data9 && data9.length > 0) {
                               async.forEach(data9, function (requestuser, callback) { 
-                                followers.find({ "project_id":requestuser._doc.project_id,"email":requestuser._doc.to_email }, function (err, data10) {                         
+                                followers.find({ "project_id":project_id,"email":requestuser._doc.to_email }, function (err, data10) {                         
                                   empmodel.find({ "email": requestuser._doc.to_email}, function (err, data11) {
                                       if(data10 && (data10.length == 0) && (requestuser._doc.accept == 0)){
                                         var followert = {};
@@ -470,17 +470,17 @@ export default class ProjectsCtrl  {
                                       } 
                                       else if(requestuser._doc.accept == -1)
                                       {
-                                        followert["employee_id"] = data11[0]._id;
+                                       /* followert["employee_id"] = data11[0]._id;
                                         followert["name"] = data11[0].name;
                                         followert["role"] = requestuser._doc.role;
                                         followert["email"] = data11[0].email;  
                                         followert["act_status"] = data11[0].act_status;
                                         followert["type"] = data11[0].type;
                                         followert["accept"] = -1;
-                                        followert["message"] = data11[0].name + " has canceled your project request";
+                                        followert["message"] = data11[0].name + " has canceled your project request";*/
                                         User_accept.remove({ "from_email": req.user.emails[0].value,"to_email": requestuser._doc.to_email,"project_id" : project_id }, function(err) {
                                           count2 = count2 + 1;
-                                          followertemp.followers.push(followert)
+                                          //followertemp.followers.push(followert)
                                           callback();
                                         }) 
                                       }

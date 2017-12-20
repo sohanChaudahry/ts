@@ -43,6 +43,8 @@ export default function setRoutes(app) {
   // Projects
   router.route('/projects/save').post(projectsCtrl.save_update_projects);
   router.route('/projects/getdetails/:id').get(projectsCtrl.getProjectDetails); 
+  router.route('/projects/delete/:id').get(followersCtrl.deleteProjectByProjectId); 
+  
     
 
   //Employees
