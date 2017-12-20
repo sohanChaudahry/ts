@@ -57,8 +57,8 @@ export default function setRoutes(app) {
   //Tasks
   router.route('/tasks/save_update_Tasks').post(tasksCtrl.save_update_Tasks);
   router.route('/tasks/getdetails/:id').get(tasksCtrl.getTaskDetails); 
-  router.route('/tasks/getDetailsByAssignFrom/:id').get(tasksCtrl.getTaskDetailsByAssignFrom);
-  router.route('/tasks/getDetailsByAssignTo/:id').get(tasksCtrl.getTaskDetailsByAssignTo); 
+  router.route('/tasks/getDetailsByAssignFrom').post(tasksCtrl.getTaskDetailsByAssignFrom);
+  router.route('/tasks/getDetailsByAssignTo').post(tasksCtrl.getTaskDetailsByAssignTo); 
   
   
   

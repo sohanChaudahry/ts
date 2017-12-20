@@ -250,31 +250,40 @@ export default class TasksCtrl  {
   var tasks = {};
   var tasktemp = {tasks:[]};
   var count = 0;
-  var assign_from = req.params.id;
+  var reqData =  req.body.reqData;
+  var assign_from = reqData.employee_id;
+  var project_id = reqData.project_id;
   var resdata = { };
   var _idstatus = mongoose.Types.ObjectId.isValid(assign_from);
+  var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
   if (_idstatus == false) {
     var resData = {};
     var err = assign_from + ' Id is invalid';
     resData['error'] = err;
     res.send(resData);
   }
+  else if (_idstatus1 == false) {
+    var resData = {};
+    var err = project_id + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
   else{
+      var project_id1 = mongoose.Types.ObjectId(project_id);
       var assign_from = mongoose.Types.ObjectId(assign_from);
-      model.find({"assign_from": assign_from}, function (err, data) {
+      model.find({"assign_from": assign_from,"project_id":project_id1}, function (err, data) {
       if(data && data.length > 0){
        async.forEach(data, function (task, callback) {
         var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
         var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
-        var project_id = mongoose.Types.ObjectId(task._doc.project_id);
         var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
         empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
         empmodel.find({ "_id": employee_id }, function (err, data1) {
-          projectsmodel.find({ "_id": task._doc.project_id }, function (err, data2) {
+          projectsmodel.find({ "_id": project_id1 }, function (err, data2) {
             activities.find({ "_id": act_id }, function (err, data3) {     
               task._doc.assign_from = data4[0]._doc;              
               task._doc.assign_to = data1[0]._doc;
-               task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id ;
+               task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
               task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;               
               tasktemp.tasks.push(task._doc);
               count = count + 1;
@@ -310,32 +319,41 @@ getTaskDetailsByAssignTo = (req, res) => {
   var tasks = {};
   var tasktemp = {tasks:[]};
   var count = 0;
-  var assign_to = req.params.id;
+  var reqData =  req.body.reqData;
+  var assign_to = reqData.employee_id;
+  var project_id = reqData.project_id;
   var resdata = { };
   var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
+  var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
   if (_idstatus == false) {
     var resData = {};
     var err = assign_to + ' Id is invalid';
     resData['error'] = err;
     res.send(resData);
   }
+  else if (_idstatus1 == false) {
+    var resData = {};
+    var err = project_id + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
   else{
+      var project_id1 = mongoose.Types.ObjectId(project_id);
       var assign_to = mongoose.Types.ObjectId(assign_to);
-      model.find({"assign_to": assign_to}, function (err, data) {
+      model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
       if(data && data.length > 0){
        async.forEach(data, function (task, callback) {
         var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
         var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
-        var project_id = mongoose.Types.ObjectId(task._doc.project_id);
         var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
         empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
         empmodel.find({ "_id": employee_id }, function (err, data1) {
-          projectsmodel.find({ "_id": task._doc.project_id }, function (err, data2) {
+          projectsmodel.find({ "_id": project_id1 }, function (err, data2) {
             activities.find({ "_id": act_id }, function (err, data3) {     
               task._doc.assign_from = data4[0]._doc;              
               task._doc.assign_to = data1[0]._doc;
-              task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id ;
-              task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;              
+               task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
+              task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;               
               tasktemp.tasks.push(task._doc);
               count = count + 1;
               callback();
