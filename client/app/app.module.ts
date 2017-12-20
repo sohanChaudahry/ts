@@ -12,13 +12,13 @@ import { ProjectService } from './services/project.service';
 import { TaskService } from './services/task.service';
 
 import { ProfileService } from './services/profile.service';
+import { RecursiveService } from './services/recursive.service';
 
 import { AuthService } from './services/auth.service';
 import { AuthGuardLogin } from './services/auth-guard-login.service';
 import { AuthGuardAdmin } from './services/auth-guard-admin.service';
-//import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
+import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
 // import {A2Edatetimepicker} from 'ng2-eonasdan-datetimepicker';
-
  
 import { AppComponent } from './app.component';
 import { AboutComponent } from './about/about.component';
@@ -41,8 +41,9 @@ import { ProfileComponent } from './profile/profile.component';
     SelectModule,
      // DatePickerModule,
      FormsModule,
-    //  AngularDateTimePickerModule,
+      AngularDateTimePickerModule,
     //  A2Edatetimepicker
+
   ],
   declarations: [
     AppComponent,
@@ -64,7 +65,8 @@ import { ProfileComponent } from './profile/profile.component';
     UserService,
     ProjectService,
     TaskService,
-    ProfileService
+    ProfileService,
+    RecursiveService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]

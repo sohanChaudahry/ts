@@ -11,7 +11,9 @@
         <table class="table table-bordered">
             <thead class="thead-default">
               <tr>
-                <th width="72%">Project Name</th>
+                <th width="22%">Project Name</th>
+                <th width="55%">Description</th>
+                <th width="15%">Role</th>
                 <th width="8%">Action</th>
               </tr>
             </thead>
@@ -24,6 +26,12 @@
               <tr *ngFor="let project of MyProjectsList">
                 <td>
                     <span>{{project.project_name}}</span>
+                </td>
+                 <td>
+                    <span>{{project.desc}}</span>
+                </td>
+                 <td>
+                    <span>{{project.role}}</span>
                 </td>
                 <td>
                     <button class="btn btn-sm btn-warning" (click)="projectEditBtm(project)"><i class="fa fa-pencil"></i></button> 
@@ -43,7 +51,8 @@
         <table class="table table-bordered">
             <thead class="thead-default">
               <tr>
-                <th width="78%">Project Name</th>
+                <th width="22%">Project Name</th>
+                <th width="46%">Description</th>
                 <th width="22%">Action</th>
               </tr>
             </thead>
@@ -58,8 +67,12 @@
                     <span>{{project.project_name}}</span>
                 </td>
                 <td>
+                    <span>{{project.desc}}</span>
+                </td>
+                <td>
                     <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
                     <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button> 
+                    <button class="btn btn-sm btn-danger" *ngIf="project.accept==1" (click)="exitProjectReq(project)"><i class="fa fa-times" aria-hidden="true"></i> Exit</button> 
                     <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
                     <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
                 </td>
@@ -183,7 +196,7 @@
                     <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
                         <div class="col-md-5">{{user.name}}</div>
                         <div class="col-md-5">{{user.role}}</div>
-                        <div class="col-md-2" class="ctm_close"><i class="fa fa-times" aria-hidden="true"></i></div>
+                        <div class="col-md-2" class="ctm_close" (click)="removeAssignUserFun(user,projectDetail)"><i class="fa fa-times" aria-hidden="true"></i></div>
                     </div>   
                     </div> 
                 </div>
@@ -200,7 +213,6 @@
           <br>
         </div>
      </div>
-
       <div class="card " *ngIf="!iscreateProject && !isProjectList && isAssignProjView">
        <div class="card-header">
         <span class="custom_span_header">View Project Detail</span>
@@ -210,17 +222,24 @@
           <div class="row" style="padding-bottom: 14px;">
             <div class="col-md-1"></div>
             <div class="col-md-10">
-                  <span>Project Name : {{AssignedProjectView.project_name}}</span>
+                  <span style="font-weight: 600;">Project Name : </span>{{AssignedProjectView.project_name}}
             </div>
             <div class="col-md-1"></div>
           </div>
           <div class="row" style="padding-bottom: 14px;">
             <div class="col-md-1"></div>
             <div class="col-md-10">
-                  <span>Project Description : {{AssignedProjectView.desc}}</span>
+                  <span style="font-weight: 600;">Project Description : </span>{{AssignedProjectView.desc}}
             </div>
             <div class="col-md-1"></div>
           </div>
+          <!--<div class="row" style="padding-bottom: 14px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                  <span>Role : {{AssignedProjectView.role}}</span>
+            </div>
+            <div class="col-md-1"></div>
+          </div>-->
           <div class="row" style="padding-bottom: 14px;">
             <div class="col-md-1"></div>
             <div class="col-md-10 cat_lable custom-div-margin">

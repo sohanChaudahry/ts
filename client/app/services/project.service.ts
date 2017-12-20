@@ -16,6 +16,9 @@ export class ProjectService {
   getAllEmployee(): Observable<any> {
     return this.http.get('/api/employees/getAllEmployeeDetails/',this.options).map(res => res.json());
   }
+  getrequestedProjects(): Observable<any> {
+    return this.http.get('/api/employees/getrequestedProjects',this.options).map(res => res.json());
+  }
   getEmpDetailApi(reqData): Observable<any> {
     return this.http.post('/api/employees/getdetailsByEmail', JSON.stringify(reqData), this.options).map(res => res.json());
   }
@@ -34,5 +37,4 @@ export class ProjectService {
   removeAssignUser(reqData): Observable<any> {
     return this.http.post('/api/followers/delete', JSON.stringify(reqData), this.options).map(res => res.json());
   }
-  
 }
