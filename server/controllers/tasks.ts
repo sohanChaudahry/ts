@@ -251,7 +251,7 @@ export default class TasksCtrl  {
   var model = this.model;
   var tasks = {};
   var tasktemp = {tasks:[]};
-  var count = 0;
+  var count = 0,count1 = 0 ;
   var reqData =  req.body.reqData;
   var assign_from = reqData.employee_id;
   var project_id = reqData.project_id;
@@ -282,14 +282,39 @@ export default class TasksCtrl  {
         empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
         empmodel.find({ "_id": employee_id }, function (err, data1) {
           projectsmodel.find({ "_id": project_id1 }, function (err, data2) {
-            activities.find({ "_id": act_id }, function (err, data3) {     
-              task._doc.assign_from = data4[0]._doc;              
-              task._doc.assign_to = data1[0]._doc;
-               task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
-              task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;               
-              tasktemp.tasks.push(task._doc);
-              count = count + 1;
-              callback();
+            activities.find({ "_id": act_id }, function (err, data3) {
+              var task_id = mongoose.Types.ObjectId(task._doc._id);
+              var spendtimes = {spendtimes: [] }                
+              tasktime.find({ "pid": task_id }, function (err, data6) {
+                if(data && data.length > 0){
+                   resdata = data[0]._doc;
+                   async.forEach(data6, function (spendtime, callback) {
+                    var dt = {};                
+                    dt['start_date_time'] = spendtime.start_date_time;
+                    dt['end_date_time'] = spendtime.end_date_time;  
+                    dt['actual_hrs'] = spendtime.actual_hrs ? spendtime.actual_hrs : 0;
+                    spendtimes.spendtimes.push(dt);
+                    count1 = count1 + 1;
+                    callback();
+                   }, function (err, cb) {
+                      if(count1 >= data6.length){
+                        task._doc.assign_from = data4[0]._doc;              
+                        task._doc.assign_to = data1[0]._doc;
+                         task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
+                        task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;  
+                        task._doc.spendtimes = spendtimes.spendtimes;              
+                        tasktemp.tasks.push(task._doc);
+                        count = count + 1;
+                        callback();                    
+                      }  
+                    return;
+                   });
+                }
+                else{
+                   count = count + 1;
+                   callback();
+                }       
+              })     
             })
           })
         })
@@ -320,7 +345,7 @@ getTaskDetailsByAssignTo = (req, res) => {
   var model = this.model;
   var tasks = {};
   var tasktemp = {tasks:[]};
-  var count = 0;
+  var count = 0 , count1 = 0;
   var reqData =  req.body.reqData;
   var assign_to = reqData.employee_id;
   var project_id = reqData.project_id;
@@ -352,13 +377,38 @@ getTaskDetailsByAssignTo = (req, res) => {
         empmodel.find({ "_id": employee_id }, function (err, data1) {
           projectsmodel.find({ "_id": project_id1 }, function (err, data2) {
             activities.find({ "_id": act_id }, function (err, data3) {     
-              task._doc.assign_from = data4[0]._doc;              
-              task._doc.assign_to = data1[0]._doc;
-               task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
-              task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;               
-              tasktemp.tasks.push(task._doc);
-              count = count + 1;
-              callback();
+              var task_id = mongoose.Types.ObjectId(task._doc._id);
+              var spendtimes = {spendtimes: [] }                
+              tasktime.find({ "pid": task_id }, function (err, data6) {
+                if(data && data.length > 0){
+                   resdata = data[0]._doc;
+                   async.forEach(data6, function (spendtime, callback) {
+                    var dt = {};                
+                    dt['start_date_time'] = spendtime.start_date_time;
+                    dt['end_date_time'] = spendtime.end_date_time;  
+                    dt['actual_hrs'] = spendtime.actual_hrs ? spendtime.actual_hrs : 0;
+                    spendtimes.spendtimes.push(dt);
+                    count1 = count1 + 1;
+                    callback();
+                   }, function (err, cb) {
+                      if(count1 >= data6.length){
+                        task._doc.assign_from = data4[0]._doc;              
+                        task._doc.assign_to = data1[0]._doc;
+                         task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
+                        task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;  
+                        task._doc.spendtimes = spendtimes.spendtimes;              
+                        tasktemp.tasks.push(task._doc);
+                        count = count + 1;
+                        callback();                    
+                      }  
+                    return;
+                   });
+                }
+                else{
+                   count = count + 1;
+                   callback();
+                }       
+              })  
             })
           })
         })
