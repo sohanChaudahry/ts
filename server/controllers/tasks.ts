@@ -44,7 +44,7 @@ export default class TasksCtrl  {
     var length = tasks.length ? tasks.length : 0;
     async.forEach(tasks, function (task, callback) {
         if(task && task._id != "" && task._id != null && task._id != undefined){
-          var spendtimes  = task.spendtimes;
+          var spendtime  = task.spendtime;
           //If Task is already exist
         var _idstatus = mongoose.Types.ObjectId.isValid(task._id);
         if (_idstatus == false) {
@@ -69,9 +69,9 @@ export default class TasksCtrl  {
                      "estimate_hrs": task.estimate_hrs ? task.estimate_hrs : data[0]._doc.estimate_hrs,
                      //"actual_hrs": task.actual_hrs ? task.actual_hrs : data[0]._doc.actual_hrs,
                      "priority": task.priority ? task.priority : data[0]._doc.priority,
-                     "status": task.status ? task.status : data[0]._doc.status
-                     /*"start_date_time": task.start_date_time ? task.start_date_time : data[0]._doc.start_date_time,
-              "end_date_time":task.end_date_time ? task.end_date_time : data[0]._doc.end_date_time */} }).exec(function (err, data3) {
+                     "status": task.status ? task.status : data[0]._doc.status,
+                     "start_date_time": task.start_date_time ? task.start_date_time : data[0]._doc.start_date_time,
+                     "end_date_time":task.end_date_time ? task.end_date_time : data[0]._doc.end_date_time } }).exec(function (err, data3) {
                          if (err) {
                                count = length; 
                                task.error = err;                                       
@@ -79,8 +79,6 @@ export default class TasksCtrl  {
                                callback();
                          }
                          else {
-                                var count1 = 0;
-                                async.forEach(spendtimes, function (spendtime, callback) {
                                   var obj = new tasktime();
                                   obj.pid = task_id;
                                   obj.start_date_time = spendtime.start_date_time ? spendtime.start_date_time : "";
@@ -88,23 +86,27 @@ export default class TasksCtrl  {
                                   obj.actual_hrs = spendtime.actual_hrs ? spendtime.actual_hrs : 0;
                                   obj.save(function (err) {
                                     if (err) {
-                                      count1 = count1 + 1;
                                       task.error = err;    
                                       failedData.failedData.push(task);
                                       callback();
                                     }
                                     else {
-                                      count1 = count1 + 1;
-                                      callback();
+
+                                      model.findOneAndUpdate({ "_id": task_id}, { "$set": { 
+                                        "actual_hrs": spendtime.actual_hrs ? (parseFloat(data[0]._doc.actual_hrs) + parseFloat(spendtime.actual_hrs)) : data[0]._doc.actual_hrs } }).exec(function (err, data3) {
+                                            if (err) {
+                                                  task.error = err;                                       
+                                                  failedData.failedData.push(task);
+                                                  callback();
+                                            }
+                                            else {
+                                              dt.success = "true";
+                                              successData.successData.push(task);
+                                              callback();
+                                            }
+                                          })
                                     }
                                   })
-                                }, function (err, cb) {
-                                    if(count1 >= spendtimes.length){
-                                      dt.success = "true";
-                                      successData.successData.push(task);
-                                      callback();
-                                    }  
-                                });
                            }
                       });
               }
@@ -122,8 +124,8 @@ export default class TasksCtrl  {
                //     obj.actual_hrs = task.actual_hrs ? task.actual_hrs : 0;
                     obj.priority = task.priority ? task.priority : "" ;
                     obj.status = task.status ? task.status : 0;
-                //    obj.start_date_time = task.start_date_time ? task.start_date_time : "";
-                //    obj.end_date_time = task.end_date_time ? task.end_date_time : "";  
+                    obj.start_date_time = task.start_date_time ? task.start_date_time : "";
+                    obj.end_date_time = task.end_date_time ? task.end_date_time : "";  
                     obj.save(function (err) {
                      if (err) {
                        count = length;
@@ -155,8 +157,8 @@ export default class TasksCtrl  {
               //  obj.actual_hrs = task.actual_hrs ? task.actual_hrs : 0;
                 obj.priority = task.priority ? task.priority : "" ;
                 obj.status = task.status ? task.status : 0;
-              //  obj.start_date_time = task.start_date_time ? task.start_date_time : "";
-             //   obj.end_date_time = task.end_date_time ? task.end_date_time : ""; 
+                obj.start_date_time = task.start_date_time ? task.start_date_time : "";
+                obj.end_date_time = task.end_date_time ? task.end_date_time : ""; 
                 obj.save(function (err) {
                 if (err) {
                     count = length;

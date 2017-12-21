@@ -10,8 +10,11 @@ var taskSchema = new mongoose.Schema({
     select: { type: Number, default: 0 },
     due_date : Date,
     estimate_hrs : Number,
+    actual_hrs :{ type: Number, default: 0 },
     priority : String,
-    status : Number
+    status : Number,
+    start_date_time: Date,
+    end_date_time: Date
 });
 var tasks = mongoose.model('tasks', taskSchema);
 export default tasks;
