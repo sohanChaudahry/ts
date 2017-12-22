@@ -25,4 +25,7 @@ export class TaskService {
   saveTaskDetail(reqData): Observable<any> {
     return this.http.post('/api/tasks/save_update_Tasks', JSON.stringify(reqData), this.options).map(res => res.json());
   }
+  getTaskDetailById(taskID): Observable<any> {
+    return this.http.get(`/api/tasks/getdetails/${taskID}`,this.options).map(res => res.json());
+  }
 }

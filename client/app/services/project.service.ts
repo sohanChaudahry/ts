@@ -37,4 +37,13 @@ export class ProjectService {
   removeAssignUser(reqData): Observable<any> {
     return this.http.post('/api/followers/delete', JSON.stringify(reqData), this.options).map(res => res.json());
   }
+  deleteProject(prodID): Observable<any> {
+    return this.http.get(`/api/projects/delete/${prodID}`,this.options).map(res => res.json());
+  }
+  getTaskDetailsByAssignFrom(reqData): Observable<any> {
+    return this.http.post('/api/tasks/getDetailsByAssignFrom', JSON.stringify(reqData), this.options).map(res => res.json());
+  }
+  getDetailsByAssignTo(reqData): Observable<any> {
+    return this.http.post(' /api/tasks/getDetailsByAssignTo', JSON.stringify(reqData), this.options).map(res => res.json());
+  } 
 }

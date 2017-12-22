@@ -88,24 +88,13 @@ export class TaskComponent implements OnInit {
   private taskService: TaskService,
   private formBuilder:FormBuilder) {
 
-   }
+  }
 
   ngOnInit() {
      this.getEmployeeDetailByEmail();
-     //this.getAllEmployeeList();
      this.getTaskAssigedFrom();
      this.getTaskAssigedToUs();
-    //  this.getTaskForm = this.formBuilder.group({
-    //       task_title: this.task_title,
-    //       task_description:this.task_description,
-    //       assign_from: this.assign_from,
-    //       assign_to:this.assign_to,
-    //       project_id:this.project_id,
-    //       activity_id:this.activity_id,
-    //       due_date:this.due_date,
-    //       priority:this.priority,
-    //       estimate_hrs : this.estimate_hrs
-    //  });
+  
   }
   private get disabledV():string {
     return this._disabledV;
@@ -142,7 +131,6 @@ export class TaskComponent implements OnInit {
         }
     }
     this.taskFormDetail.assign_to=selectAssignId;
-    console.log('Selected value is: ', value);
   }
  
   public removed(value:any):void {
@@ -164,7 +152,6 @@ export class TaskComponent implements OnInit {
       this.resetFormValue();
   }
   editAssignedTaskBtn(selectedData) {
-      this.taskFormDetail=selectedData;
       this.taskFormDetail.assign_from=this.taskFormDetail.assign_from._id ? this.taskFormDetail.assign_from._id : this.taskFormDetail.assign_from;
       this.taskFormDetail.activity_id=this.taskFormDetail.activity_id._id ? this.taskFormDetail.activity_id._id : this.taskFormDetail.activity_id;
       this.taskFormDetail.assign_to=this.taskFormDetail.assign_to._id ? this.taskFormDetail.assign_to._id : this.taskFormDetail.assign_to;
@@ -179,6 +166,14 @@ export class TaskComponent implements OnInit {
       this.isEditTask=false;
       this.isEditOtherTask=false;
   }
+  getTaskDetailByIdFun(task_id){
+    this.taskService.getTaskDetailById(task_id).subscribe(
+        res => {
+            return res;
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
+  }
   editAssignTaskOtherBtn(selectedData){
       this.taskFormDetail=selectedData;
       this.isListTask=false;
@@ -190,18 +185,7 @@ export class TaskComponent implements OnInit {
       this.isEditTask=false;
       this.isEditOtherTask=false;
   }
-  // getAllEmployeeList() {
-  //     this.projectService.getAllEmployee().subscribe(
-  //       res => {
-  //          let data=res;
-  //          this.employeesList=res.employees;
-  //          for(var i=0;i<this.employeesList.length;i++){
-  //              this.employeesToshow.push(this.employeesList[i].name);
-  //          }
-  //       },
-  //       error => this.toast.setMessage('Some thing wrong!', 'danger')
-  //     );
-  // }
+
   getEmployeeDetailByEmail() {
       let reqData={
           "email":localStorage.getItem("email") ? localStorage.getItem("email") : ""
@@ -301,7 +285,6 @@ export class TaskComponent implements OnInit {
     );
   }
   saveOthersTask(selectedData){
-
       this.taskFormDetail.assign_from=this.taskFormDetail.assign_from._id ? this.taskFormDetail.assign_from._id : this.taskFormDetail.assign_from;
       this.taskFormDetail.activity_id=this.taskFormDetail.activity_id._id ? this.taskFormDetail.activity_id._id : this.taskFormDetail.activity_id;
       this.taskFormDetail.assign_to=this.taskFormDetail.assign_to._id ? this.taskFormDetail.assign_to._id : this.taskFormDetail.assign_to;

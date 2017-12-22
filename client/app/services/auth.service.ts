@@ -24,14 +24,25 @@ export class AuthService {
       }
     );
   }
-  getLogedinUserData() {
+
+  public checkIsLogin=0;
+
+  getLogedinUserData(cb? :any) {
      this.userService.getLogedinUser().subscribe(
       res => {
-        localStorage.setItem('_id', res._id);
-        localStorage.setItem('name', res.name);
-        localStorage.setItem('login_status', res.login_status); 
-        localStorage.setItem('email', res.email);
-        console.log(res);
+        if(res && res.login_status){
+            localStorage.setItem('_id', res._id);
+            localStorage.setItem('name', res.name);
+            localStorage.setItem('login_status', res.login_status); 
+            localStorage.setItem('email', res.email);
+            this.checkIsLogin=res.login_status;
+            // console.log(res);
+        }else{
+            localStorage.clear();
+        }
+        if(cb && typeof cb=="function"){
+           cb();
+        }
       }
     );
   }

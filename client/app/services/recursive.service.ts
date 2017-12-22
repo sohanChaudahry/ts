@@ -14,16 +14,18 @@ export class RecursiveService {
               private authService:AuthService) {
        
   }
+  
   checkUserLogedIn(){
-    this.authService.getLogedinUserData();
+      
     if(!localStorage.getItem("login_status")){
         this.router.navigate(['/login']);
         return;
     }
-    if(localStorage.getItem("login_status")){
-       setTimeout(() => {
-            this.checkUserLogedIn();
-       }, 60*60*3);
-    }
+    let me=this;
+    this.authService.getLogedinUserData(function() {
+        setTimeout(function() {
+            me.checkUserLogedIn();
+        }, 60*60*3);
+    });
   }
 }

@@ -219,20 +219,20 @@ app.get('/fail', function(req, res) {
   @API : $Logout from google
   */
 app.get('/logout', function(req, res) {
-  console.log("logged out!");
-  if(req && req.user){
-  empmodel.findOneAndUpdate({ "email": req.user.emails[0].value}, { "$set": { "act_status": 0 }}).exec(function (err, data2) {
-  req.session.destroy(function (err) {
-   // res.redirect('https://accounts.google.com/logout');  
-    res.redirect('http://localhost:4200/login');  
-  });   
-  })
-  }
-  else{
-    res.redirect('http://localhost:3000/auth/google');        
-  }
+    console.log("logged out!");
+    if(req && req.user){
+    empmodel.findOneAndUpdate({ "email": req.user.emails[0].value}, { "$set": { "act_status": 0 }}).exec(function (err, data2) {
+    
+      req.session.destroy(function (err) {
+          //res.redirect('https://accounts.google.com/logout');  
+          res.redirect('http://localhost:4200/login');  
+        });   
+    })
+    }
+    else{
+      res.redirect('http://localhost:3000/auth/google');        
+    }
 });
-
 
 let mongodbURI;
 if (process.env.NODE_ENV === 'test') {

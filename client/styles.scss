@@ -9,6 +9,7 @@ body {
 .input-group {
   margin-bottom: 15px;
 }
+
 table{
   td {
     padding-bottom: 7px !important;
@@ -25,7 +26,11 @@ table{
 }
 .winkel-calendar[_ngcontent-c2]{
     .wc-date-container[_ngcontent-c3]{
-          border: 1px solid #ccc;
+        border: 1px solid #ccc;
         border-radius: 5px;
     }
+}
+.card-header{
+    padding-bottom: 10px;
+    padding-top: 10px;
 }

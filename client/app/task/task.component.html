@@ -52,8 +52,9 @@
               <thead class="thead-default">
                 <tr>
                     <th width="22%">Task Name</th>
-                    <th width="55%">Task Description</th>
-                    <th width="15%">Due Date</th>
+                    <th width="45%">Task Description</th>
+                    <th width="10%">Priority</th>
+                    <th width="15%">Due Date</th> 
                     <th width="8%">Action</th>
                 </tr>
               </thead>
@@ -69,6 +70,9 @@
                   </td>
                   <td>
                       <span>{{task.task_description}}</span>
+                  </td>
+                   <td>
+                      <span>{{task.priority}}</span>
                   </td>
                    <td>
                       <span>{{task.due_date | date}}</span>
