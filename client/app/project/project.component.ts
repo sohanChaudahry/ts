@@ -83,20 +83,20 @@ export class ProjectComponent implements OnInit {
   email = new FormControl('');
   activities = new FormControl([]);
   assign_to = new FormControl([]);
-  settings = {
-    bigBanner: true,
-    timePicker: true,
-    format: 'dd-MMM-yyyy hh:mm a',
-    defaultOpen: false,
-    closeOnSelect:false
-}
-settings1 = {
-    bigBanner: true,
-    timePicker: false,
-    format: 'dd-MM-yyyy',
-    defaultOpen: false,
-    closeOnSelect:true
-}
+    settings = {
+      bigBanner: true,
+      timePicker: true,
+      format: 'dd-MMM-yyyy hh:mm a',
+      defaultOpen: false,
+      closeOnSelect:false
+  }
+  settings1 = {
+      bigBanner: true,
+      timePicker: false,
+      format: 'dd-MM-yyyy',
+      defaultOpen: false,
+      closeOnSelect:true
+  }
   projectDetail={
       "_id":"",
       "project_id":"",
@@ -137,10 +137,12 @@ settings1 = {
   private get disabledV():string {
     return this._disabledV;
   }
-
+ 
+  //Vaibhav Mali 27 Dec 2017 ...Start
   updateProjectRequeststatus(){
     this.recursiveService.UpdateProjectRequestFlag();
   }
+  //Vaibhav Mali 27 Dec 2017 ...End
  
   private set disabledV(value:string) {
     this._disabledV = value;
@@ -179,10 +181,63 @@ settings1 = {
     this.isAssignProjView=false;
     this.activityData=[{"name":"","activity_id":""}];
   }
-   cancelView(){
+  cancelCreateTaskPage(){
+     this.iscreateProject=false; 
+     this.isProjectList=false;  
+     this.isAssignedTaskEdit=false; 
+     this.isMyTaskEdit=false; 
+     this.isTaskListView=true;
+     this.isAssignProjView=false;
+     this.isTaskCardShow=true;
+  }
+  cancelView(){
     this.isProjectList=true;
     this.iscreateProject=false;
     this.isAssignProjView=false;
+  }
+  openTaskListPage(project_detail){
+     this.selectedProjectDetail=project_detail;
+     this.iscreateProject=false; 
+     this.isProjectList=false;  
+     this.isAssignedTaskEdit=false; 
+     this.isMyTaskEdit=false; 
+     this.isTaskListView=true;
+     this.isAssignProjView=false;
+     this.isTaskCardShow=true;
+     this.getTaskDetailsByAssignFromAPi();
+     this.getDetailsByAssignToApi();
+  }
+  openCreateTaskPage(){
+     this.iscreateProject=false; 
+     this.isProjectList=false;  
+     this.isAssignedTaskEdit=false; 
+     this.isMyTaskEdit=true; 
+     this.isTaskListView=false;
+     this.isAssignProjView=false;
+     this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
+  }
+  editMyTaskBtn(task_detail){
+     this.iscreateProject=false; 
+     this.isProjectList=false;  
+     this.isAssignedTaskEdit=false; 
+     this.isMyTaskEdit=true; 
+     this.isTaskListView=false;
+     this.isAssignProjView=false;
+     this.taskFormDetail=task_detail;
+     this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
+  }
+  backTaskListPage(){
+     this.iscreateProject=false; 
+     this.isProjectList=true;  
+     this.isAssignedTaskEdit=false; 
+     this.isMyTaskEdit=false; 
+     this.isTaskListView=false;
+     this.isAssignProjView=false;
+     this.isTaskCardShow=false;
+  }
+  trackTaskStatusFun(){
+      
+
   }
   sendProjectFormData(Data){
     //test
@@ -219,6 +274,14 @@ settings1 = {
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
+  deleteProjects(selected_project){
+       this.projectService.deleteProject(selected_project._id).subscribe(
+        res => {
+          console.log(res);
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
+  }
   projectEditBtm(selectedProject){
       this.isProjectList=false;
       this.iscreateProject=true;
@@ -245,6 +308,11 @@ settings1 = {
   craeteProjectBtn(){
       this.isProjectList=false;
       this.iscreateProject=true;
+      this.isAssignedTaskEdit=false; 
+      this.isMyTaskEdit=false; 
+      this.isTaskListView=false;
+      this.isAssignProjView=false;
+      this.isTaskCardShow=false;
       this.projectDetail={
         "_id":"",
         "project_id":"",
@@ -257,6 +325,36 @@ settings1 = {
       };
       this.activityData=[{"name":"","activity_id":""}];
       this.addAssignUserList=[];
+  }
+  getTaskDetailsByAssignFromAPi(){
+      let reqData={  
+        "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
+        "project_id":this.selectedProjectDetail._id ? this.selectedProjectDetail._id : ""
+      }
+      this.projectService.getTaskDetailsByAssignFrom({"reqData":reqData}).subscribe(
+          res => {
+            
+              if(res){
+                  this.getTaskAssigedToUsList=res.tasks;
+              }
+          },
+          error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
+  }
+  getDetailsByAssignToApi(){
+      let reqData={
+        "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
+        "project_id":this.selectedProjectDetail._id ? this.selectedProjectDetail._id : ""
+      }
+      this.projectService.getDetailsByAssignTo({"reqData":reqData}).subscribe(
+          res => {
+            if(res){
+                this.AssigedToOtherList=res.tasks;
+
+            }
+          },
+          error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
   }
   addSelectedEmp(){
     if(this.searchEmpDetail.name && this.searchEmpDetail.role){
@@ -281,13 +379,14 @@ settings1 = {
         this.isEmpAutoSelect=[];
     }
   }
-
+  
   getProjectDetailById(ProdId){
       this.projectService.getProjectDetailById(ProdId).subscribe(
         res => {
            this.projectDetail=res;
            this.addAssignUserList=[];
-           this.activityData=[];
+           this.addAssignTaskUserList=[];
+           this.activityList=[];
            if(this.projectDetail.activities.length!=0){
               for(var i=0;i<this.projectDetail.activities.length;i++){
                 this.activityData.push({"name":this.projectDetail.activities[i].activity_name,"activity_id":this.projectDetail.activities[i]._id});
@@ -296,6 +395,31 @@ settings1 = {
            if(res.followers.length!=0){
               for(var i=0;i<res.followers.length;i++){
                 this.addAssignUserList.push(res.followers[i]);
+              }
+           }
+           if(res.followers.length!=0){
+              for(var i=0;i<res.followers.length;i++){
+                this.addAssignTaskUserList.push(res.followers[i]);
+              }
+           }
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
+    }
+    getProjectDetailByIdForTask(ProdId){
+      this.projectService.getProjectDetailById(ProdId).subscribe(
+        res => {
+           let task_all_detail=res;
+           this.addAssignTaskUserList=[];
+           this.activityList=[];
+           if(task_all_detail.activities.length!=0){
+              for(var i=0;i<task_all_detail.activities.length;i++){
+                this.activityList.push({"name":task_all_detail.activities[i].activity_name,"activity_id":task_all_detail.activities[i]._id});
+              }
+           }
+           if(res.followers.length!=0){
+              for(var i=0;i<res.followers.length;i++){
+                this.addAssignTaskUserList.push(res.followers[i]);
               }
            }
         },
@@ -383,6 +507,21 @@ settings1 = {
           //  this.projectList=res.details.projects;
            this.MyProjectsList=res.details.MyProjects;
            this.AssignedProjectsList=res.details.AssignedProjects;
+           let project_list=[];
+            
+            if(res.details.MyProjects.length!=0){
+                for(var i=0;i<res.details.MyProjects.length;i++){
+                    project_list.push(res.details.MyProjects[i]);
+                }
+            }
+            if(res.details.AssignedProjects.length!=0){
+                for(var i=0;i<res.details.AssignedProjects.length;i++){
+                  if(res.details.AssignedProjects[i].accept==1){
+                     project_list.push(res.details.AssignedProjects[i]);
+                  }
+                }
+            }   
+            this.projectList=project_list;
            this.getRequestedProjectsFun();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
@@ -401,5 +540,36 @@ settings1 = {
         error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
   }
- 
+  saveTaskDetail(){
+    let id=localStorage.getItem("_id") ? localStorage.getItem("_id") : "";  
+    this.taskFormDetail.assign_from=id;
+    this.taskFormDetail.activity_id=this.taskFormDetail.activity_id._id ? this.taskFormDetail.activity_id._id : this.taskFormDetail.activity_id;
+    this.taskFormDetail.assign_to=this.taskFormDetail.assign_to._id ? this.taskFormDetail.assign_to._id : this.taskFormDetail.assign_to;
+    this.taskFormDetail.project_id=this.selectedProjectDetail._id ? this.selectedProjectDetail._id : "";
+    console.log(this.taskFormDetail);
+    this.taskService.saveTaskDetail({reqData:[this.taskFormDetail]}).subscribe(
+      res => {
+          if(res.success.successData.length!=0){
+            this.toast.setMessage('Task add successfully!', 'success');
+            this.getTaskDetailsByAssignFromAPi()
+            this.getDetailsByAssignToApi();
+            this.iscreateProject=false; 
+            this.isProjectList=false;  
+            this.isAssignedTaskEdit=false; 
+            this.isMyTaskEdit=false; 
+            this.isTaskListView=true;
+            this.isAssignProjView=false;
+            this.isTaskCardShow=true;
+          }
+      },
+      error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
+  }
+  changeProjectOption(data){
+     console.log(data);
+     this.taskFormDetail.activity_id="";
+     this.employeesList=[];
+     this.employeesToshow=[];
+     this.getProjectDetailById(data);
+   }
 }
