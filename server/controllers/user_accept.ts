@@ -243,11 +243,11 @@ export default class UserAcceptCtrl  {
                   projects.find({ "_id": project_id}, function (err, data3) {
                       dt["project_id"] = request.project_id;  
                       dt["project_name"] = data3[0].project_name;
-                      user_accept.findOneAndUpdate({  "to_email": email,"accept" : 0,"project_id" : request.project_id,"flag":0 }, { "$set": { "flag":1 }}).exec(function (err, data2) {
+                     // user_accept.findOneAndUpdate({  "to_email": email,"accept" : 0,"project_id" : request.project_id,"flag":0 }, { "$set": { "flag":1 }}).exec(function (err, data2) {
                         result.requests.push(dt);
                         count = count + 1;
                         callback();
-                      })
+                    //  })
                   })
               })
             }
@@ -294,7 +294,6 @@ export default class UserAcceptCtrl  {
   user_accept.find({ "from_email": email,"accept" : 1,"$or":[{"flag":0},{"flag": 1}] }, function (err, data) {
      user_accept.find({ "from_email": email,"accept" : -1,"$or":[{"flag":0},{"flag": 1}] }, function (err, data1) {      
         if(data && data.length > 0){
-            //If project requests are present for users.
             count = 0;
             var length = data.length ? data.length : 0;
             async.forEach(data, function (request, callback) {
@@ -308,7 +307,7 @@ export default class UserAcceptCtrl  {
                       dt["project_id"] = request.project_id;  
                       dt["project_name"] = data3[0].project_name;
                       dt["message"] = data3[0].project_name + " Project accepted succssfully by " + dt["name"];
-                      user_accept.findOneAndUpdate({  "from_email": email,"accept" : 1,"project_id" : request.project_id,"$or":[{"flag":0},{"flag": 1}]}, { "$set": { "flag":2 }}).exec(function (err, data2) {
+                      user_accept.findOneAndUpdate({  "from_email": email,"accept" : 1,"project_id" : project_id,"$or":[{"flag":0},{"flag": 1}]}, { "$set": { "flag":2 }}).exec(function (err, data2) {
                         result.accepts.push(dt);
                         count = count + 1;
                         callback();
@@ -354,7 +353,6 @@ export default class UserAcceptCtrl  {
             });
         }
         else if (data1 && data1.length > 0){
-            //If project requests are present for users.
             count = 0;
             var length = data1.length ? data1.length : 0;
             async.forEach(data1, function (request, callback) {
@@ -416,7 +414,6 @@ export default class UserAcceptCtrl  {
         
         }
         else{
-            //If no any project request for user.
              res.send(result);
         } 
       })  
@@ -428,12 +425,6 @@ export default class UserAcceptCtrl  {
         res.send(result1);
     } 
   };
-
-
-  
-
-
-
 
 
 
@@ -534,5 +525,28 @@ export default class UserAcceptCtrl  {
         res.send(result);
     }
  }
+
+
+  /*
+  @author : Vaibhav Mali 
+  @date : 26 Dec 2017
+  @API : updateProjectRequestStatus
+  @desc :Update Project request flag of current logged in user.
+  */
+  updateProjectRequestStatus = (req, res) => {
+    var model = User_accept;
+    var result = {};        
+    if(req && req.user){
+        user_accept.update({  "to_email": req.user.emails[0].value,"accept" : 0,"flag":0 }, { "$set": { "flag":1 }},{multi:true}).exec(function (err, data) {
+          result['success'] = true; 
+          res.send(result);          
+        })
+    }
+    else{
+      result['success'] = false;
+      result['error'] = "User is not logged in please login with google and continue"
+      res.send(result);
+    }
+  }
 
 }

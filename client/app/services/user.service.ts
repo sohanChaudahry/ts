@@ -40,10 +40,25 @@ export class UserService {
     return this.http.post('/api/user', JSON.stringify(user), this.options);
   }
 
+
+  //Vaibhav Mali 27 Dec 2017 ...Start
   getLogedinUser(): Observable<any> {
     return this.http.get('/api/employees/getCurrentLoginDetails/', this.options).map(res => res.json());
   }
+
+  getnewProjectRequests(): Observable<any> {
+    return this.http.get('/api/employees/request/getprojectrequests', this.options).map(res => res.json());
+  }
+
+  UpdateProjectRequestsStatus(): Observable<any> {
+    return this.http.get('api/employees/request/updateProjectRequestsStatus', this.options).map(res => res.json());
+  }
  
+  get_Accept_Cancel_ProjectRequests(): Observable<any> {
+    return this.http.get('/api/employees/request/getAccept_Cancel_Projectrequests', this.options).map(res => res.json());
+  }
+  //Vaibhav Mali 27 Dec 2017 ...End
+
   getUser(user): Observable<any> {
     return this.http.get(`/api/user/${user._id}`).map(res => res.json());
   }

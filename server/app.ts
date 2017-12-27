@@ -203,7 +203,7 @@ function(req, res) {
 app.get('/success', function(req, res) {
   console.log("Login success");
   //res.send("Login Success");
-  res.redirect('http://localhost:4200');
+  res.redirect('http://localhost:4200/home');
   
 });  
 

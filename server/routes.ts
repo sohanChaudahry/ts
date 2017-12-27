@@ -71,6 +71,9 @@ export default function setRoutes(app) {
  router.route('/employees/request/getAccept_Cancel_Projectrequests').get(userAcceptCtrl.getaccept_cancel_projectrequests); 
  router.route('/employees/request/accept/:id').get(userAcceptCtrl.request_accept); 
  router.route('/employees/request/cancel/:id').get(userAcceptCtrl.request_cancel); 
+ router.route('/employees/request/updateProjectRequestsStatus').get(userAcceptCtrl.updateProjectRequestStatus); 
+ 
+
  
 //Followers 
 router.route('/followers/delete').post(followersCtrl.deleteFollowerByprojectId); 
