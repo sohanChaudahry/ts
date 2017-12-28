@@ -343,7 +343,7 @@
                         </tr>  
                     </tbody>
                     <tbody>
-                        <tr *ngFor="let task of AssigedToOtherList">
+                        <tr *ngFor="let task of AssigedToOtherList;let i=index;">
                             <td>
                                 <span>{{task.task_title}}</span>
                             </td>
@@ -354,9 +354,9 @@
                                 <span>{{task.due_date | date}}</span>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-danger"><i class="fa fa-play" aria-hidden="true"></i></button> 
-                                <button class="btn btn-sm btn-warning"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
-                                <button class="btn btn-sm btn-primary"><i class="fa fa-list" aria-hidden="true"></i> Finish</button> 
+                                <button class="btn btn-sm btn-danger" (click)="startTaskFun(i)"><i class="fa fa-play" aria-hidden="true"></i></button> 
+                                <button class="btn btn-sm btn-warning" (click)="pauseTaskFun(i)"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
+                                <button class="btn btn-sm btn-primary" (click)="finishTaskFun(i)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button> 
                             </td>  
                         </tr> 
                     </tbody>  

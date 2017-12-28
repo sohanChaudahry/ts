@@ -44,6 +44,9 @@ export class ProjectService {
     return this.http.post('/api/tasks/getDetailsByAssignFrom', JSON.stringify(reqData), this.options).map(res => res.json());
   }
   getDetailsByAssignTo(reqData): Observable<any> {
-    return this.http.post(' /api/tasks/getDetailsByAssignTo', JSON.stringify(reqData), this.options).map(res => res.json());
+    return this.http.post('/api/tasks/getDetailsByAssignTo', JSON.stringify(reqData), this.options).map(res => res.json());
+  } 
+  saveUpdateTask(reqData): Observable<any> {
+    return this.http.post('/api/tasks/save_update_Tasks', JSON.stringify(reqData), this.options).map(res => res.json());
   } 
 }

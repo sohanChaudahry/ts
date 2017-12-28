@@ -333,7 +333,6 @@ export class ProjectComponent implements OnInit {
       }
       this.projectService.getTaskDetailsByAssignFrom({"reqData":reqData}).subscribe(
           res => {
-            
               if(res){
                   this.getTaskAssigedToUsList=res.tasks;
               }
@@ -350,11 +349,37 @@ export class ProjectComponent implements OnInit {
           res => {
             if(res){
                 this.AssigedToOtherList=res.tasks;
-
+                for(var i=0;i<this.AssigedToOtherList.length;i++){
+                  this.AssigedToOtherList[i].isStart=false;
+                  this.AssigedToOtherList[i].isPause=false;
+                  this.AssigedToOtherList[i].isFinish=false;
+                }
             }
+            console.log(this.AssigedToOtherList);
           },
           error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
+  }
+  saveUpdateTaskFun(req_data){
+    this.projectService.saveUpdateTask(req_data).subscribe(
+        res => {
+          if(res){
+             return res;
+          }
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
+  }
+  startTaskFun(index){
+    this.AssigedToOtherList[index].isStart=true;
+  }
+  pauseTaskFun(index){
+    this.AssigedToOtherList[index].isPause=true;
+    console.log(this.AssigedToOtherList[index]);
+  }
+  finishTaskFun(index){
+    this.AssigedToOtherList[index].isFinish=true;
+    console.log(this.AssigedToOtherList[index]);
   }
   addSelectedEmp(){
     if(this.searchEmpDetail.name && this.searchEmpDetail.role){
