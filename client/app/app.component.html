@@ -1,7 +1,8 @@
 <div class="container ctm_container">
   <nav class="navbar navbar-dark bg-primary nav_ctm_left">
     <div class="nav navbar-nav">
-      <div style="height: 50px;border-bottom: 1px solid #fff;">
+      <div style="height: 50px;border-bottom: 1px solid #fff;padding-top: 15px;padding-left: 15px;}">
+          <span style="color: #fff;font-size: 17px">Track Status</span> 
       </div>
       <a routerLink="/home" class="nav-item nav-link ctm_menu_link" *ngIf = "check_login_status()" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
         <i class="fa fa-home"></i> Home
@@ -9,9 +10,9 @@
       <a routerLink="/login" class="nav-item nav-link ctm_menu_link"  *ngIf = "!check_login_status()" routerLinkActive="active" >
         <i class="fa fa-sign-in"></i> Login
       </a>
-      <!-- <a routerLink="/project" class="nav-item nav-link ctm_menu_link" *ngIf = "check_project_requests() && check_login_status()" routerLinkActive="active">
+      <a routerLink="/project" style="color:red" class="nav-item nav-link ctm_menu_link" *ngIf = "check_project_requests() && check_login_status()" routerLinkActive="active">
         <i class="fa fa-registered" aria-hidden="true"></i> Projects
-      </a> -->
+      </a>
       <a routerLink="/project" class="nav-item nav-link ctm_menu_link" *ngIf = "!check_project_requests() && check_login_status()" routerLinkActive="active">
         <i class="fa fa-registered" aria-hidden="true"></i> Projects
       </a>
@@ -22,7 +23,7 @@
     </div>
   </nav>
   <div class="ctm_right top_menubar">
-    <span style="color: #fff;">Track Status</span> 
+    
     <!-- <div class="btn-group" style="float: right;" *ngIf="check_login_status()">
         <button type="button" class="btn btn-secondary dropdown-toggle profile_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fa fa-user-circle" aria-hidden="true"></i>

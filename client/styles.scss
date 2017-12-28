@@ -66,7 +66,7 @@ table{
     color: #fff !important;
     background-color: #0275d8;
 }
-.card{
+.card {
   float:left;
   width:100%;
 }
@@ -81,7 +81,7 @@ table{
   border-radius: 0;
   padding-left: 0;
   padding-right: 0;
- 
+  z-index:99;
 }
 .ctm_menu_link{
   color: rgba(255,255,255,.5);
@@ -104,11 +104,11 @@ table{
   float: left;
   width: 85%;
   margin-left: 15%;
-  position: fixed;
-  top: 70px;
+  margin-top: 70px;
   border-radius: 0;
   padding-left: 0;
   padding-right: 0;
+  z-index:9;
 }
 .top_menubar{
   height: 54px;
@@ -123,4 +123,6 @@ table{
   border-radius: 0;
   padding-left: 0;
   padding-right: 0;
+  margin-top: 0;
+  z-index:99;
 }

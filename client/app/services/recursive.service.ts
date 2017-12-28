@@ -12,8 +12,8 @@ import { AuthService } from '../services/auth.service';
 @Injectable()
 export class RecursiveService {
 
-  constructor(private userService: UserService,
-              private router: Router,
+  constructor(private router: Router,
+              private userService: UserService,
               private authService:AuthService,
               public toast:ToastComponent) {
        
@@ -25,8 +25,9 @@ export class RecursiveService {
     let me=this;
     this.authService.getLogedinUserData(function() {
         var current_status = localStorage.getItem("login_status");    
-        if(parseInt(current_status)!= 1){
+        if(!current_status){
             this.router.navigate(['/login']);
+            
             return;
         }
         else{

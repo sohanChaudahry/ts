@@ -50,6 +50,7 @@ export class ProjectComponent implements OnInit {
   activityData=[{"name":"","activity_id":""}];
   activityList=[];
   addAssignTaskUserList=[];
+  projectWorkingTaskList=[];
   statusList=[{"val":0,"name":"Assigned"},{"val":1,"name":"In Progress"},{"val":2,"name":"Completed"},{"val":3,"name":"Failed"}];
   priorityList=["P0","P1","P2","P3","P4","P5"];
   isProjectList=true;
@@ -59,6 +60,7 @@ export class ProjectComponent implements OnInit {
   isTaskListView=false; 
   isAssignedTaskEdit=false;
   isTaskCardShow=false;
+  isProjectWorkingTask=false;
   taskFormDetail : taskFormData = {
      task_title :"",
      task_description : "",
@@ -216,6 +218,25 @@ export class ProjectComponent implements OnInit {
      this.isAssignProjView=false;
      this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
   }
+  openProjectWorkingTask(projec_detail){
+    this.isProjectList=false;
+    this.iscreateProject=false;
+    this.isAssignProjView=false;
+    this.isProjectWorkingTask=true;
+    let req_data={
+        reqData:{
+          employee_id : projec_detail.employee_id ? projec_detail.employee_id : "",
+          project_id : projec_detail._id ? projec_detail._id :""
+        }
+    }
+    this.projectService.ProjectWorkingTaskApi(req_data).subscribe(
+      res => {
+         console.log(res);
+         this.projectWorkingTaskList=res.tasks;
+      },
+      error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
+  }
   editMyTaskBtn(task_detail){
      this.iscreateProject=false; 
      this.isProjectList=false;  
@@ -328,6 +349,7 @@ export class ProjectComponent implements OnInit {
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
+  
   craeteProjectBtn(){
       this.isProjectList=false;
       this.iscreateProject=true;

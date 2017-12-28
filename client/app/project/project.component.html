@@ -1,7 +1,7 @@
 <div class="cointaner">
     <app-loading [condition]="isLoading"></app-loading>
     <app-toast [message]="toast.message"></app-toast>
-    <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow">
+    <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
       <div class="card-header hearder_btn">
         <span class="custom_span_header">My Project</span>
         <button class="btn btn-sm btn-primary header_btn" (click)="craeteProjectBtn()">Create Project</button> 
@@ -44,7 +44,7 @@
         </div>
       </div>
     </div>
-    <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow">
+    <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
       <div class="card-header">
         <span class="custom_span_header">Assigned Project</span>
       </div>
@@ -86,10 +86,10 @@
         </div>
       </div>
     </div>
-    <div class="card " *ngIf="iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow">
+    <div class="card " *ngIf="iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
        <app-loading [condition]="isLoading1"></app-loading>
        <div class="card-header">
-        <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
+            <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
        </div>
         <div class="ctm_form">
           <br>
@@ -191,7 +191,7 @@
                     <div class="searc_head"> 
                           <div class="col-md-5">Selected Employees</div>
                           <div class="col-md-5">Role</div>
-                          <div class="col-md-2" style="text-align:right">Action</div>
+                          <div class="col-md-2" style="text-align:right;padding-right: 7%;">Action</div>
                     </div>
                      <div *ngIf="addAssignUserList.length==0" class="city-data-div user_table">
                          <div class="col-md-4"></div>
@@ -201,7 +201,12 @@
                     <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
                         <div class="col-md-5">{{user.name}}</div>
                         <div class="col-md-5">{{user.role}}</div>
-                        <div class="col-md-2" class="ctm_close" (click)="removeAssignUserFun(user,projectDetail)"><i class="fa fa-times" aria-hidden="true"></i></div>
+                        <div class="col-md-1" (click)="removeAssignUserFun(user,projectDetail)" style="padding-left:5%;color:red">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                        </div>
+                        <div class="col-md-1" style="color: blue;" (click)="openProjectWorkingTask(projectDetail)">
+                            <i class="fa fa-tasks" aria-hidden="true"></i>
+                        </div>
                     </div>   
                     </div> 
                 </div>
@@ -218,7 +223,7 @@
           <br>
         </div>
      </div>
-     <div class="card " *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && isAssignProjView && !isTaskCardShow">
+     <div class="card " *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
        <div class="card-header">
         <span class="custom_span_header">View Project Detail</span>
        </div>
@@ -270,7 +275,47 @@
             </div>
             <br>
         </div>
-     </div>
+      </div>
+        <!-- ProjectWorkingTask -->
+        <div class="card " *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && isProjectWorkingTask">
+            <app-loading [condition]="isLoading"></app-loading>
+            <div class="card-header">
+                    <span class="custom_span_header">Employee status</span>
+            </div>
+            <div class="card-block">
+                <div class="table-responsive custom_table">
+                    <table class="table table-bordered">
+                        <thead class="thead-default">
+                            <tr>
+                            <th width="22%">Task</th>
+                            <th width="15%">Title</th>
+                            <th width="15%">Description</th>
+                            <th width="15%">Actual Hours</th>
+                            <th width="15%">Last Seen</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="projectWorkingTaskList.length == 0">
+                            <tr>
+                            <td colspan="5">There are no record in the DB.</td>
+                            </tr>  
+                        </tbody>
+                        <tbody>
+                            <tr *ngFor="let emp of projectWorkingTaskList">
+                            <td>
+                                <span>{{emp.project_name}}</span>
+                            </td>
+                                <td>
+                                <span>{{emp.desc}}</span>
+                            </td>
+                                <td>
+                                <span>{{emp.role}}</span>
+                            </td>
+                            </tr> 
+                        </tbody>  
+                    </table>
+                </div>
+            </div>
+    </div>
      <!--list task -->
      <div *ngIf="!isProjectList && isTaskCardShow">
         <!--<div style="height: 40px;background: #f5f5f5;border: 1px solid #ddd;">
