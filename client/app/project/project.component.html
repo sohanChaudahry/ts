@@ -2,7 +2,7 @@
     <app-loading [condition]="isLoading"></app-loading>
     <app-toast [message]="toast.message"></app-toast>
     <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow">
-      <div class="card-header">
+      <div class="card-header hearder_btn">
         <span class="custom_span_header">My Project</span>
         <button class="btn btn-sm btn-primary header_btn" (click)="craeteProjectBtn()">Create Project</button> 
       </div>
@@ -87,6 +87,7 @@
       </div>
     </div>
     <div class="card " *ngIf="iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow">
+       <app-loading [condition]="isLoading1"></app-loading>
        <div class="card-header">
         <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
        </div>
@@ -94,20 +95,20 @@
           <br>
           <div class="row">
               <div class="col-md-1"></div>
-              <div class="col-md-5">
+              <div class="col-md-10">
                  <div class="form-group">
                    <label>Project Name</label>
                    <input class="form-control" type="text" name="project_name" [(ngModel)]="projectDetail.project_name" placeholder="Project Name">
                   </div>
               </div>
-              <div class="col-md-5">
+              <!-- <div class="col-md-5">
                  <div class="form-group">
                    <label>Role</label>
                    <select class="form-control" name="role" [(ngModel)]="projectDetail.role">
                         <option [ngValue]="role" *ngFor="let role of roleList;"  placeholder="Role">{{role}}</option>
                    </select>
                   </div>
-              </div>
+              </div> -->
               <div class="col-md-1"></div>
           </div>
           <div class="row">
@@ -145,7 +146,7 @@
                             </td>
                             <td class="col-md-2">
                                 <button class="btn btn-sm btn-danger" (click)="removeActivity(index);"><i class="fa fa-times" aria-hidden="true"></i></button>
-                                <button class="btn btn-sm btn-info" (click)="addActivity();"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                <button class="btn btn-sm btn-info" (click)="addActivity();" *ngIf="activityData.length==i+1"><i class="fa fa-plus" aria-hidden="true"></i></button>
                             </td>
                           </tr> 
                       </tbody>  
@@ -194,7 +195,7 @@
                     </div>
                      <div *ngIf="addAssignUserList.length==0" class="city-data-div user_table">
                          <div class="col-md-4"></div>
-                        <div class="col-md-8">No record availble in DB.</div>
+                        <div class="col-md-8">No employee selected for assign project.</div>
                     </div> 
                     <div *ngIf="addAssignUserList.length!=0" >
                     <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
@@ -210,7 +211,7 @@
           <div class="row">
               <div class="col-md-1"></div>
               <div class="col-md-6">
-                <button class="btn btn-sm btn-primary" type="button" (click)="sendProjectFormData(myForm)"><i class="fa fa-floppy-o"></i> Save</button>
+                <button class="btn btn-sm btn-primary" type="button" (click)="sendProjectFormData()"><i class="fa fa-floppy-o"></i> Save</button>
                 <button class="btn btn-sm btn-primary" (click)="cancel()" type="button"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
               </div>
           </div>
@@ -275,14 +276,14 @@
         <!--<div style="height: 40px;background: #f5f5f5;border: 1px solid #ddd;">
             <span style="font-size: 18px;font-weight: 500;">Tasks</span>
         </div>-->
-        <div class="custom_hd">
-          <span class="" style="height: 40px;background: #f5f5f5;border: 1px solid #ddd;">Tasks</span>
+        <div class="custom_hd ctm_hd_task">
+          <span class="custom_span_header">Tasks</span>
           <span class="custom_back_btn">
               <button class="btn btn-sm btn-success" (click)="backTaskListPage()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
           </span>
         </div>
         <div class="card" *ngIf="!iscreateProject && !isProjectList && !isAssignProjView  && !isAssignedTaskEdit && !isMyTaskEdit && isTaskListView && isTaskCardShow">
-            <div class="card-header">
+            <div class="card-header hearder_btn">
                 <span class="custom_span_header">My Task</span>
                 <button class="btn btn-sm btn-primary header_btn" (click)="openCreateTaskPage()">Create Task</button> 
             </div>
@@ -367,7 +368,7 @@
         <!--edit my task task -->
         <div class="card " *ngIf="!iscreateProject && !isProjectList && !isAssignProjView && !isTaskListView && !isAssignedTaskEdit && isMyTaskEdit && isTaskCardShow">    
             <div class="card-header">
-                <span class="custom_span_header">Create Task</span>
+                <span class="custom_span_header">{{taskFormDetail._id ? "Update Task" : "Create Task"}}</span>
             </div>
             <div class="card-block">
                 <div>
@@ -390,12 +391,10 @@
                     <div class="row">
                         <div class="col-md-1"></div>
                             <div class="col-md-5">
-                                <div class="form-group">
-                                    <label>Activities</label>
-                                    <select class="form-control" [(ngModel)]="taskFormDetail.activity_id">
-                                        <option [ngValue]="act.activity_id" *ngFor="let act of activityList;"  placeholder="Select Activities">{{act.name}}</option>
-                                    </select>
-                                </div>
+                                <label>Activities</label>
+                                <select class="form-control" [(ngModel)]="taskFormDetail.activity_id">
+                                    <option [ngValue]="act.activity_id" *ngFor="let act of activityList;"  placeholder="Select Activities">{{act.name}}</option>
+                                </select>
                             </div>
                             <div class="col-md-5">
                                 <label class="Assign">Assign To</label>

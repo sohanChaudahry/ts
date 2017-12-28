@@ -235,13 +235,37 @@ export class ProjectComponent implements OnInit {
      this.isAssignProjView=false;
      this.isTaskCardShow=false;
   }
-  trackTaskStatusFun(){
-      
+ 
+  sendProjectFormData(){
 
-  }
-  sendProjectFormData(Data){
-    //test
+    if(this.projectDetail.project_name=='' || this.projectDetail.project_name==null || !this.projectDetail.project_name){
+      this.toast.setMessage('Project name should not be blank!', 'danger');
+      return;
+    }
+    if(this.projectDetail.desc=='' || this.projectDetail.desc==null || !this.projectDetail.desc){
+      this.toast.setMessage('Project description should not be blank!', 'danger');
+      return;
+    }
+  
+    for(var i=0;i<this.activityData.length;i++){
+      if(this.activityData[i].name=='' || this.activityData[i].name==null || !this.activityData[i].name){
+        this.toast.setMessage('Activity name should not be blank!', 'danger')
+        return;
+      }
+    }
+    // for(var i=0;i<this.addAssignUserList.length;i++){
+    //   if(this.addAssignUserList[i].role=='' || this.addAssignUserList[i].role==null || !this.addAssignUserList[i].role || this.addAssignUserList[i].to_email=='' || 
+    //   this.addAssignUserList[i].to_email==null || !this.addAssignUserList[i].to_email){
+    //     this.toast.setMessage('Please select employee detail!', 'danger')
+    //     return;
+    //   }
+    // }
+    if(this.addAssignUserList.length==0){
+      this.toast.setMessage('Please select employee to assign project.', 'danger')
+      return;
+    }
     this.projectDetail.email=localStorage.getItem("email") ? localStorage.getItem("email") : "";
+    this.projectDetail.role="Manager";
     this.projectDetail.activities=this.activityData;
     this.projectDetail.assign_to=this.addAssignUserList;
     console.log(this.projectDetail);
@@ -257,7 +281,6 @@ export class ProjectComponent implements OnInit {
          this.isProjectList=true;
          this.iscreateProject=false;
          this.getEmployeeDetailByEmail();
-        // this.getRequestedProjectsFun();
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
@@ -383,18 +406,18 @@ export class ProjectComponent implements OnInit {
   }
   addSelectedEmp(){
     if(this.searchEmpDetail.name && this.searchEmpDetail.role){
+        for(var i=0;i<this.addAssignUserList.length;i++){
+          if(this.addAssignUserList[i].name==this.searchEmpDetail.name){
+            this.toast.setMessage('Employee already selected!', 'danger');
+            return;
+          }
+        }
         for(var i=0;i<this.employeesList.length;i++){
             if(this.employeesList[i].name==this.searchEmpDetail.name){
                 this.searchEmpDetail.to_email=this.employeesList[i].email;
                 break;
             }
         }
-        // for(var i=0;i<this.employeesList.length;i++){
-        //     if(this.employeesList[i].email==this.searchEmpDetail.to_email){
-        //         this.toast.setMessage('Employee already selected', 'danger')
-        //         return;
-        //     }
-        // }
         this.addAssignUserList.push(this.searchEmpDetail);
         this.searchEmpDetail={
           "name":"",
@@ -402,6 +425,8 @@ export class ProjectComponent implements OnInit {
           "to_email":""
         }
         this.isEmpAutoSelect=[];
+    }else{
+      this.toast.setMessage('Please select all value!', 'danger')
     }
   }
   
