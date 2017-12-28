@@ -12,16 +12,18 @@
       <!-- <a routerLink="/project" class="nav-item nav-link ctm_menu_link" *ngIf = "check_project_requests() && check_login_status()" routerLinkActive="active">
         <i class="fa fa-registered" aria-hidden="true"></i> Projects
       </a> -->
-      <a routerLink="/project" class="nav-item nav-link" *ngIf = "!check_project_requests() && check_login_status()" routerLinkActive="active">
+      <a routerLink="/project" class="nav-item nav-link ctm_menu_link" *ngIf = "!check_project_requests() && check_login_status()" routerLinkActive="active">
         <i class="fa fa-registered" aria-hidden="true"></i> Projects
       </a>
-       <!-- <a routerLink="/profile" class="nav-item nav-link" *ngIf="check_login_status()" routerLinkActive="active"><i class="fa fa-registered" aria-hidden="true"></i> Profile</a>
-        <a (click)="logout()" class="nav-item nav-link" *ngIf = "check_login_status()" routerLinkActive="active"><i class="fa fa-sign-out"></i> Logout</a> -->
+      <a routerLink="/profile" class="nav-item nav-link ctm_menu_link" *ngIf="check_login_status()" routerLinkActive="active">
+        <i class="fa fa-user-circle" aria-hidden="true"></i> Profile</a>
+      <a (click)="logout()" class="nav-item nav-link ctm_menu_link" *ngIf = "check_login_status()" routerLinkActive="active">
+        <i class="fa fa-sign-out"></i> Logout</a>
     </div>
   </nav>
   <div class="ctm_right top_menubar">
     <span style="color: #fff;">Track Status</span> 
-    <div class="btn-group" style="float: right;" *ngIf="check_login_status()">
+    <!-- <div class="btn-group" style="float: right;" *ngIf="check_login_status()">
         <button type="button" class="btn btn-secondary dropdown-toggle profile_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fa fa-user-circle" aria-hidden="true"></i>
         </button>
@@ -29,7 +31,7 @@
             <a class="dropdown-item" routerLink="/profile" *ngIf="check_login_status()" routerLinkActive="active"><i class="fa fa-registered" aria-hidden="true"></i> Profile</a>
             <a class="dropdown-item" (click)="logout()" *ngIf = "check_login_status()" routerLinkActive="active"><i class="fa fa-sign-out"></i> Logout</a>
         </div>
-    </div>
+    </div> -->
   </div>
   <router-outlet></router-outlet>
 </div>

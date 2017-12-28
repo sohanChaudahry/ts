@@ -88,7 +88,7 @@ table{
   float: left;
   width: 100%;
   padding-left: 0;
-  margin-left: 0;
+  margin-left: 0 !important;
   margin-top: 0px;
   margin-bottom: 0px;
   border-bottom: 1px solid #fff;
@@ -104,11 +104,23 @@ table{
   float: left;
   width: 85%;
   margin-left: 15%;
+  position: fixed;
+  top: 70px;
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 .top_menubar{
-  height: 50px;
+  height: 54px;
   background-color: #0275d8 !important;
   padding-bottom: 10px;
   padding-top: 15px;
   padding-left: 15px;
+  float: left;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
