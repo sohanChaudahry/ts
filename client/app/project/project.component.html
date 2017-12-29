@@ -299,9 +299,9 @@
                             <tr>
                                 <th width="15%">Task Title</th>
                                 <th width="40%">Description</th>
-                                <th width="15%">Estimate Hours</th>
+                                <th width="10%">Estimate Hours</th>
                                 <th width="15%">Actual Hours</th>
-                                <th width="15%">Last Seen</th>
+                                <th width="20%">Last Seen</th>
                             </tr>
                         </thead>
                         <tbody *ngIf="projectWorkingTaskList.length == 0">
@@ -315,7 +315,7 @@
                                 <td> {{task.task_description}} </td>
                                 <td>{{task.estimate_hrs}} </td>
                                 <td>{{task.actual_hrs}} </td>
-                                <td> {{task.end_date_time | date}} </td>     
+                                <td>{{task.seen_time ? ( task.seen_time | date : " MMM d, y h:mm:ss a" ) : "Not seen"}} </td>     
                             </tr> 
                         </tbody>  
                     </table>
@@ -422,7 +422,7 @@
         <!--edit my task task -->
         <div class="card " *ngIf="!iscreateProject && !isProjectList && !isAssignProjView && !isTaskListView && !isAssignedTaskEdit && isMyTaskEdit && isTaskCardShow">    
             <div class="card-header">
-                <span class="custom_span_header">{{taskFormDetail._id ? "Update Task" : "Create Task"}}</span>
+                <span class="custom_span_header">{{task_id ? "Update Task" : "Create Task"}}</span>
             </div>
             <div class="card-block">
                 <div>

@@ -294,8 +294,22 @@ export class ProjectComponent implements OnInit {
     }
     this.projectService.ProjectWorkingTaskApi(req_data).subscribe(
       res => {
-         console.log(res);
-         this.projectWorkingTaskList=res.tasks;
+        console.log(res);
+        this.projectWorkingTaskList=res.tasks;
+        if(this.projectWorkingTaskList.length!=0){
+           for(let i=0;i<this.projectWorkingTaskList.length;i++){
+             if(this.projectWorkingTaskList[i].start_date_time!=null && this.projectWorkingTaskList[i].start_date_time!='' && this.projectWorkingTaskList[i].start_date_time!=undefined){
+                 if(this.projectWorkingTaskList[i].spendtimes.length!=0){
+                   let index=this.projectWorkingTaskList[i].spendtimes.length;
+                   this.projectWorkingTaskList[i].seen_time=this.projectWorkingTaskList[i].spendtimes[index-1].end_date_time;
+                 }else{
+                   this.projectWorkingTaskList[i].seen_time=this.projectWorkingTaskList[i].start_date_time;
+                 }
+             }else{
+               this.projectWorkingTaskList[i].seen_time=null;
+             }
+         }
+        }
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );

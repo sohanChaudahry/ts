@@ -8,7 +8,7 @@ interface profileFormData {
   name : string;
   email : string;
   address  : string;
-  type : string;
+  // type : string;
 }
 
 @Component({
@@ -35,7 +35,7 @@ export class ProfileComponent implements OnInit {
     Validators.maxLength(100)
   ]);
   address = new FormControl('', [Validators.required]);
-  type = new FormControl('', [ Validators.required]);
+  // type = new FormControl('', [ Validators.required]);
 
   typeList=[{"val":"E","name":"Employee"}];
   constructor(private toast :ToastComponent,
@@ -51,7 +51,7 @@ export class ProfileComponent implements OnInit {
           name: this.name,
           email: this.email,
           address: this.address,
-          type:this.type,
+          // type:this.type,
           _id : localStorage.getItem("_id") ? localStorage.getItem("_id") : ""
       });
   }
