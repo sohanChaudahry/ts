@@ -34,12 +34,16 @@
                     <span>{{project.role}}</span>
                 </td>
                 <td>
+                    <!-- deleteProjects(project)  -->
                     <button class="btn btn-sm btn-warning" (click)="projectEditBtm(project)"><i class="fa fa-pencil"></i></button> 
-                    <button class="btn btn-sm btn-danger" (click)="deleteProjects(project)"><i class="fa fa-times" aria-hidden="true"></i></button> 
+                    <button class="btn btn-sm btn-danger" (click)="openPopup(project)"><i class="fa fa-times" aria-hidden="true"></i></button> 
                     <button class="btn btn-sm btn-primary" (click)="openTaskListPage(project)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
                 </td>
               </tr> 
             </tbody>  
+            <popup (confirmClick)="conformPopup()" (cancelClick)="cancelPopup()">
+                <span>Do you want to delete project ?</span>
+            </popup>
         </table>
         </div>
       </div>
@@ -431,40 +435,42 @@
                         </div>
                         <div class="col-md-1"></div>
                     </div>
-                    <div class="row">
+                    <div class="row" style="padding-bottom: 15px;">
                         <div class="col-md-1"></div>
                             <div class="col-md-5">
+                                <!-- {{taskFormDetail.activity_id}} -->
                                 <label>Activities</label>
                                 <select class="form-control" [(ngModel)]="taskFormDetail.activity_id">
-                                    <option [ngValue]="act.activity_id" *ngFor="let act of activityList;"  placeholder="Select Activities">{{act.name}}</option>
+                                    <option [ngValue]="act.activity_id" *ngFor="let act of activityList;" placeholder="Select Activities">{{act.name}}</option>
                                 </select>
                             </div>
                             <div class="col-md-5">
-                                <label class="Assign">Assign To</label>
+                                <!-- {{taskFormDetail.assign_to._id}} -->
+                                <label>Assign To</label>
                                 <select class="form-control" [(ngModel)]="taskFormDetail.assign_to">
-                                    <option [ngValue]="emp.employee_id" *ngFor="let emp of addAssignTaskUserList;"  placeholder="Select Project">{{emp.name}}</option>
+                                    <option [ngValue]="emp._id" *ngFor="let emp of addAssignTaskUserList;" placeholder="Select Project">{{emp.name}}</option>
                                 </select>
                             </div>
                         <div class="col-md-1"></div>
                     </div>
                     <div class="row">
-                    <div class="col-md-1"></div>
-                    <div class="col-md-5">
-                        <div class="form-group">
-                            <label>Priority</label>
-                            <select class="form-control" name="role" [(ngModel)]="taskFormDetail.priority">
-                                <option [ngValue]="priority" *ngFor="let priority of priorityList;" placeholder="Select Priority">{{priority}}</option>
-                            </select>
-                        </div>
-                        </div>
+                        <div class="col-md-1"></div>
                         <div class="col-md-5">
                             <div class="form-group">
-                                <label>Due Date</label>
-                                <input class="form-control" type="date" [(ngModel)]="taskFormDetail.due_date">
-                                <!--<angular2-date-picker [(ngModel)]="taskFormDetail.due_date" placeholder="Due Date" [settings]="settings1"></angular2-date-picker>-->
-                            </div>      
-                        </div>
-                    <div class="col-md-1"></div>
+                                <label>Priority</label>
+                                <select class="form-control" name="role" [(ngModel)]="taskFormDetail.priority">
+                                    <option [ngValue]="priority" *ngFor="let priority of priorityList;" placeholder="Select Priority">{{priority}}</option>
+                                </select>
+                            </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Due Date</label>
+                                    <!-- <input class="form-control" type="date" [(ngModel)]="taskFormDetail.due_date"> -->
+                                    <angular2-date-picker [(ngModel)]="taskFormDetail.due_date" placeholder="Due Date" [settings]="settings1"></angular2-date-picker>
+                                </div>      
+                            </div>
+                        <div class="col-md-1"></div>
                     </div>
                     <div class="row">
                         <div class="col-md-1"></div>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { ProjectService } from '../services/project.service';
 import { TaskService } from '../services/task.service';
+import {Popup} from 'ng2-opd-popup';
 
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { UserService } from '../services/user.service';
@@ -45,6 +46,7 @@ export class ProjectComponent implements OnInit {
   selectedProjectDetail={"_id":""};
   AssigedToOtherList=[];
   getTaskAssigedToUsList=[];
+  selected_proj_delete={};
   roleList=["Manager","Developer","Tester"];
   addAssignUserList=[];
   activityData=[{"name":"","activity_id":""}];
@@ -85,20 +87,13 @@ export class ProjectComponent implements OnInit {
   email = new FormControl('');
   activities = new FormControl([]);
   assign_to = new FormControl([]);
-    settings = {
-      bigBanner: true,
-      timePicker: true,
-      format: 'dd-MMM-yyyy hh:mm a',
-      defaultOpen: false,
-      closeOnSelect:false
-  }
   settings1 = {
-      bigBanner: true,
-      timePicker: false,
-      format: 'dd-MM-yyyy',
-      defaultOpen: false,
-      closeOnSelect:true
-  }
+    bigBanner: true,
+    timePicker: false,
+    format: 'dd-MM-yyyy',
+    defaultOpen: false,
+    closeOnSelect:true
+}
   projectDetail={
       "_id":"",
       "project_id":"",
@@ -119,13 +114,14 @@ export class ProjectComponent implements OnInit {
   private formBuilder:FormBuilder,
   private taskService : TaskService,
   private userService: UserService,
-  private recursiveService :RecursiveService) { }
+  private recursiveService :RecursiveService,
+  private popup:Popup,) { }
   
   ngOnInit() {
       this.getAllEmployeeList();
       this.getEmployeeDetailByEmail();
       this.updateProjectRequeststatus();
-     // this.getRequestedProjectsFun();
+      // this.getRequestedProjectsFun();
       this.getProjectForm = this.formBuilder.group({
         project_id: this.project_id,
         project_name:this.project_name,
@@ -134,7 +130,19 @@ export class ProjectComponent implements OnInit {
         email:this.email,
         activities:this.activities,
         assign_to:this.assign_to,
-     });
+      });
+      this.popup.options = {
+        header: "Delete Project",
+        color: "#5cb85c", // red, blue.... 
+        widthProsentage: 40, // The with of the popou measured by browser width 
+        animationDuration: 1, // in seconds, 0 = no animation 
+        showButtons: true, // You can hide this in case you want to use custom buttons 
+        confirmBtnContent: "OK", // The text on your confirm button 
+        cancleBtnContent: "Cancel", // the text on your cancel button 
+        confirmBtnClass: "btn btn-default", // your class for styling the confirm button 
+        cancleBtnClass: "btn btn-default", // you class for styling the cancel button 
+        animation: "fadeInDown" // 'fadeInLeft', 'fadeInRight', 'fadeInUp', 'bounceIn','bounceInDown' 
+      };
   }
   private get disabledV():string {
     return this._disabledV;
@@ -148,7 +156,35 @@ export class ProjectComponent implements OnInit {
     this._disabledV = value;
     this.disabled = this._disabledV === '1';
   }
- 
+  reSetTaskFormValue(){
+      this.taskFormDetail = {
+          task_title :"",
+          task_description : "",
+          assign_from:"",
+          assign_to : "",
+          project_id : "",
+          activity_id : "",
+          due_date : new Date(),
+          priority : "",
+          estimate_hrs : null,
+          actual_hrs  : null,
+          status : null,
+          select : null,
+          start_date_time : new Date(),
+          end_date_time : new Date(),
+    };
+  }
+  openPopup(project_detail){
+    this.selected_proj_delete=project_detail;
+    this.popup.show();
+  }
+  conformPopup(){
+    this.popup.hide();
+    this.deleteProjects(this.selected_proj_delete);
+  }
+  cancelPopup(){
+    this.popup.hide();
+  }
   public selected(value:any):void {
     console.log('Selected value is: ', value);
     this.searchEmpDetail.name=value.text;
@@ -214,6 +250,7 @@ export class ProjectComponent implements OnInit {
      this.isMyTaskEdit=true; 
      this.isTaskListView=false;
      this.isAssignProjView=false;
+     this.reSetTaskFormValue();
      this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
   }
   openProjectWorkingTask(projec_detail){
@@ -243,6 +280,8 @@ export class ProjectComponent implements OnInit {
      this.isTaskListView=false;
      this.isAssignProjView=false;
      this.taskFormDetail=task_detail;
+     this.taskFormDetail.assign_to=this.taskFormDetail.assign_to._id ? this.taskFormDetail.assign_to._id : this.taskFormDetail.assign_to ;
+     this.taskFormDetail.activity_id=this.taskFormDetail.activity_id._id ? this.taskFormDetail.activity_id._id : this.taskFormDetail.activity_id ;
      this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
   }
   backTaskListPage(){
@@ -275,23 +314,16 @@ export class ProjectComponent implements OnInit {
       return;
     }
   
-    for(var i=0;i<this.activityData.length;i++){
-      if(this.activityData[i].name=='' || this.activityData[i].name==null || !this.activityData[i].name){
-        this.toast.setMessage('Activity name should not be blank!', 'danger')
-        return;
-      }
-    }
-    // for(var i=0;i<this.addAssignUserList.length;i++){
-    //   if(this.addAssignUserList[i].role=='' || this.addAssignUserList[i].role==null || !this.addAssignUserList[i].role || this.addAssignUserList[i].to_email=='' || 
-    //   this.addAssignUserList[i].to_email==null || !this.addAssignUserList[i].to_email){
-    //     this.toast.setMessage('Please select employee detail!', 'danger')
+    // for(var i=0;i<this.activityData.length;i++){
+    //   if(this.activityData[i].name=='' || this.activityData[i].name==null || !this.activityData[i].name){
+    //     this.toast.setMessage('Activity name should not be blank!', 'danger')
     //     return;
     //   }
     // }
-    if(this.addAssignUserList.length==0){
-      this.toast.setMessage('Please select employee to assign project.', 'danger')
-      return;
-    }
+    // if(this.addAssignUserList.length==0){
+    //   this.toast.setMessage('Please select employee to assign project.', 'danger')
+    //   return;
+    // }
     this.projectDetail.email=localStorage.getItem("email") ? localStorage.getItem("email") : "";
     this.projectDetail.role="Manager";
     this.projectDetail.activities=this.activityData;
