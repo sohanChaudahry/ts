@@ -78,7 +78,6 @@
                     <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
                     <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
                     <button class="btn btn-sm btn-primary" *ngIf="project.accept==1" (click)="openTaskListPage(project)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
-
                 </td>
               </tr> 
             </tbody>  
@@ -277,39 +276,38 @@
         </div>
       </div>
         <!-- ProjectWorkingTask -->
-        <div class="card " *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && isProjectWorkingTask">
+        <div class="card" *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && isProjectWorkingTask">
             <app-loading [condition]="isLoading"></app-loading>
             <div class="card-header">
-                    <span class="custom_span_header">Employee status</span>
+                <span class="custom_span_header">Employee task status</span>
+                <span class="custom_back_btn">
+                    <button class="btn btn-sm btn-success" (click)="backProjectWorkingTaskPage()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
+                </span>
             </div>
             <div class="card-block">
                 <div class="table-responsive custom_table">
                     <table class="table table-bordered">
                         <thead class="thead-default">
                             <tr>
-                            <th width="22%">Task</th>
-                            <th width="15%">Title</th>
-                            <th width="15%">Description</th>
-                            <th width="15%">Actual Hours</th>
-                            <th width="15%">Last Seen</th>
+                                <th width="15%">Task Title</th>
+                                <th width="40%">Description</th>
+                                <th width="15%">Estimate Hours</th>
+                                <th width="15%">Actual Hours</th>
+                                <th width="15%">Last Seen</th>
                             </tr>
                         </thead>
                         <tbody *ngIf="projectWorkingTaskList.length == 0">
                             <tr>
-                            <td colspan="5">There are no record in the DB.</td>
+                                <td colspan="4">There are no record in the DB.</td>
                             </tr>  
                         </tbody>
                         <tbody>
-                            <tr *ngFor="let emp of projectWorkingTaskList">
-                            <td>
-                                <span>{{emp.project_name}}</span>
-                            </td>
-                                <td>
-                                <span>{{emp.desc}}</span>
-                            </td>
-                                <td>
-                                <span>{{emp.role}}</span>
-                            </td>
+                            <tr *ngFor="let task of projectWorkingTaskList">
+                                <td>{{task.task_title}} </td>
+                                <td> {{task.task_description}} </td>
+                                <td>{{task.estimate_hrs}} </td>
+                                <td>{{task.actual_hrs}} </td>
+                                <td> {{task.end_date_time | date}} </td>     
                             </tr> 
                         </tbody>  
                     </table>
@@ -469,21 +467,21 @@
                     <div class="col-md-1"></div>
                     </div>
                     <div class="row">
-                    <div class="col-md-1"></div>
+                        <div class="col-md-1"></div>
                         <div class="col-md-10">
                         <div class="form-group">
                             <label>Task Description</label>
                             <textarea class="form-control" rows="3" name="desc" [(ngModel)]="taskFormDetail.task_description" placeholder="Task Description" ></textarea>
                             </div>
                         </div>
-                    <div class="col-md-1"></div>
+                        <div class="col-md-1"></div>
                     </div>
                     <div class="row">
-                    <div class="col-md-1"></div>
-                    <div class="col-md-6">
-                        <button class="btn btn-sm btn-primary" (click)="saveTaskDetail()" type="button"><i class="fa fa-floppy-o"></i> Save</button>
-                        <button class="btn btn-sm btn-primary" type="button" (click)="cancelCreateTaskPage()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
-                    </div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-6">
+                            <button class="btn btn-sm btn-primary" (click)="saveTaskDetail()" type="button"><i class="fa fa-floppy-o"></i> Save</button>
+                            <button class="btn btn-sm btn-primary" type="button" (click)="cancelCreateTaskPage()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>

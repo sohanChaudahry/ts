@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { RecursiveService } from './services/recursive.service';
 import {Observable} from 'rxjs/Rx';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +11,8 @@ import {Observable} from 'rxjs/Rx';
 export class AppComponent {
 
   constructor(public auth: AuthService,
-  private recursiveService :RecursiveService) { 
+  private recursiveService :RecursiveService,
+  private router : Router) { 
 
   }
   ngOnInit() {
@@ -18,6 +20,9 @@ export class AppComponent {
     localStorage.setItem("project_requests",count.toString())   
     this.auth.getLogedinUserData();
     this.recursiveService.checkUserLogedIn();
+    if (this.auth.loggedIn) {
+      this.router.navigate(['/home']);
+    }
    // this.recursiveService.getProjectRequests();    
   }
   logout(){

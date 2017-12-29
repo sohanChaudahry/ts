@@ -139,13 +139,11 @@ export class ProjectComponent implements OnInit {
   private get disabledV():string {
     return this._disabledV;
   }
- 
   //Vaibhav Mali 27 Dec 2017 ...Start
   updateProjectRequeststatus(){
     this.recursiveService.UpdateProjectRequestFlag();
   }
   //Vaibhav Mali 27 Dec 2017 ...End
- 
   private set disabledV(value:string) {
     this._disabledV = value;
     this.disabled = this._disabledV === '1';
@@ -256,7 +254,16 @@ export class ProjectComponent implements OnInit {
      this.isAssignProjView=false;
      this.isTaskCardShow=false;
   }
- 
+  backProjectWorkingTaskPage(){
+    this.iscreateProject=true; 
+     this.isProjectList=false;  
+     this.isAssignedTaskEdit=false; 
+     this.isMyTaskEdit=false; 
+     this.isTaskListView=false;
+     this.isAssignProjView=false;
+     this.isTaskCardShow=false;
+     this.isProjectWorkingTask=false;
+  }
   sendProjectFormData(){
 
     if(this.projectDetail.project_name=='' || this.projectDetail.project_name==null || !this.projectDetail.project_name){
@@ -299,9 +306,14 @@ export class ProjectComponent implements OnInit {
     this.projectService.saveProjectDetails({"reqData":[this.projectDetail]}).subscribe(
       res => {
          console.log(res);
-         this.isProjectList=true;
-         this.iscreateProject=false;
-         this.getEmployeeDetailByEmail();
+         if(res.successProjects.successData.length!=0){
+          this.isProjectList=true;
+          this.iscreateProject=false;
+          this.toast.setMessage('Project saved successfully!', 'success')
+          this.getEmployeeDetailByEmail();
+         }else if(res.failedProjects.failedData.length!=0){
+          this.toast.setMessage('Project create failed.', 'danger')
+         }
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
@@ -619,6 +631,31 @@ export class ProjectComponent implements OnInit {
     this.taskFormDetail.assign_to=this.taskFormDetail.assign_to._id ? this.taskFormDetail.assign_to._id : this.taskFormDetail.assign_to;
     this.taskFormDetail.project_id=this.selectedProjectDetail._id ? this.selectedProjectDetail._id : "";
     console.log(this.taskFormDetail);
+
+    if(this.taskFormDetail.task_title==null || !this.taskFormDetail.task_title|| this.taskFormDetail.task_title==''){
+      this.toast.setMessage('Task title should not be blank!', 'danger');
+      return;
+    }
+    if(this.taskFormDetail.estimate_hrs==null || !this.taskFormDetail.estimate_hrs){
+      this.toast.setMessage('Task estimate hours should not be blank!', 'danger');
+      return;
+    }
+    if(this.taskFormDetail.activity_id==null || !this.taskFormDetail.activity_id || this.taskFormDetail.activity_id==''){
+      this.toast.setMessage('Please select any activity!', 'danger');
+      return;
+    } 
+    if(this.taskFormDetail.assign_to==null || !this.taskFormDetail.assign_to || this.taskFormDetail.assign_to==''){
+      this.toast.setMessage('Please select any employee to assign task!', 'danger');
+      return;
+    }
+    if(this.taskFormDetail.priority==null || !this.taskFormDetail.priority || this.taskFormDetail.priority==''){
+      this.toast.setMessage('Task priority should not be blank!', 'danger');
+      return;
+    } 
+    if(this.taskFormDetail.task_description==null || !this.taskFormDetail.task_description || this.taskFormDetail.task_description==''){
+      this.toast.setMessage('Task description should not be blank!', 'danger');
+      return;
+    } 
     this.taskService.saveTaskDetail({reqData:[this.taskFormDetail]}).subscribe(
       res => {
           if(res.success.successData.length!=0){

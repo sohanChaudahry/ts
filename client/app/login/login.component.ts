@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     if (this.auth.loggedIn) {
-      this.router.navigate(['']);
+      this.router.navigate(['/home']);
     }
   }
   loginGoogle(){

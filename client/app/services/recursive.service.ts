@@ -27,7 +27,6 @@ export class RecursiveService {
         var current_status = localStorage.getItem("login_status");    
         if(!current_status){
             this.router.navigate(['/login']);
-            
             return;
         }
         else{
