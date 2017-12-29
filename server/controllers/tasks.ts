@@ -42,6 +42,7 @@ export default class TasksCtrl  {
         failedData : []
     }
     var length = tasks.length ? tasks.length : 0;
+    var me = this;
     async.forEach(tasks, function (task, callback) {
         if(task && task._id != "" && task._id != null && task._id != undefined){
           var spendtime  = task.spendtime;
@@ -65,13 +66,15 @@ export default class TasksCtrl  {
                     "project_id": task.project_id ? task.project_id : data[0]._doc.project_id,
                      "activity_id": task.activity_id ? task.activity_id : data[0]._doc.activity_id,
                      "due_date": task.due_date ? task.due_date : data[0]._doc.due_date,
-                     "select": task.select ? task.select : data[0]._doc.select,
+                     "select": task && (task.select == 0 || task.select == 1 || task.select == 2 )? task.select : 0,
                      "estimate_hrs": task.estimate_hrs ? task.estimate_hrs : data[0]._doc.estimate_hrs,
                      //"actual_hrs": task.actual_hrs ? task.actual_hrs : data[0]._doc.actual_hrs,
                      "priority": task.priority ? task.priority : data[0]._doc.priority,
                      "status": task.status ? task.status : data[0]._doc.status,
                      "start_date_time": task.start_date_time ? task.start_date_time : data[0]._doc.start_date_time,
-                     "end_date_time":task.end_date_time ? task.end_date_time : data[0]._doc.end_date_time } }).exec(function (err, data3) {
+                     "end_date_time":task.end_date_time ? task.end_date_time : data[0]._doc.end_date_time,
+                      "modify_date" : current_date ,
+                       "stime" : me.toTimestamp(current_date)} }).exec(function (err, data3) {
                          if (err) {
                                count = length; 
                                task.error = err;                                       
@@ -79,6 +82,8 @@ export default class TasksCtrl  {
                                callback();
                          }
                          else {
+                              //If spendtime is not null
+                                 if(spendtime && spendtime.start_date_time != null && spendtime.start_date_time != "" && spendtime.start_date_time != undefined && spendtime.end_date_time != null && spendtime.end_date_time != "" && spendtime.end_date_time != undefined){
                                   var obj = new tasktime();
                                   obj.pid = task_id;
                                   obj.start_date_time = spendtime.start_date_time ? spendtime.start_date_time : "";
@@ -107,6 +112,12 @@ export default class TasksCtrl  {
                                           })
                                     }
                                   })
+                                }
+                                else{
+                                  dt.success = "true";
+                                  successData.successData.push(task);
+                                  callback();
+                                }
                            }
                       });
               }
@@ -126,6 +137,9 @@ export default class TasksCtrl  {
                     obj.status = task.status ? task.status : 0;
                     obj.start_date_time = task.start_date_time ? task.start_date_time : "";
                     obj.end_date_time = task.end_date_time ? task.end_date_time : "";  
+                    obj.create_date = current_date;
+                    obj.modify_date = current_date; 
+                    obj.stime = me.toTimestamp(current_date);                   
                     obj.save(function (err) {
                      if (err) {
                        count = length;
@@ -159,6 +173,9 @@ export default class TasksCtrl  {
                 obj.status = task.status ? task.status : 0;
                 obj.start_date_time = task.start_date_time ? task.start_date_time : "";
                 obj.end_date_time = task.end_date_time ? task.end_date_time : ""; 
+                obj.create_date = current_date;
+                obj.modify_date = current_date;   
+                obj.stime = me.toTimestamp(current_date);                                   
                 obj.save(function (err) {
                 if (err) {
                     count = length;
@@ -186,6 +203,14 @@ export default class TasksCtrl  {
         return;
     });
   };
+
+
+ toTimestamp(strDate){
+    var datum = Date.parse(strDate);
+    return datum/1000;
+ }
+
+
 
 /*
   @author : Vaibhav Mali 
@@ -215,7 +240,12 @@ export default class TasksCtrl  {
        model.find({ "_id": task_id }, function (err, data) {
         tasktime.find({ "pid": task_id }, function (err, data1) {
             if(data && data.length > 0){
-               resdata = data[0]._doc;
+               var assignfrom = mongoose.Types.ObjectId(data[0]._doc.assign_from);        
+               var assignto = mongoose.Types.ObjectId(data[0]._doc.assign_to);
+               var act_id = mongoose.Types.ObjectId(data[0]._doc.activity_id);    
+              empmodel.find({ "_id": assignfrom }, function (err, data4) {          
+              empmodel.find({ "_id": assignto }, function (err, data1) {
+              activities.find({ "_id": act_id }, function (err, data3) {
                async.forEach(data1, function (spendtime, callback) {
                 var dt = {};                
                 dt['start_date_time'] = spendtime.start_date_time;
@@ -226,11 +256,18 @@ export default class TasksCtrl  {
                 callback();
                }, function (err, cb) {
                   if(count >= data1.length){
+                    data[0]._doc.assign_from = data4[0]._doc;              
+                    data[0]._doc.assign_to = data1[0]._doc;
+                    data[0]._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ; 
+                    resdata = data[0]._doc; 
                     resdata['spendtimes'] = spendtimes.spendtimes;
                     res.send(resdata);                    
                   }  
                 return;
-               });
+                  });
+                })
+              })
+            })
             }
             else{
                  res.send(resdata);
@@ -321,6 +358,17 @@ export default class TasksCtrl  {
        })
         }, function (err, cb) {
         if(count >= data.length){
+          var i = 0,j = 0;
+          for (i = 0; i < tasktemp.tasks.length - 1; i++) {
+            for (j = i + 1; j < tasktemp.tasks.length; j++) {
+                var temp;
+                if (tasktemp.tasks[i].stime < tasktemp.tasks[j].stime) {
+                    temp = tasktemp.tasks[i];
+                    tasktemp.tasks[i] = tasktemp.tasks[j];
+                    tasktemp.tasks[j] = temp;
+                }
+            }
+        }
           tasks['tasks'] = tasktemp.tasks;
           res.send(tasks);
         }  
@@ -331,7 +379,7 @@ export default class TasksCtrl  {
        tasks['tasks'] = tasktemp.tasks;
        res.send(tasks);
     }          
-   });
+   }).sort({stime: -1});
  };
 }
  
@@ -415,6 +463,17 @@ getTaskDetailsByAssignTo = (req, res) => {
        })
         }, function (err, cb) {
         if(count >= data.length){
+          var i = 0,j = 0;
+          for (i = 0; i < tasktemp.tasks.length - 1; i++) {
+            for (j = i + 1; j < tasktemp.tasks.length; j++) {
+                var temp;
+                if (tasktemp.tasks[i].stime < tasktemp.tasks[j].stime) {
+                    temp = tasktemp.tasks[i];
+                    tasktemp.tasks[i] = tasktemp.tasks[j];
+                    tasktemp.tasks[j] = temp;
+                }
+            }
+        }
           tasks['tasks'] = tasktemp.tasks;
           res.send(tasks);
         }  
@@ -422,14 +481,11 @@ getTaskDetailsByAssignTo = (req, res) => {
       });  
     } 
     else{
-       tasks['tasks'] = tasktemp.tasks;
-       res.send(tasks);
+      tasks['tasks'] = tasktemp.tasks;
+      res.send(tasks);
     }          
-   });
+   }).sort({stime: -1});
  };
 }
-
-
-
 
 }

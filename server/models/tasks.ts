@@ -14,7 +14,10 @@ var taskSchema = new mongoose.Schema({
     priority : String,
     status : Number,
     start_date_time: Date,
-    end_date_time: Date
+    end_date_time: Date,
+    create_date: Date,
+    modify_date: Date,
+    stime : { type : Number }    
 });
 var tasks = mongoose.model('tasks', taskSchema);
 export default tasks;

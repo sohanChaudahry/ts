@@ -3,6 +3,8 @@ import { ToastComponent } from '../shared/toast/toast.component';
 import { ProjectService } from '../services/project.service';
 import { TaskService } from '../services/task.service';
 
+import { Observable, Subscription } from 'rxjs/Rx';
+
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { RecursiveService } from '../services/recursive.service';
@@ -30,7 +32,12 @@ interface taskFormData {
 })
 export class ProjectComponent implements OnInit {
 
-
+  
+  ticks = 0;
+  minutesDisplay: number = 0;
+  hoursDisplay: number = 0;
+  secondsDisplay: number = 0;
+  sub: Subscription;  
   public employeesToshow  :Array<any>=[];
   private value:any = {};
   private _disabledV:string = '0';
@@ -50,7 +57,7 @@ export class ProjectComponent implements OnInit {
   activityData=[{"name":"","activity_id":""}];
   activityList=[];
   addAssignTaskUserList=[];
-  projectWorkingTaskList=[];
+  projectWorkingTaskList=[];  
   statusList=[{"val":0,"name":"Assigned"},{"val":1,"name":"In Progress"},{"val":2,"name":"Completed"},{"val":3,"name":"Failed"}];
   priorityList=["P0","P1","P2","P3","P4","P5"];
   isProjectList=true;
@@ -61,6 +68,8 @@ export class ProjectComponent implements OnInit {
   isAssignedTaskEdit=false;
   isTaskCardShow=false;
   isProjectWorkingTask=false;
+  task_id = "";
+  paused = 0;
   taskFormDetail : taskFormData = {
      task_title :"",
      task_description : "",
@@ -71,12 +80,20 @@ export class ProjectComponent implements OnInit {
      due_date : new Date(),
      priority : "",
      estimate_hrs : null,
-     actual_hrs  : null,
-     status : null,
-     select : null,
-     start_date_time : new Date(),
-     end_date_time : new Date(),
   };
+  AssignedtaskFormDetail = {
+    _id:"",
+    select:0,
+    status:0,
+ //   start_date_time : new Date(),
+    //end_date_time : new Date(),
+    spendtime : {}
+ };
+ spendtime = {
+  start_date_time : new Date(),
+  end_date_time : new Date(),
+  actual_hrs : 0
+}
   getProjectForm: FormGroup;
   project_id = new FormControl('');
   project_name = new FormControl('', Validators.required);
@@ -216,6 +233,15 @@ export class ProjectComponent implements OnInit {
      this.isMyTaskEdit=true; 
      this.isTaskListView=false;
      this.isAssignProjView=false;
+     this.taskFormDetail.task_title  = "";
+     this.taskFormDetail.task_description  =  "";
+  //   this.taskFormDetail.assign_from = "";
+     this.taskFormDetail.assign_to  =  "";
+     this.taskFormDetail.project_id  = "";
+     this.taskFormDetail.activity_id  = "";
+     this.taskFormDetail.due_date  = new Date();
+     this.taskFormDetail.priority  = "";
+     this.taskFormDetail.estimate_hrs  =  null,
      this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
   }
   openProjectWorkingTask(projec_detail){
@@ -244,8 +270,10 @@ export class ProjectComponent implements OnInit {
      this.isMyTaskEdit=true; 
      this.isTaskListView=false;
      this.isAssignProjView=false;
-     this.taskFormDetail=task_detail;
+    //Vaibhav Mali 29 Dec 2017 ...Updated
+    // this.taskFormDetail=task_detail;
      this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
+     this.getTaskDetailsByTaskIdApi(task_detail._id);
   }
   backTaskListPage(){
      this.iscreateProject=false; 
@@ -258,54 +286,54 @@ export class ProjectComponent implements OnInit {
   }
  
   sendProjectFormData(){
-
-    if(this.projectDetail.project_name=='' || this.projectDetail.project_name==null || !this.projectDetail.project_name){
-      this.toast.setMessage('Project name should not be blank!', 'danger');
-      return;
-    }
-    if(this.projectDetail.desc=='' || this.projectDetail.desc==null || !this.projectDetail.desc){
-      this.toast.setMessage('Project description should not be blank!', 'danger');
-      return;
-    }
-  
-    for(var i=0;i<this.activityData.length;i++){
-      if(this.activityData[i].name=='' || this.activityData[i].name==null || !this.activityData[i].name){
-        this.toast.setMessage('Activity name should not be blank!', 'danger')
-        return;
+    
+        if(this.projectDetail.project_name=='' || this.projectDetail.project_name==null || !this.projectDetail.project_name){
+          this.toast.setMessage('Project name should not be blank!', 'danger');
+          return;
+        }
+        if(this.projectDetail.desc=='' || this.projectDetail.desc==null || !this.projectDetail.desc){
+          this.toast.setMessage('Project description should not be blank!', 'danger');
+          return;
+        }
+      
+        for(var i=0;i<this.activityData.length;i++){
+          if(this.activityData[i].name=='' || this.activityData[i].name==null || !this.activityData[i].name){
+            this.toast.setMessage('Activity name should not be blank!', 'danger')
+            return;
+          }
+        }
+        // for(var i=0;i<this.addAssignUserList.length;i++){
+        //   if(this.addAssignUserList[i].role=='' || this.addAssignUserList[i].role==null || !this.addAssignUserList[i].role || this.addAssignUserList[i].to_email=='' || 
+        //   this.addAssignUserList[i].to_email==null || !this.addAssignUserList[i].to_email){
+        //     this.toast.setMessage('Please select employee detail!', 'danger')
+        //     return;
+        //   }
+        // }
+        if(this.addAssignUserList.length==0){
+          this.toast.setMessage('Please select employee to assign project.', 'danger')
+          return;
+        }
+        this.projectDetail.email=localStorage.getItem("email") ? localStorage.getItem("email") : "";
+        this.projectDetail.role="Manager";
+        this.projectDetail.activities=this.activityData;
+        this.projectDetail.assign_to=this.addAssignUserList;
+        console.log(this.projectDetail);
+        if(this.projectDetail._id){
+            this.projectDetail.project_id=this.projectDetail._id;
+        }
+        for(var i=0;i<this.projectDetail.activities.length;i++){
+            this.projectDetail.activities[i].activity_name=this.projectDetail.activities[i].name;
+        }
+        this.projectService.saveProjectDetails({"reqData":[this.projectDetail]}).subscribe(
+          res => {
+             console.log(res);
+             this.isProjectList=true;
+             this.iscreateProject=false;
+             this.getEmployeeDetailByEmail();
+          },
+          error => this.toast.setMessage('Some thing wrong!', 'danger')
+        );
       }
-    }
-    // for(var i=0;i<this.addAssignUserList.length;i++){
-    //   if(this.addAssignUserList[i].role=='' || this.addAssignUserList[i].role==null || !this.addAssignUserList[i].role || this.addAssignUserList[i].to_email=='' || 
-    //   this.addAssignUserList[i].to_email==null || !this.addAssignUserList[i].to_email){
-    //     this.toast.setMessage('Please select employee detail!', 'danger')
-    //     return;
-    //   }
-    // }
-    if(this.addAssignUserList.length==0){
-      this.toast.setMessage('Please select employee to assign project.', 'danger')
-      return;
-    }
-    this.projectDetail.email=localStorage.getItem("email") ? localStorage.getItem("email") : "";
-    this.projectDetail.role="Manager";
-    this.projectDetail.activities=this.activityData;
-    this.projectDetail.assign_to=this.addAssignUserList;
-    console.log(this.projectDetail);
-    if(this.projectDetail._id){
-        this.projectDetail.project_id=this.projectDetail._id;
-    }
-    for(var i=0;i<this.projectDetail.activities.length;i++){
-        this.projectDetail.activities[i].activity_name=this.projectDetail.activities[i].name;
-    }
-    this.projectService.saveProjectDetails({"reqData":[this.projectDetail]}).subscribe(
-      res => {
-         console.log(res);
-         this.isProjectList=true;
-         this.iscreateProject=false;
-         this.getEmployeeDetailByEmail();
-      },
-      error => this.toast.setMessage('Some thing wrong!', 'danger')
-    );
-  }
   getAllEmployeeList() {
       this.projectService.getAllEmployee().subscribe(
         res => {
@@ -334,6 +362,23 @@ export class ProjectComponent implements OnInit {
       this.activityData=[];
       this.getProjectDetailById(selectedProject._id)
   }
+   /*
+  @author : Vaibhav Mali 
+  @date : 29 Dec 2017
+  @fn : IsFollowerExist
+  @desc :To check whether current project have followers or not.
+  */
+  IsFollowerExist(selectedProject){
+    this.projectService.getProjectDetailById(selectedProject._id).subscribe(
+      res => {
+         if(res && res.followers.length > 0) 
+           return 1;
+         else
+           return 0;
+      },
+      error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
+}
   showAssignedProjectView(selected_data){
       this.isProjectList=false;
       this.iscreateProject=false;
@@ -349,7 +394,7 @@ export class ProjectComponent implements OnInit {
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
-  
+
   craeteProjectBtn(){
       this.isProjectList=false;
       this.iscreateProject=true;
@@ -377,7 +422,7 @@ export class ProjectComponent implements OnInit {
         "project_id":this.selectedProjectDetail._id ? this.selectedProjectDetail._id : ""
       }
       this.projectService.getTaskDetailsByAssignFrom({"reqData":reqData}).subscribe(
-          res => {
+          res => {      
               if(res){
                   this.getTaskAssigedToUsList=res.tasks;
               }
@@ -398,42 +443,151 @@ export class ProjectComponent implements OnInit {
                   this.AssigedToOtherList[i].isStart=false;
                   this.AssigedToOtherList[i].isPause=false;
                   this.AssigedToOtherList[i].isFinish=false;
-                }
-            }
-            console.log(this.AssigedToOtherList);
-          },
-          error => this.toast.setMessage('Some thing wrong!', 'danger')
-      );
+                 }
+          }
+          console.log(this.AssigedToOtherList);
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+         );
   }
-  saveUpdateTaskFun(req_data){
-    this.projectService.saveUpdateTask(req_data).subscribe(
+   /*
+  @author : Vaibhav Mali 
+  @date : 29 Dec 2017
+  @fn : getTaskDetailsByTaskIdApi
+  @desc :Get task details by task id.
+  */
+  getTaskDetailsByTaskIdApi(taskId){
+    this.projectService.getTaskDetailsByTaskId(taskId).subscribe(
         res => {
           if(res){
-             return res;
+           //   this.AssigedToOtherList=res.tasks;
+           this.taskFormDetail.activity_id = res.activity_id._id;
+           this.taskFormDetail.assign_from = res.assign_from._id;
+           this.taskFormDetail.assign_to = res.assign_to._id;
+           this.taskFormDetail.estimate_hrs = res.estimate_hrs;
+           this.taskFormDetail.priority = res.priority;
+           this.taskFormDetail.task_description = res.task_description;
+           this.taskFormDetail.due_date = res.due_date;
+           this.taskFormDetail.task_title= res.task_title;
+           this.taskFormDetail.task_description = res.task_description;  
+         //  this.taskFormDetail['_id'] = res.__id;
+           this.task_id = res._id;
           }
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
+}
+ /*
+  @author : Vaibhav Mali 
+  @date : 29 Dec 2017
+  @fn : startTimer,getSeconds,getMinutes,getHours,pad,UpdateAssignedTaskDetail,startTaskFun,
+        pauseTaskFun,finishTaskFun
+  */
+private startTimer() {
+  
+    let timer = Observable.timer(1, 1000);
+       this.sub = timer.subscribe(
+             t => {
+               this.ticks = t;
+               this.secondsDisplay = this.getSeconds(this.ticks);
+               this.minutesDisplay = this.getMinutes(this.ticks);
+               this.hoursDisplay = this.getHours(this.ticks);
+          }
+      );
   }
-  startTaskFun(index){
-    this.AssigedToOtherList[index].isStart=true;
+  
+  private getSeconds(ticks: number) {
+      return this.pad(ticks % 60);
+   }
+  
+   private getMinutes(ticks: number) {
+      return this.pad((Math.floor(ticks / 60)) % 60);
+   }
+  
+  private getHours(ticks: number) {
+      return this.pad(Math.floor((ticks / 60) / 60));
+   }
+  
+  private pad(digit: any) { 
+     return digit <= 9 ? '0' + digit : digit;
   }
-  pauseTaskFun(index){
-    this.AssigedToOtherList[index].isPause=true;
-    console.log(this.AssigedToOtherList[index]);
-  }
-  finishTaskFun(index){
-    this.AssigedToOtherList[index].isFinish=true;
-    console.log(this.AssigedToOtherList[index]);
-  }
+UpdateAssignedTaskDetail(){
+  console.log(this.AssignedtaskFormDetail);
+  this.taskService.saveTaskDetail({reqData:[this.AssignedtaskFormDetail]}).subscribe(
+    res => {
+        if(res.success.successData.length!=0){
+          //this.toast.setMessage('Task add successfully!', 'success');
+          this.getTaskDetailsByAssignFromAPi()
+          this.getDetailsByAssignToApi();
+          this.iscreateProject=false; 
+          this.isProjectList=false;  
+          this.isAssignedTaskEdit=false; 
+          this.isMyTaskEdit=false; 
+          this.isTaskListView=true;
+          this.isAssignProjView=false;
+          this.isTaskCardShow=true;
+        }
+    },
+    error => this.toast.setMessage('Some thing wrong!', 'danger')
+  );
+}
+startTaskFun(task){
+  this.AssignedtaskFormDetail._id = task._id;
+  this.AssignedtaskFormDetail.status = 1;
+  this.AssignedtaskFormDetail.select = 1;
+ // this.projectService.getTaskDetailsByTaskId(task._id).subscribe(
+    //res => {
+      if(task && task.spendtimes.length > 0){
+        delete this.AssignedtaskFormDetail['start_date_time'];
+      }
+      else{
+        this.AssignedtaskFormDetail['start_date_time'] = new Date();             
+      }
+      this.startTimer();      
+      delete this.AssignedtaskFormDetail['end_date_time'];
+      this.AssignedtaskFormDetail.spendtime = {};
+      this.spendtime['start_date_time'] = new Date();
+      this.UpdateAssignedTaskDetail();
+//  })
+}
+pauseTaskFun(task){
+  this.AssignedtaskFormDetail._id = task._id;
+  this.AssignedtaskFormDetail.status = 1;
+  this.AssignedtaskFormDetail.select = 0;  
+  this.paused = 1;
+  delete this.AssignedtaskFormDetail['start_date_time'];
+  this.spendtime['end_date_time'] = new Date();
+  this.sub.unsubscribe(); 
+  this.spendtime.actual_hrs = this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600);
+  console.log(this.spendtime.actual_hrs);
+  this.AssignedtaskFormDetail.spendtime = this.spendtime;
+  this.UpdateAssignedTaskDetail();  
+}
+finishTaskFun(task){
+  this.AssignedtaskFormDetail._id = task._id;
+  this.AssignedtaskFormDetail.status = 2;
+  this.AssignedtaskFormDetail.select = 0;  
+  delete this.AssignedtaskFormDetail['start_date_time'];
+  this.AssignedtaskFormDetail['end_date_time'] = new Date(); 
+  this.spendtime['end_date_time'] = new Date();
+  this.sub.unsubscribe();   
+  this.spendtime.actual_hrs = this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600);
+  console.log(this.spendtime.actual_hrs);
+  if(this.paused == 1)
+    this.AssignedtaskFormDetail.spendtime = {};
+  else
+    this.AssignedtaskFormDetail.spendtime = this.spendtime;      
+  this.paused = 0;
+  this.UpdateAssignedTaskDetail();
+}
   addSelectedEmp(){
     if(this.searchEmpDetail.name && this.searchEmpDetail.role){
-        for(var i=0;i<this.addAssignUserList.length;i++){
-          if(this.addAssignUserList[i].name==this.searchEmpDetail.name){
-            this.toast.setMessage('Employee already selected!', 'danger');
-            return;
-          }
+      for(var i=0;i<this.addAssignUserList.length;i++){
+        if(this.addAssignUserList[i].name==this.searchEmpDetail.name){
+          this.toast.setMessage('Employee already selected!', 'danger');
+          return;
         }
+      }
         for(var i=0;i<this.employeesList.length;i++){
             if(this.employeesList[i].name==this.searchEmpDetail.name){
                 this.searchEmpDetail.to_email=this.employeesList[i].email;
@@ -447,9 +601,9 @@ export class ProjectComponent implements OnInit {
           "to_email":""
         }
         this.isEmpAutoSelect=[];
-    }else{
-      this.toast.setMessage('Please select all value!', 'danger')
-    }
+      }else{
+        this.toast.setMessage('Please select all value!', 'danger')
+      }
   }
   
   getProjectDetailById(ProdId){
@@ -618,10 +772,20 @@ export class ProjectComponent implements OnInit {
     this.taskFormDetail.activity_id=this.taskFormDetail.activity_id._id ? this.taskFormDetail.activity_id._id : this.taskFormDetail.activity_id;
     this.taskFormDetail.assign_to=this.taskFormDetail.assign_to._id ? this.taskFormDetail.assign_to._id : this.taskFormDetail.assign_to;
     this.taskFormDetail.project_id=this.selectedProjectDetail._id ? this.selectedProjectDetail._id : "";
+    // Vaibhav Mali 29 Dec 2017 ... Start
+    if(this.task_id == ""){
+      delete this.taskFormDetail['_id'];
+    }
+    else{
+      this.taskFormDetail['_id'] = this.task_id;
+    }
+    this.taskFormDetail['spendtime'] = {};
     console.log(this.taskFormDetail);
+    // Vaibhav Mali 29 Dec 2017 ...End
     this.taskService.saveTaskDetail({reqData:[this.taskFormDetail]}).subscribe(
       res => {
           if(res.success.successData.length!=0){
+            this.task_id = "";
             this.toast.setMessage('Task add successfully!', 'success');
             this.getTaskDetailsByAssignFromAPi()
             this.getDetailsByAssignToApi();

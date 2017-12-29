@@ -46,6 +46,10 @@ export class ProjectService {
   getDetailsByAssignTo(reqData): Observable<any> {
     return this.http.post('/api/tasks/getDetailsByAssignTo', JSON.stringify(reqData), this.options).map(res => res.json());
   } 
+  //Vaibhav Mali 29 Dec 2017
+  getTaskDetailsByTaskId(taskId): Observable<any> {
+    return this.http.get(`/api/tasks/getdetails/${taskId}`,this.options).map(res => res.json());
+  } 
   saveUpdateTask(reqData): Observable<any> {
     return this.http.post('/api/tasks/save_update_Tasks', JSON.stringify(reqData), this.options).map(res => res.json());
   } 

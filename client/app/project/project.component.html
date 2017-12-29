@@ -2,7 +2,7 @@
     <app-loading [condition]="isLoading"></app-loading>
     <app-toast [message]="toast.message"></app-toast>
     <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-      <div class="card-header hearder_btn">
+        <div class="card-header hearder_btn">
         <span class="custom_span_header">My Project</span>
         <button class="btn btn-sm btn-primary header_btn" (click)="craeteProjectBtn()">Create Project</button> 
       </div>
@@ -45,7 +45,7 @@
       </div>
     </div>
     <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-      <div class="card-header">
+        <div class="card-header">
         <span class="custom_span_header">Assigned Project</span>
       </div>
       <div class="card-block">
@@ -87,21 +87,21 @@
       </div>
     </div>
     <div class="card " *ngIf="iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-       <app-loading [condition]="isLoading1"></app-loading>
-       <div class="card-header">
-            <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
+        <app-loading [condition]="isLoading1"></app-loading>
+         <div class="card-header">
+        <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
        </div>
         <div class="ctm_form">
           <br>
           <div class="row">
               <div class="col-md-1"></div>
               <div class="col-md-10">
-                 <div class="form-group">
+                <div class="form-group">
                    <label>Project Name</label>
                    <input class="form-control" type="text" name="project_name" [(ngModel)]="projectDetail.project_name" placeholder="Project Name">
                   </div>
               </div>
-              <!-- <div class="col-md-5">
+             <!-- <div class="col-md-5">
                  <div class="form-group">
                    <label>Role</label>
                    <select class="form-control" name="role" [(ngModel)]="projectDetail.role">
@@ -192,25 +192,25 @@
                           <div class="col-md-5">Selected Employees</div>
                           <div class="col-md-5">Role</div>
                           <div class="col-md-2" style="text-align:right;padding-right: 7%;">Action</div>
-                    </div>
+                        </div>
                      <div *ngIf="addAssignUserList.length==0" class="city-data-div user_table">
                          <div class="col-md-4"></div>
-                        <div class="col-md-8">No employee selected for assign project.</div>
-                    </div> 
+                         <div class="col-md-8">No employee selected for assign project.</div>
+                        </div> 
                     <div *ngIf="addAssignUserList.length!=0" >
                     <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
                         <div class="col-md-5">{{user.name}}</div>
                         <div class="col-md-5">{{user.role}}</div>
                         <div class="col-md-1" (click)="removeAssignUserFun(user,projectDetail)" style="padding-left:5%;color:red">
                             <i class="fa fa-times" aria-hidden="true"></i>
-                        </div>
-                        <div class="col-md-1" style="color: blue;" (click)="openProjectWorkingTask(projectDetail)">
+                        </div>    
+                         <div class="col-md-1" style="color: blue;" (click)="openProjectWorkingTask(projectDetail)">
                             <i class="fa fa-tasks" aria-hidden="true"></i>
                         </div>
-                    </div>   
-                    </div> 
                 </div>
             </div>
+           </div>
+         </div>
             <div class="col-md-1"></div>
           </div>
           <div class="row">
@@ -224,7 +224,7 @@
         </div>
      </div>
      <div class="card " *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-       <div class="card-header">
+        <div class="card-header">
         <span class="custom_span_header">View Project Detail</span>
        </div>
         <div class="ctm_form">
@@ -275,55 +275,55 @@
             </div>
             <br>
         </div>
-      </div>
-        <!-- ProjectWorkingTask -->
-        <div class="card " *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && isProjectWorkingTask">
-            <app-loading [condition]="isLoading"></app-loading>
-            <div class="card-header">
-                    <span class="custom_span_header">Employee status</span>
-            </div>
-            <div class="card-block">
-                <div class="table-responsive custom_table">
-                    <table class="table table-bordered">
-                        <thead class="thead-default">
-                            <tr>
-                            <th width="22%">Task</th>
-                            <th width="15%">Title</th>
-                            <th width="15%">Description</th>
-                            <th width="15%">Actual Hours</th>
-                            <th width="15%">Last Seen</th>
-                            </tr>
-                        </thead>
-                        <tbody *ngIf="projectWorkingTaskList.length == 0">
-                            <tr>
-                            <td colspan="5">There are no record in the DB.</td>
-                            </tr>  
-                        </tbody>
-                        <tbody>
-                            <tr *ngFor="let emp of projectWorkingTaskList">
+     </div>
+      <!-- ProjectWorkingTask -->
+      <div class="card " *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && isProjectWorkingTask">
+        <app-loading [condition]="isLoading"></app-loading>
+        <div class="card-header">
+                <span class="custom_span_header">Employee status</span>
+        </div>
+        <div class="card-block">
+            <div class="table-responsive custom_table">
+                <table class="table table-bordered">
+                    <thead class="thead-default">
+                        <tr>
+                        <th width="22%">Task</th>
+                        <th width="15%">Title</th>
+                        <th width="15%">Description</th>
+                        <th width="15%">Actual Hours</th>
+                        <th width="15%">Last Seen</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="projectWorkingTaskList.length == 0">
+                        <tr>
+                        <td colspan="5">There are no record in the DB.</td>
+                        </tr>  
+                    </tbody>
+                    <tbody>
+                        <tr *ngFor="let emp of projectWorkingTaskList">
+                        <td>
+                            <span>{{emp.project_name}}</span>
+                        </td>
                             <td>
-                                <span>{{emp.project_name}}</span>
-                            </td>
-                                <td>
-                                <span>{{emp.desc}}</span>
-                            </td>
-                                <td>
-                                <span>{{emp.role}}</span>
-                            </td>
-                            </tr> 
-                        </tbody>  
-                    </table>
-                </div>
+                            <span>{{emp.desc}}</span>
+                        </td>
+                            <td>
+                            <span>{{emp.role}}</span>
+                        </td>
+                        </tr> 
+                    </tbody>  
+                </table>
             </div>
-    </div>
+        </div>
+</div>
      <!--list task -->
      <div *ngIf="!isProjectList && isTaskCardShow">
         <!--<div style="height: 40px;background: #f5f5f5;border: 1px solid #ddd;">
             <span style="font-size: 18px;font-weight: 500;">Tasks</span>
         </div>-->
         <div class="custom_hd ctm_hd_task">
-          <span class="custom_span_header">Tasks</span>
-          <span class="custom_back_btn">
+            <span class="custom_span_header">Tasks</span>
+         <span class="custom_back_btn">
               <button class="btn btn-sm btn-success" (click)="backTaskListPage()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
           </span>
         </div>
@@ -371,6 +371,9 @@
         <div class="card"  *ngIf="!iscreateProject && !isProjectList && !isAssignProjView  && !isAssignedTaskEdit && !isMyTaskEdit && isTaskListView && isTaskCardShow">
             <div class="card-header">
                 <span class="custom_span_header">Assigned Task</span>
+                <button class="btn btn-sm btn-primary" style="float:right;margin-right:10px"> :{{secondsDisplay}}</button>                
+                <button class="btn btn-sm btn-primary" style="float:right;margin-right:2px"> :{{minutesDisplay}}</button>                
+                <button class="btn btn-sm btn-primary" style="float:right;margin-right:2px">{{hoursDisplay}}</button>
             </div>
             <div class="card-block">
                 <div class="table-responsive custom_table">
@@ -400,9 +403,9 @@
                                 <span>{{task.due_date | date}}</span>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-danger" (click)="startTaskFun(i)"><i class="fa fa-play" aria-hidden="true"></i></button> 
-                                <button class="btn btn-sm btn-warning" (click)="pauseTaskFun(i)"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
-                                <button class="btn btn-sm btn-primary" (click)="finishTaskFun(i)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button> 
+                                <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
+                                <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="pauseTaskFun(task)"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
+                                <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2)" (click)="finishTaskFun(task)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
                             </td>  
                         </tr> 
                     </tbody>  
@@ -436,11 +439,11 @@
                     <div class="row">
                         <div class="col-md-1"></div>
                             <div class="col-md-5">
-                                <label>Activities</label>
-                                <select class="form-control" [(ngModel)]="taskFormDetail.activity_id">
-                                    <option [ngValue]="act.activity_id" *ngFor="let act of activityList;"  placeholder="Select Activities">{{act.name}}</option>
-                                </select>
-                            </div>
+                                    <label>Activities</label>
+                                    <select class="form-control" [(ngModel)]="taskFormDetail.activity_id">
+                                        <option [ngValue]="act.activity_id" *ngFor="let act of activityList;"  placeholder="Select Activities">{{act.name}}</option>
+                                    </select>
+                                </div>
                             <div class="col-md-5">
                                 <label class="Assign">Assign To</label>
                                 <select class="form-control" [(ngModel)]="taskFormDetail.assign_to">
