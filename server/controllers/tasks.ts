@@ -256,7 +256,19 @@ export default class TasksCtrl  {
                 callback();
                }, function (err, cb) {
                   if(count >= data1.length){
-                    data[0]._doc.assign_from = data4[0]._doc;              
+                    data[0]._doc.assign_from = data4[0]._doc;    
+                     if(Math.ceil(parseFloat(data[0]._doc.actual_hrs)) === data[0]._doc.actual_hrs){
+                      data[0]._doc.actual_hrs = data[0]._doc.actual_hrs + " : 0 : 0 ";
+                    }
+                    else{
+                     console.log("actual: " + data[0]._doc.actual_hrs)                          
+                     var hours =  Math.floor(data[0]._doc.actual_hrs);
+                     var temp = parseFloat(data[0]._doc.actual_hrs) - Math.floor(parseFloat(data[0]._doc.actual_hrs));
+                     var minutes = parseInt(((temp *3600)/60).toString());
+                     var seconds =  parseInt((temp * 3600).toString()) - (minutes * 60);
+                     data[0]._doc.actual_hrs = (parseInt(hours.toString()) <= 9 ? "0" + hours : hours )+ " : " +(parseInt(minutes.toString()) <= 9 ? "0" + minutes : minutes )  + " : " + (parseInt(seconds.toString()) <= 9 ? "0" + seconds : seconds );
+                     console.log("Converted: " + data[0]._doc.actual_hrs)                                
+                   }          
                     data[0]._doc.assign_to = data1[0]._doc;
                     data[0]._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ; 
                     resdata = data[0]._doc; 
@@ -335,7 +347,19 @@ export default class TasksCtrl  {
                     callback();
                    }, function (err, cb) {
                       if(count1 >= data6.length){
-                        task._doc.assign_from = data4[0]._doc;              
+                        task._doc.assign_from = data4[0]._doc;  
+                        if(Math.ceil(parseFloat(task._doc.actual_hrs)) === task._doc.actual_hrs){
+                           task._doc.actual_hrs = task._doc.actual_hrs + " : 0 : 0 ";
+                        }
+                        else{
+                          console.log("actual: " + task._doc.actual_hrs)                          
+                          var hours =  Math.floor(task._doc.actual_hrs);
+                          var temp = parseFloat(task._doc.actual_hrs) - Math.floor(parseFloat(task._doc.actual_hrs));
+                          var minutes = parseInt(((temp *3600)/60).toString());
+                          var seconds =  parseInt((temp * 3600).toString()) - (minutes * 60);
+                          task._doc.actual_hrs = (parseInt(hours.toString()) <= 9 ? "0" + hours : hours )+ " : " +(parseInt(minutes.toString()) <= 9 ? "0" + minutes : minutes )  + " : " + (parseInt(seconds.toString()) <= 9 ? "0" + seconds : seconds );
+                          console.log("Converted: " + task._doc.actual_hrs)                                
+                        }
                         task._doc.assign_to = data1[0]._doc;
                          task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
                         task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;  
@@ -440,7 +464,19 @@ getTaskDetailsByAssignTo = (req, res) => {
                     callback();
                    }, function (err, cb) {
                       if(count1 >= data6.length){
-                        task._doc.assign_from = data4[0]._doc;              
+                        task._doc.assign_from = data4[0]._doc;    
+                        if(Math.ceil(parseFloat(task._doc.actual_hrs)) === task._doc.actual_hrs){
+                          task._doc.actual_hrs = task._doc.actual_hrs + " : 0 : 0 ";
+                        }
+                        else{
+                         console.log("actual: " + task._doc.actual_hrs)                          
+                         var hours =  Math.floor(task._doc.actual_hrs);
+                         var temp = parseFloat(task._doc.actual_hrs) - Math.floor(parseFloat(task._doc.actual_hrs));
+                         var minutes = parseInt(((temp *3600)/60).toString());
+                         var seconds =  parseInt((temp * 3600).toString()) - (minutes * 60);
+                         task._doc.actual_hrs = (parseInt(hours.toString()) <= 9 ? "0" + hours : hours )+ " : " +(parseInt(minutes.toString()) <= 9 ? "0" + minutes : minutes )  + " : " + (parseInt(seconds.toString()) <= 9 ? "0" + seconds : seconds );
+                         console.log("Converted: " + task._doc.actual_hrs)                                
+                        }          
                         task._doc.assign_to = data1[0]._doc;
                          task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
                         task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;  
