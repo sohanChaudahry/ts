@@ -66,6 +66,7 @@ export class ProjectComponent implements OnInit {
   iscreateProject=false;
   isAssignProjView=false;
   isMyTaskEdit=false; 
+  isShowAssignedTask=true;
   isTaskListView=false; 
   isAssignedTaskEdit=false;
   isTaskCardShow=false;
@@ -248,7 +249,8 @@ export class ProjectComponent implements OnInit {
     this.iscreateProject=false;
     this.isAssignProjView=false;
   }
-  openTaskListPage(project_detail){
+  openTaskListPage(project_detail,flag){
+     this.isShowAssignedTask=flag;
      this.selectedProjectDetail=project_detail;
      this.iscreateProject=false; 
      this.isProjectList=false;  
@@ -269,7 +271,6 @@ export class ProjectComponent implements OnInit {
      this.isAssignProjView=false;
 
     //  this.reSetTaskFormValue();
-
      this.taskFormDetail.task_title  = "";
      this.taskFormDetail.task_description  =  "";
      this.taskFormDetail.assign_to  =  "";
@@ -280,14 +281,14 @@ export class ProjectComponent implements OnInit {
      this.taskFormDetail.estimate_hrs  =  null,
      this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
   }
-  openProjectWorkingTask(projec_detail){
+  openProjectWorkingTask(projec_detail,selected_follower){
     this.isProjectList=false;
     this.iscreateProject=false;
     this.isAssignProjView=false;
     this.isProjectWorkingTask=true;
     let req_data={
         reqData:{
-          employee_id : projec_detail.employee_id ? projec_detail.employee_id : "",
+          employee_id : selected_follower.employee_id ? selected_follower.employee_id : "",
           project_id : projec_detail._id ? projec_detail._id :""
         }
     }
@@ -307,8 +308,9 @@ export class ProjectComponent implements OnInit {
      this.isTaskListView=false;
      this.isAssignProjView=false;
     //  this.taskFormDetail=task_detail;
-     this.taskFormDetail.assign_to=this.taskFormDetail.assign_to._id ? this.taskFormDetail.assign_to._id : this.taskFormDetail.assign_to ;
-     this.taskFormDetail.activity_id=this.taskFormDetail.activity_id._id ? this.taskFormDetail.activity_id._id : this.taskFormDetail.activity_id ;
+  
+    this.taskFormDetail.assign_to=task_detail.assign_to._id ? task_detail.assign_to._id : task_detail.assign_to ;
+    this.taskFormDetail.activity_id=task_detail.activity_id._id ? task_detail.activity_id._id : task_detail.activity_id ;
     //Vaibhav Mali 29 Dec 2017 ...Updated
     // this.taskFormDetail=task_detail;
      this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
@@ -396,6 +398,10 @@ export class ProjectComponent implements OnInit {
        this.projectService.deleteProject(selected_project._id).subscribe(
         res => {
           console.log(res);
+          if(res){
+            this.toast.setMessage('Project deleted successfully!', 'success');
+            this.getEmployeeDetailByEmail();
+          }
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
@@ -522,7 +528,7 @@ export class ProjectComponent implements OnInit {
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
-}
+  }
  /*
   @author : Vaibhav Mali 
   @date : 29 Dec 2017
@@ -530,8 +536,8 @@ export class ProjectComponent implements OnInit {
         pauseTaskFun,finishTaskFun
   */
 private startTimer() {
-  
-    let timer = Observable.timer(1, 1000);
+    
+  let timer = Observable.timer(1, 1000);
        this.sub = timer.subscribe(
              t => {
                this.ticks = t;
@@ -815,8 +821,8 @@ finishTaskFun(task){
   saveTaskDetail(){
     let id=localStorage.getItem("_id") ? localStorage.getItem("_id") : "";  
     this.taskFormDetail.assign_from=id;
-    this.taskFormDetail.activity_id=this.taskFormDetail.activity_id._id ? this.taskFormDetail.activity_id._id : this.taskFormDetail.activity_id;
-    this.taskFormDetail.assign_to=this.taskFormDetail.assign_to._id ? this.taskFormDetail.assign_to._id : this.taskFormDetail.assign_to;
+    this.taskFormDetail.activity_id=this.taskFormDetail.activity_id.activity_id ? this.taskFormDetail.activity_id.activity_id : this.taskFormDetail.activity_id;
+    this.taskFormDetail.assign_to=this.taskFormDetail.assign_to.employee_id ? this.taskFormDetail.assign_to.employee_id : this.taskFormDetail.assign_to;
     this.taskFormDetail.project_id=this.selectedProjectDetail._id ? this.selectedProjectDetail._id : "";
     // Vaibhav Mali 29 Dec 2017 ... Start
     if(this.task_id == ""){
@@ -855,8 +861,8 @@ finishTaskFun(task){
     // Vaibhav Mali 29 Dec 2017 ...End
     this.taskService.saveTaskDetail({reqData:[this.taskFormDetail]}).subscribe(
       res => {
+           this.task_id = "";
           if(res.success.successData.length!=0){
-            this.task_id = "";
             this.toast.setMessage('Task add successfully!', 'success');
             this.getTaskDetailsByAssignFromAPi()
             this.getDetailsByAssignToApi();
