@@ -72,7 +72,7 @@ export class ProjectComponent implements OnInit {
   isTaskCardShow=false;
   isProjectWorkingTask=false;
   task_id = "";
-  paused = 0;
+  paused = 0;  
   taskFormDetail : taskFormData = {
      task_title :"",
      task_description : "",
@@ -558,6 +558,7 @@ private startTimer() {
                this.secondsDisplay = this.getSeconds(this.ticks);
                this.minutesDisplay = this.getMinutes(this.ticks);
                this.hoursDisplay = this.getHours(this.ticks);
+               console.log(this.hoursDisplay + " : " + this.minutesDisplay + " : " + this.secondsDisplay);
           }
       );
   }

@@ -60,9 +60,10 @@
         <table class="table table-bordered">
             <thead class="thead-default">
               <tr>
-                <th width="22%">Project Name</th>
-                <th width="46%">Description</th>
-                <th width="22%">Action</th>
+                <th width="24%">Project Name</th>
+                <th width="50%">Description</th>
+                <th width="11%">Role</th>
+                <th width="15%">Action</th>
               </tr>
             </thead>
             <tbody *ngIf="AssignedProjectsList.length == 0">
@@ -77,6 +78,9 @@
                 </td>
                 <td>
                     <span>{{project.desc}}</span>
+                </td>
+                <td>
+                    <span>{{project.role}}</span>
                 </td>
                 <td>
                     <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
@@ -298,10 +302,11 @@
                         <thead class="thead-default">
                             <tr>
                                 <th width="15%">Task Title</th>
-                                <th width="40%">Description</th>
+                                <th width="30%">Description</th>
                                 <th width="10%">Estimate Hours</th>
                                 <th width="15%">Actual Hours</th>
                                 <th width="20%">Last Seen</th>
+                                <th width="10%">Status</th>
                             </tr>
                         </thead>
                         <tbody *ngIf="projectWorkingTaskList.length == 0">
@@ -315,7 +320,10 @@
                                 <td> {{task.task_description}} </td>
                                 <td>{{task.estimate_hrs}} </td>
                                 <td>{{task.actual_hrs}} </td>
-                                <td>{{task.seen_time ? ( task.seen_time | date : " MMM d, y h:mm:ss a" ) : "Not seen"}} </td>     
+                                <td>{{task.seen_time ? ( task.seen_time | date : " MMM d, y h:mm:ss a" ) : "Not seen"}} </td>   
+                                <td *ngIf = "task.status == 0">{{"Pending"}} </td>       
+                                <td *ngIf = "task.status == 1">{{"In progress"}} </td>       
+                                <td *ngIf = "task.status == 2">{{"Completed"}} </td>       
                             </tr> 
                         </tbody>  
                     </table>
@@ -344,7 +352,8 @@
                         <thead class="thead-default">
                             <tr>   
                             <th width="22%">Task Name</th>
-                            <th width="55%">Task Description</th>
+                            <th width="35%">Task Description</th>
+                            <th width="20%">Assign To</th>
                             <th width="15%">Due Date</th>
                             <th width="8%">Action</th>
                             </tr>
@@ -361,6 +370,9 @@
                             </td>
                             <td>
                                 <span>{{task.task_description}}</span>
+                            </td>
+                            <td>
+                                <span>{{task.assign_to.name}}</span>
                             </td>
                             <td>
                                 <span>{{task.due_date | date}}</span>
@@ -386,15 +398,17 @@
                  <table class="table table-bordered">
                     <thead class="thead-default">
                         <tr> 
-                            <th width="22%">Task Name</th>
-                            <th width="43%">Task Description</th>
-                            <th width="15%">Due Date</th> 
-                            <th width="20%">Action</th>
+                            <th width="17%">Task Name</th>
+                            <th width="30%">Task Description</th>
+                            <th width="15%">Assign From</th>
+                            <th width="15%">Actual Hours</th>
+                            <th width="10%">Due Date</th> 
+                            <th width="18%">Action</th>
                         </tr>
                     </thead>
                     <tbody *ngIf="AssigedToOtherList.length==0">
                         <tr>
-                            <td colspan="5">There are no task in the DB. Add a new task.</td>
+                            <td colspan="6">There are no task in the DB. Add a new task.</td>
                         </tr>  
                     </tbody>
                     <tbody>
@@ -406,12 +420,18 @@
                                 <span>{{task.task_description}}</span>
                             </td>
                             <td>
+                                <span>{{task.assign_from.name}}</span>
+                            </td>
+                            <td>
+                                <span>{{task.actual_hrs}}</span>
+                            </td>
+                            <td>
                                 <span>{{task.due_date | date}}</span>
                             </td>
                             <td>
                                 <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
                                 <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="pauseTaskFun(task)"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
-                                <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2)" (click)="finishTaskFun(task)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
+                                <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="finishTaskFun(task)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
                             </td>  
                         </tr> 
                     </tbody>  
