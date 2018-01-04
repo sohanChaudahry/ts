@@ -92,7 +92,7 @@
           <div class="card card_ctm">
             <div class="card-body" style="margin: 20px;height: 140px;">
               <h5 class="card-title" style="color:green;">{{task_detail.name}}
-                  <i class="fa fa-briefcase" aria-hidden="true" style="float: right;color:black;" (click)="openTaskListDialog()"></i>
+                  <i class="fa fa-tasks" aria-hidden="true" style="float: right;color:black;" (click)="openTaskListDialog()"></i>
               </h5>
               <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
             </div>
@@ -103,7 +103,7 @@
       </div>
       <div *ngIf="taskList.length==0" style="margin: 20px;">
           <span style="margin-left: 40%;">No record available in DB.</span>
-       </div>
+      </div>
       <div class="row">
         <div class="col-md-10"></div>
         <div class="col-md-2">
