@@ -19,5 +19,7 @@ var taskSchema = new mongoose.Schema({
     modify_date: Date,
     stime : { type : Number }    
 });
+var mongoosePaginate = require('mongoose-paginate');
+taskSchema.plugin(mongoosePaginate);
 var tasks = mongoose.model('tasks', taskSchema);
 export default tasks;

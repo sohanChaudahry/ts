@@ -10,5 +10,7 @@ var reqJoinSchema = new mongoose.Schema({
     create_date : Date,
     modify_date: Date
 });
+var mongoosePaginate = require('mongoose-paginate');
+reqJoinSchema.plugin(mongoosePaginate);
 var user_accept = mongoose.model('user_accept', reqJoinSchema);
 export default user_accept;
