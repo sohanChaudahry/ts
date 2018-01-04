@@ -1,5 +1,6 @@
 import Tasks from '../models/tasks';
 import tasktime from '../models/tasktime';
+import followers from '../models/followers';
 
 
 var async = require("async");
@@ -82,6 +83,8 @@ export default class TasksCtrl  {
                                callback();
                          }
                          else {
+                              var project_id = mongoose.Types.ObjectId(task.project_id);
+                              followers.findOneAndUpdate({ "email": req.user.emails[0].value,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data11) {
                               //If spendtime is not null
                                  if(spendtime && spendtime.start_date_time != null && spendtime.start_date_time != "" && spendtime.start_date_time != undefined && spendtime.end_date_time != null && spendtime.end_date_time != "" && spendtime.end_date_time != undefined){
                                   var obj = new tasktime();
@@ -118,6 +121,7 @@ export default class TasksCtrl  {
                                   successData.successData.push(task);
                                   callback();
                                 }
+                              })
                            }
                       });
               }
@@ -139,7 +143,9 @@ export default class TasksCtrl  {
                     obj.end_date_time = task.end_date_time ? task.end_date_time : "";  
                     obj.create_date = current_date;
                     obj.modify_date = current_date; 
-                    obj.stime = me.toTimestamp(current_date);                   
+                    obj.stime = me.toTimestamp(current_date);   
+                    var project_id = mongoose.Types.ObjectId(task.project_id);
+                    followers.findOneAndUpdate({ "email": req.user.emails[0].value,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data4) {
                     obj.save(function (err) {
                      if (err) {
                        count = length;
@@ -153,6 +159,8 @@ export default class TasksCtrl  {
                         callback();
                      }
                    });
+
+                  })
                  }
   
             })
@@ -175,7 +183,9 @@ export default class TasksCtrl  {
                 obj.end_date_time = task.end_date_time ? task.end_date_time : ""; 
                 obj.create_date = current_date;
                 obj.modify_date = current_date;   
-                obj.stime = me.toTimestamp(current_date);                                   
+                obj.stime = me.toTimestamp(current_date);   
+                var project_id = mongoose.Types.ObjectId(task.project_id);
+                followers.findOneAndUpdate({ "email": req.user.emails[0].value,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data4) {
                 obj.save(function (err) {
                 if (err) {
                     count = length;
@@ -189,6 +199,7 @@ export default class TasksCtrl  {
                     callback();
                  }
                 });
+              })
          }
   
       count = count + 1;
