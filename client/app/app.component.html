@@ -7,14 +7,17 @@
       <a routerLink="/home" class="nav-item nav-link ctm_menu_link" *ngIf = "check_login_status()" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
         <i class="fa fa-home"></i> Home
       </a>
-      <a routerLink="/login" class="nav-item nav-link ctm_menu_link"  *ngIf = "!check_login_status()" routerLinkActive="active" >
+      <a routerLink="/login" class="nav-item nav-link ctm_menu_link"  *ngIf = "!check_login_status()" routerLinkActive="active">
         <i class="fa fa-sign-in"></i> Login
       </a>
-      <a routerLink="/project" style="color:green" class="nav-item nav-link ctm_menu_link" *ngIf = "check_project_requests() && check_login_status()" routerLinkActive="active">
+      <a routerLink="/project" style="color:green" class="nav-item nav-link ctm_menu_link" *ngIf="check_project_requests() && check_login_status()" routerLinkActive="active">
         <i class="fa fa-registered" aria-hidden="true"></i> Projects
       </a>
       <a routerLink="/project" class="nav-item nav-link ctm_menu_link" *ngIf = "!check_project_requests() && check_login_status()" routerLinkActive="active">
         <i class="fa fa-registered" aria-hidden="true"></i> Projects
+      </a>
+      <a routerLink="/employee" class="nav-item nav-link ctm_menu_link" *ngIf = "!check_project_requests() && check_login_status()" routerLinkActive="active">
+        <i class="fa fa-user" aria-hidden="true"></i> Employees
       </a>
       <a routerLink="/profile" class="nav-item nav-link ctm_menu_link" *ngIf="check_login_status()" routerLinkActive="active">
         <i class="fa fa-user-circle" aria-hidden="true"></i> Profile</a>

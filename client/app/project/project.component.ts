@@ -44,6 +44,7 @@ export class ProjectComponent implements OnInit {
   private _disabledV:string = '0';
   private disabled:boolean = false;
   isLoading=false;
+  isLoading1=false;
   employeesList=[];
   projectList=[];
   isEmpAutoSelect=[];
@@ -54,7 +55,7 @@ export class ProjectComponent implements OnInit {
   AssigedToOtherList=[];
   getTaskAssigedToUsList=[];
   selected_proj_delete={};
-  roleList=["Manager","Developer","Tester"];
+  roleList=["Developer","Tester"];
   addAssignUserList=[];
   activityData=[{"name":"","activity_id":""}];
   activityList=[];
@@ -381,16 +382,18 @@ export class ProjectComponent implements OnInit {
     for(var i=0;i<this.projectDetail.activities.length;i++){
         this.projectDetail.activities[i].activity_name=this.projectDetail.activities[i].name;
     }
+    this.isLoading1=true;
     this.projectService.saveProjectDetails({"reqData":[this.projectDetail]}).subscribe(
       res => {
+         this.isLoading1=false;
          console.log(res);
          if(res.successProjects.successData.length!=0){
-          this.isProjectList=true;
-          this.iscreateProject=false;
-          this.toast.setMessage('Project saved successfully!', 'success')
-          this.getEmployeeDetailByEmail();
+            this.isProjectList=true;
+            this.iscreateProject=false;
+            this.toast.setMessage('Project saved successfully!', 'success')
+            this.getEmployeeDetailByEmail();
          }else if(res.failedProjects.failedData.length!=0){
-          this.toast.setMessage('Project create failed.', 'danger')
+            this.toast.setMessage('Project create failed.', 'danger')
          }
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
@@ -444,7 +447,7 @@ export class ProjectComponent implements OnInit {
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
-}
+  }
   showAssignedProjectView(selected_data){
       this.isProjectList=false;
       this.iscreateProject=false;
@@ -460,7 +463,6 @@ export class ProjectComponent implements OnInit {
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
-
   craeteProjectBtn(){
       this.isProjectList=false;
       this.iscreateProject=true;

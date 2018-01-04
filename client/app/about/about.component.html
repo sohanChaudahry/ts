@@ -1,12 +1,132 @@
 <app-loading [condition]="isLoading"></app-loading>
 
 <app-toast [message]="toast.message"></app-toast>
-
-<div class="card">
-  <div class="card-header">
-    <span class="custom_span_header">Home Page</span>
+<div *ngIf="isShowproject && !isShowList" style="height: 350px;">
+    <div class="home_header nav_header" style="height:52px;background-color: #d6e1ea;">
+        <div> 
+          <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <!-- (employeeDetail.MyProjects.length!=0 ? employeeDetail.MyProjects.length : "")
+                (employeeDetail.AcceptedProjects.length!=0 ? employeeDetail.AcceptedProjects.length : "")
+              (employeeDetail.RequestedProjects.length!=0 ? employeeDetail.RequestedProjects.length : "") -->
+                <a class="nav-link active" (click)="openMyProject()">My Project ({{myProjectList.length}})</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" (click)="openAcceptedProject()">Accepted Project ({{AcceptedProjectList.length}})</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" (click)="openRequestedProject()">Requested Project ({{RequestedProjectList.length}})</a>
+              </li>
+            </ul>
+        </div>
+    </div>
+    <div *ngFor="let project_detail of projectList">
+        <div class="card card_ctm">
+          <div class="card-body" style="margin: 20px;height: 140px;">
+            <h5 class="card-title" style="color:green;">{{project_detail.name}}
+                <i class="fa fa-briefcase" aria-hidden="true" style="float:right;color:black" (click)="openProjectListDialog()"></i>
+            </h5>
+            <!-- {{project_detail.desc}} 
+            {{project_detail.role}}-->
+            <p class="card-text">We use a large block of connected links for our pagination, making links hard to miss and easily scalable—all while providing large hit areas.</p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Role : Developer</li>
+          </ul>
+          <div class="card-body" style="margin: 20px;">
+            <a class="card-link" style="color:blue;cursor: pointer;" (click)="openProjectListDialog()">Tasks</a>
+          </div>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-md-10"></div>
+      <div class="col-md-2">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li class="page-item">
+                <a class="page-link" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+              <li class="page-item"><a class="page-link">1</a></li>
+              <li class="page-item"><a class="page-link">2</a></li>
+              <li class="page-item"><a class="page-link">3</a></li>
+              <li class="page-item">
+                <a class="page-link" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+    </div>
+</div>
+<div *ngIf="!isShowproject && isShowList">
+  <div class="home_header" style="height:52px;background-color: #d6e1ea;">
+    <div class="row"> 
+      <div class="col-md-11">
+          <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" (click)="openAllTasks()">All Tasks (3)</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" (click)="openCompletedTasks()">Completed Tasks (3)</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" (click)="openCommingTasks()">Comming Tasks (3)</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" (click)="openRunningTasks()">Running Tasks (3)</a>
+              </li>
+            </ul>
+      </div>
+      <!-- <span>Project 1 </span>
+      <i class="fa fa-briefcase" aria-hidden="true" style="color:black;font-size: 20px;" (click)="openProjectListDialog()"></i> -->
+      <!-- <span style="float: right;">Tasks(3)</span> -->
+      <span class="col-md-1">
+        <button class="btn btn-sm btn-success" (click)="backBtn()" style="margin-top: 3px;"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
+      </span>
+    </div>
   </div>
-  <div class="card-block">
-    <h3>Welcome to Track Status!!</h3>
+  <div *ngIf="taskList.length!=0">
+      <div *ngFor="let task_detail of taskList">
+          <div class="card card_ctm">
+            <div class="card-body" style="margin: 20px;height: 140px;">
+              <h5 class="card-title" style="color:green;">{{task_detail.name}}
+                  <i class="fa fa-briefcase" aria-hidden="true" style="float: right;color:black;" (click)="openTaskListDialog()"></i>
+              </h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Role : Developer</li>
+            </ul>
+          </div>
+      </div>
+      <div class="row">
+        <div class="col-md-10"></div>
+        <div class="col-md-2">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                  <li class="page-item">
+                    <a class="page-link" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                      <span class="sr-only">Previous</span>
+                    </a>
+                  </li>
+                  <li class="page-item"><a class="page-link">1</a></li>
+                  <li class="page-item"><a class="page-link">2</a></li>
+                  <li class="page-item"><a class="page-link">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                      <span class="sr-only">Next</span>
+                    </a>
+                  </li>
+                </ul>
+            </nav>
+        </div>
+      </div>
   </div>
 </div>

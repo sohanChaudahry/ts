@@ -1,0 +1,23 @@
+.card {
+        width: 20%;margin: 10px;box-shadow: 0 8px 17px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .15);
+}
+.home_header{
+    height: 40px;
+    background-color: #0275d8;
+    margin-left: 10px;
+    padding: 10px;
+    span{
+        color: white;
+        font-size: 18px;
+    }
+}
+.card_ctm{
+    width: 20%;margin: 10px;box-shadow: 0 8px 17px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .15);
+    height: 300px;
+    .card-body{
+        margin: 20px;
+        .card-link{
+            float: right; margin: 10px; margin-left: 0px;  
+        }
+    }
+}

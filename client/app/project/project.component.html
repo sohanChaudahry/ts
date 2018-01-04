@@ -99,9 +99,9 @@
     </div>
     <div class="card " *ngIf="iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
         <app-loading [condition]="isLoading1"></app-loading>
-         <div class="card-header">
-        <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
-       </div>
+        <div class="card-header">
+            <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
+        </div>
         <div class="ctm_form">
           <br>
           <div class="row">
@@ -315,7 +315,7 @@
                             </tr>  
                         </tbody>
                         <tbody>
-                            <tr *ngFor="let task of projectWorkingTaskList">
+                            <tr *ngFor="let task of projectWorkingTaskList" [ngClass]="task.select==1 ? 'row_selected' : ''">
                                 <td>{{task.task_title}} </td>
                                 <td> {{task.task_description}} </td>
                                 <td>{{task.estimate_hrs}} </td>

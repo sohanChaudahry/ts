@@ -1,0 +1,45 @@
+<app-loading [condition]="isLoading"></app-loading>
+
+<app-toast [message]="toast.message"></app-toast>
+<div class="home_header">
+  <span>Employees</span>
+</div>
+<div style="height: 350px;">
+    <div *ngFor="let employee_detail of employeeList">
+        <div class="card card_ctm">
+          <div class="card-body" style="margin: 20px;height: 140px;">
+            <h5 class="card-title" style="color:green;">{{employee_detail.name}}
+                <i class="fa fa-briefcase" aria-hidden="true" style="float: right;color:black" (click)="openProjectListDialog()"></i>
+            </h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Role : Developer</li>
+          </ul>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-md-10"></div>
+      <div class="col-md-2">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li class="page-item">
+                <a class="page-link" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+              <li class="page-item"><a class="page-link">1</a></li>
+              <li class="page-item"><a class="page-link">2</a></li>
+              <li class="page-item"><a class="page-link">3</a></li>
+              <li class="page-item">
+                <a class="page-link" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+    </div>
+</div>

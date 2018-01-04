@@ -10,8 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from './services/user.service';
 import { ProjectService } from './services/project.service';
 import { TaskService } from './services/task.service';
-
 import { ProfileService } from './services/profile.service';
+import { HomeService } from './services/home.service';
 import { RecursiveService } from './services/recursive.service';
 
 import { AuthService } from './services/auth.service';
@@ -32,6 +32,7 @@ import { ProjectComponent } from './project/project.component';
 import {SelectModule} from 'ng2-select';
 import { TaskComponent } from './task/task.component';
 import { ProfileComponent } from './profile/profile.component';
+import { EmployeeComponent } from './employee/employee.component';
 
  @NgModule({
   imports: [
@@ -56,7 +57,8 @@ import { ProfileComponent } from './profile/profile.component';
     NotFoundComponent,
     ProjectComponent,
     TaskComponent,
-    ProfileComponent
+    ProfileComponent,
+    EmployeeComponent
   ],
   providers: [
     AuthService,
@@ -66,7 +68,8 @@ import { ProfileComponent } from './profile/profile.component';
     ProjectService,
     TaskService,
     ProfileService,
-    RecursiveService
+    RecursiveService,
+    HomeService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
