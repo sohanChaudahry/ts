@@ -18,12 +18,16 @@ export class AboutComponent implements OnInit{
   AcceptedProjectList=[];
   RequestedProjectList=[];
   projectList=[];
+  isActiveMyProject=true;
+  isActiveAcceptProject=false;
+  isActiveReqProject=false;
+  isTaskActive=[true,false,false,false];
   taskList=[{"name":"Task 1"},{"name":"Task 2"},{"name":"Task 3"}];
   constructor(public toast: ToastComponent,
   private homeService:HomeService) { }
 
   ngOnInit() {
-
+    this.getProjectDetail();
   }
   openProjectListDialog(){
     this.isShowproject=false;
@@ -49,25 +53,40 @@ export class AboutComponent implements OnInit{
     this.projectList=this.myProjectList;
   }
   openAcceptedProject(){
-    this.projectList=[{"name":"AcceptedProject project 1"},{"name":"AcceptedProject project 2"},{"name":"AcceptedProject project 3"}];
+    this.projectList=this.AcceptedProjectList;
   }
   openRequestedProject(){
-    this.projectList=[{"name":"RequestedProject project 1"},{"name":"RequestedProject project 2"},{"name":"RequestedProject project 3"}];
+    this.projectList=this.RequestedProjectList;
   }
   backBtn(){
     this.isShowproject=true;
     this.isShowList=false;
   }
   getProjectDetail(){
-    this.homeService.getProjects({"reqData":[]}).subscribe(
+    let reqData={
+        "reqData":{
+        "email" : localStorage.getItem("email") ? localStorage.getItem("email") : "",
+        "page" : 1,
+        "limit" : 10
+        }
+    }
+    this.homeService.getProjects(reqData).subscribe(
       res => {
         console.log(res);
-        this.employeeDetail=res;
-        this.myProjectList=res.MyProjects;
-        this.AcceptedProjectList=res.AcceptedProjects;
-        this.RequestedProjectList=res.RequestedProjects;
+        this.employeeDetail=res.details;
+        this.myProjectList=res.details.MyProjects;
+        this.AcceptedProjectList=res.details.AcceptedProjects;
+        this.RequestedProjectList=res.details.RequestedProjects;
+        this.openMyProject()
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
+  }
+  arrayToString = function(string){
+    let string_list=[];
+    for(var i=0;i<string.length;i++){
+      string_list.push(string[i].activity_name);
+    }
+    return string_list;
   }
 }

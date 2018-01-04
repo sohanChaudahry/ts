@@ -5,13 +5,25 @@
     }
 }
 .home_header{
-    height: 40px;
-    background-color: #0275d8;
+    height:52px;background-color: #0275d8!important;;
     margin-left: 10px;
-    padding: 10px;
+    padding: 18px 10px;
     span{
         color: white;
         font-size: 18px;
+    }
+    
+}
+.home_header .nav-tabs{
+    .nav-item{
+        margin-left: 0px;
+        a{
+            border: 1px solid #fff;
+            border-top-right-radius: .25rem;
+            border-top-left-radius: .25rem;
+            color: #fff;
+        }
+       
     }
 }
 .nav_header{
@@ -21,9 +33,22 @@
     width: 20%;margin: 10px;box-shadow: 0 8px 17px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .15);
     height: 300px;
     .card-body{
-        margin: 20px;
+        margin: 20px;height: 80px;
         .card-link{
             float: right; margin: 10px; margin-left: 0px;  
         }
     }
+}
+.icon{
+    float:right;color:black;
+}
+.ctm_div{
+    margin: 20px;
+    .cursor_ctm{
+        color:blue;cursor: pointer;
+    }
+}
+.isActiveClass{
+    background-color: #fff !important;
+    color : #000 !important;
 }

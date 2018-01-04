@@ -2,41 +2,41 @@
 
 <app-toast [message]="toast.message"></app-toast>
 <div *ngIf="isShowproject && !isShowList" style="height: 350px;">
-    <div class="home_header nav_header" style="height:52px;background-color: #d6e1ea;">
+    <div class="home_header">
         <div> 
           <ul class="nav nav-tabs">
               <li class="nav-item">
-                <!-- (employeeDetail.MyProjects.length!=0 ? employeeDetail.MyProjects.length : "")
-                (employeeDetail.AcceptedProjects.length!=0 ? employeeDetail.AcceptedProjects.length : "")
-              (employeeDetail.RequestedProjects.length!=0 ? employeeDetail.RequestedProjects.length : "") -->
-                <a class="nav-link active" (click)="openMyProject()">My Project ({{myProjectList.length}})</a>
+                <a class="nav-link" (click)="openMyProject();isActiveMyProject=true;isActiveAcceptProject=false;isActiveReqProject=false;" [ngClass]="{'isActiveClass':isActiveMyProject}">My Project ({{myProjectList.length}})</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openAcceptedProject()">Accepted Project ({{AcceptedProjectList.length}})</a>
+                <a class="nav-link" (click)="openAcceptedProject();isActiveMyProject=false;isActiveAcceptProject=true;isActiveReqProject=false;" [ngClass]="{'isActiveClass':isActiveAcceptProject}">Accepted Project ({{AcceptedProjectList.length}})</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openRequestedProject()">Requested Project ({{RequestedProjectList.length}})</a>
+                <a class="nav-link" (click)="openRequestedProject();isActiveMyProject=false;isActiveAcceptProject=false;isActiveReqProject=true;" [ngClass]="{'isActiveClass':isActiveReqProject}">Requested Project ({{RequestedProjectList.length}})</a>
               </li>
             </ul>
         </div>
     </div>
     <div *ngFor="let project_detail of projectList">
         <div class="card card_ctm">
-          <div class="card-body" style="margin: 20px;height: 140px;">
-            <h5 class="card-title" style="color:green;">{{project_detail.name}}
-                <i class="fa fa-briefcase" aria-hidden="true" style="float:right;color:black" (click)="openProjectListDialog()"></i>
+          <div class="card-body">
+            <h5 class="card-title" style="color:green;">{{project_detail.project_name}}
+                <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openProjectListDialog()"></i>
             </h5>
-            <!-- {{project_detail.desc}} 
-            {{project_detail.role}}-->
-            <p class="card-text">We use a large block of connected links for our pagination, making links hard to miss and easily scalable—all while providing large hit areas.</p>
+            <p class="card-text">{{project_detail.desc}} </p>
           </div>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Role : Developer</li>
+            <li class="list-group-item">Role : {{project_detail.role}}</li>
+            <li class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
+            <li class="list-group-item">Activities : </li>
           </ul>
-          <div class="card-body" style="margin: 20px;">
-            <a class="card-link" style="color:blue;cursor: pointer;" (click)="openProjectListDialog()">Tasks</a>
+          <div class="card-body ctm_div">
+            <a class="card-link cursor_ctm" (click)="openProjectListDialog()">Tasks</a>
           </div>
         </div>
+    </div>
+    <div *ngIf="projectList.length==0" style="margin: 20px;">
+       <span style="margin-left: 40%;">No record available in DB.</span>
     </div>
     <div class="row">
       <div class="col-md-10"></div>
@@ -64,27 +64,24 @@
     </div>
 </div>
 <div *ngIf="!isShowproject && isShowList">
-  <div class="home_header" style="height:52px;background-color: #d6e1ea;">
+  <div class="home_header">
     <div class="row"> 
       <div class="col-md-11">
           <ul class="nav nav-tabs">
               <li class="nav-item">
-                <a class="nav-link active" (click)="openAllTasks()">All Tasks (3)</a>
+                <a class="nav-link" (click)="openAllTasks();isTaskActive[0]=true;isTaskActive[1]=false;isTaskActive[2]=false;isTaskActive[3]=false;" [ngClass]="{'isActiveClass' : isTaskActive[0]}">Pending (3)</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openCompletedTasks()">Completed Tasks (3)</a>
+                <a class="nav-link" (click)="openCompletedTasks();isTaskActive[0]=false;isTaskActive[1]=true;isTaskActive[2]=false;isTaskActive[3]=false;" [ngClass]="{'isActiveClass' : isTaskActive[1]}">Completed Tasks (3)</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openCommingTasks()">Comming Tasks (3)</a>
+                <a class="nav-link" (click)="openCommingTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=true;isTaskActive[3]=false;" [ngClass]="{'isActiveClass' : isTaskActive[2]}">Upcoming Tasks (3)</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openRunningTasks()">Running Tasks (3)</a>
+                <a class="nav-link" (click)="openRunningTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=false;isTaskActive[3]=true;" [ngClass]="{'isActiveClass' : isTaskActive[3]}">Inprogress Tasks (3)</a>
               </li>
             </ul>
       </div>
-      <!-- <span>Project 1 </span>
-      <i class="fa fa-briefcase" aria-hidden="true" style="color:black;font-size: 20px;" (click)="openProjectListDialog()"></i> -->
-      <!-- <span style="float: right;">Tasks(3)</span> -->
       <span class="col-md-1">
         <button class="btn btn-sm btn-success" (click)="backBtn()" style="margin-top: 3px;"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
       </span>
@@ -104,6 +101,9 @@
             </ul>
           </div>
       </div>
+      <div *ngIf="taskList.length==0" style="margin: 20px;">
+          <span style="margin-left: 40%;">No record available in DB.</span>
+       </div>
       <div class="row">
         <div class="col-md-10"></div>
         <div class="col-md-2">
