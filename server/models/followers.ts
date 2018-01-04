@@ -8,6 +8,7 @@ var followerSchema = new mongoose.Schema({
     create_date: Date,
     modify_date: Date
 });
-
+var mongoosePaginate = require('mongoose-paginate');
+followerSchema.plugin(mongoosePaginate);
 const followers = mongoose.model('followers', followerSchema);
 export default followers;

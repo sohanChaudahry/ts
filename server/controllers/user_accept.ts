@@ -53,7 +53,9 @@ export default class UserAcceptCtrl  {
                                   obj.from_email = req_data.from_email;
                                   obj.to_email = req_data.to_email;
                                   obj.project_id = req_data.project_id;
-                                  obj.role = req_data.role;                                  
+                                  obj.role = req_data.role;    
+                                  obj.create_date = current_date;     
+                                  obj.modify_date = current_date;                         
                                   obj.save(function (err) {
                                    if (err){
                                        console.log("Error: " + err);
