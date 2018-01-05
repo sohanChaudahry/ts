@@ -539,7 +539,12 @@ getTaskDetailsByAssignTo = (req, res) => {
  };
 }
 
-
+/*
+  @author : Vaibhav Mali 
+  @date : 05 Jan 2018
+  @API : getPendingTasks
+  @desc :Get Pending Tasks with pagination.
+  */
 getPendingTasks = (req, res) => {   
   var model = this.model;  
   var tasks = {};  
@@ -610,9 +615,10 @@ getPendingTasks = (req, res) => {
                           task._doc.assign_to = data1[0]._doc;
                            task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
                           task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;  
-                          task._doc.spendtimes = spendtimes.spendtimes;    
-                            pending.tasks.push(task._doc);
-                            count = count + 1;
+                          task._doc.spendtimes = spendtimes.spendtimes; 
+                          task._doc.expire = (task._doc.due_date < new Date()) ? 1 : 0;
+                          pending.tasks.push(task._doc);
+                          count = count + 1;
                           callback();                    
                         }  
                      // return;
@@ -631,8 +637,8 @@ getPendingTasks = (req, res) => {
              if(count >= data.docs.length){
               if(pending && pending.tasks.length > 0){
               pending.tasks.sort(function(a,b){
-              var c:any = new Date(a.assign_date);
-              var d:any = new Date(b.assign_date);
+              var c:any = new Date(a.due_date);
+              var d:any = new Date(b.due_date);
               return d-c;
               });
               }
@@ -652,7 +658,12 @@ getPendingTasks = (req, res) => {
   
 }
 
-
+/*
+  @author : Vaibhav Mali 
+  @date : 05 Jan 2018
+  @API : getCompletedTasks
+  @desc :Get Completed Tasks with pagination.
+  */
 getCompletedTasks = (req, res) => {   
   var model = this.model;  
   var tasks = {};  
@@ -744,8 +755,8 @@ getCompletedTasks = (req, res) => {
              if(count >= data.docs.length){
               if(completed && completed.tasks.length > 0){
                 completed.tasks.sort(function(a,b){
-              var c:any = new Date(a.assign_date);
-              var d:any = new Date(b.assign_date);
+              var c:any = new Date(a.due_date);
+              var d:any = new Date(b.due_date);
               return d-c;
               });
               }
@@ -765,7 +776,12 @@ getCompletedTasks = (req, res) => {
   
 }
 
-
+/*
+  @author : Vaibhav Mali 
+  @date : 05 Jan 2018
+  @API : getIn_ProgressTasks
+  @desc :Get In_Progress Tasks with pagination.
+  */
 getIn_ProgressTasks = (req, res) => {   
   var model = this.model;  
   var tasks = {};  
@@ -837,6 +853,7 @@ getIn_ProgressTasks = (req, res) => {
                            task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
                           task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;  
                           task._doc.spendtimes = spendtimes.spendtimes;    
+                          task._doc.expire = (task._doc.due_date < new Date()) ? 1 : 0;
                           in_progress.tasks.push(task._doc);
                             count = count + 1;
                           callback();                    
@@ -857,8 +874,8 @@ getIn_ProgressTasks = (req, res) => {
              if(count >= data.docs.length){
               if(in_progress && in_progress.tasks.length > 0){
                 in_progress.tasks.sort(function(a,b){
-              var c:any = new Date(a.assign_date);
-              var d:any = new Date(b.assign_date);
+              var c:any = new Date(a.due_date);
+              var d:any = new Date(b.due_date);
               return d-c;
               });
               }
@@ -878,7 +895,12 @@ getIn_ProgressTasks = (req, res) => {
   
 }
 
-
+/*
+  @author : Vaibhav Mali 
+  @date : 05 Jan 2018
+  @API : getUpcomingTasks
+  @desc :Get Upcoming Tasks with pagination.
+  */
 getUpcomingTasks = (req, res) => {   
   var model = this.model;  
   var tasks = {};  
@@ -970,8 +992,8 @@ getUpcomingTasks = (req, res) => {
              if(count >= data.docs.length){
               if(upcoming && upcoming.tasks.length > 0){
                 upcoming.tasks.sort(function(a,b){
-              var c:any = new Date(a.assign_date);
-              var d:any = new Date(b.assign_date);
+              var c:any = new Date(a.due_date);
+              var d:any = new Date(b.due_date);
               return d-c;
               });
               }
