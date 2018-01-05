@@ -639,7 +639,7 @@ getPendingTasks = (req, res) => {
               pending.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
-              return d-c;
+              return c-d;
               });
               }
                tasks['Pending'] = pending.tasks;
@@ -757,7 +757,7 @@ getCompletedTasks = (req, res) => {
                 completed.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
-              return d-c;
+              return c-d;
               });
               }
                tasks['Completed'] = completed.tasks;
@@ -876,7 +876,7 @@ getIn_ProgressTasks = (req, res) => {
                 in_progress.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
-              return d-c;
+              return c-d;
               });
               }
                tasks['In_Progress'] = in_progress.tasks;
@@ -994,7 +994,7 @@ getUpcomingTasks = (req, res) => {
                 upcoming.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
-              return d-c;
+              return c-d;
               });
               }
                tasks['Upcoming'] = upcoming.tasks;
