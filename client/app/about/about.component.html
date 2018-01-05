@@ -23,14 +23,17 @@
             <h5 class="card-title" style="color:green;">{{project_detail.project_name}}
                 <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openProjectListDialog()"></i>
             </h5>
-            <p class="card-text">{{project_detail.desc}} </p>
+            <p class="card-text desc_elipsis">{{project_detail.desc}} </p>
           </div>
           <ul class="list-group list-group-flush">
             <li class="list-group-item">Role : {{project_detail.role}}</li>
             <li class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
             <li class="list-group-item">Activities : </li>
           </ul>
-          <div class="card-body ctm_div">
+          <div class="card-body ctm_div" style="height: 40px;    height: 40px;
+          float: right;
+          margin-bottom: 0px;
+          margin-left: 10px;">
             <a class="card-link cursor_ctm" (click)="openProjectListDialog()">Tasks</a>
           </div>
         </div>
@@ -83,7 +86,7 @@
             </ul>
       </div>
       <span class="col-md-1">
-        <button class="btn btn-sm btn-success" (click)="backBtn()" style="margin-top: 3px;"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
+        <button class="btn btn-sm btn-success" (click)="backBtn()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
       </span>
     </div>
   </div>

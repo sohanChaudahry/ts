@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
     }
   }
   loginGoogle(){
-       this.auth.login_google().subscribe(
+      this.auth.login_google().subscribe(
         data =>{ 
           console.log(data);
         },

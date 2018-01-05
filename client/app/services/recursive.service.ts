@@ -35,7 +35,6 @@ export class RecursiveService {
         } 
         setTimeout(function() {
             me.checkUserLogedIn();
-       
         }, 60*60*5);
     })
    

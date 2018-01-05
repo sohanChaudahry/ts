@@ -1,6 +1,7 @@
 import { Component ,OnInit} from '@angular/core';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { HomeService } from '../services/home.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-about',
@@ -24,10 +25,14 @@ export class AboutComponent implements OnInit{
   isTaskActive=[true,false,false,false];
   taskList=[{"name":"Task 1"},{"name":"Task 2"},{"name":"Task 3"}];
   constructor(public toast: ToastComponent,
-  private homeService:HomeService) { }
+  private homeService:HomeService,
+private auth:AuthService) { }
 
   ngOnInit() {
-    this.getProjectDetail();
+    this.auth.getLogedinUserData();
+    setTimeout(()=>{    
+      this.getProjectDetail();
+    },100);
   }
   openProjectListDialog(){
     this.isShowproject=false;
@@ -72,7 +77,6 @@ export class AboutComponent implements OnInit{
     }
     this.homeService.getProjects(reqData).subscribe(
       res => {
-        console.log(res);
         this.employeeDetail=res.details;
         this.myProjectList=res.details.MyProjects;
         this.AcceptedProjectList=res.details.AcceptedProjects;
