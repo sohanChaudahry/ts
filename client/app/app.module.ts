@@ -13,6 +13,7 @@ import { TaskService } from './services/task.service';
 import { ProfileService } from './services/profile.service';
 import { HomeService } from './services/home.service';
 import { RecursiveService } from './services/recursive.service';
+import { EmployeeService } from './services/employee.service';
 
 import { AuthService } from './services/auth.service';
 import { AuthGuardLogin } from './services/auth-guard-login.service';
@@ -69,7 +70,7 @@ import { EmployeeComponent } from './employee/employee.component';
     TaskService,
     ProfileService,
     RecursiveService,
-    HomeService
+    HomeService,EmployeeService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]

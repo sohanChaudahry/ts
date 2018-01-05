@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { RecursiveService } from './services/recursive.service';
 import {Observable} from 'rxjs/Rx';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +23,13 @@ export class AppComponent {
     if (this.auth.loggedIn) {
       this.router.navigate(['/home']);
     }
-   // this.recursiveService.getProjectRequests();    
+    this.router.events.subscribe(event => {
+      if(!this.auth.loggedIn) {
+          if(!this.check_login_status) {
+              this.router.navigate(['login']);
+          } 
+      }
+    });
   }
   logout(){
     window.location.href='http://localhost:3000/logout';

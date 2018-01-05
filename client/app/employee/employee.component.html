@@ -1,21 +1,149 @@
 <app-loading [condition]="isLoading"></app-loading>
 
 <app-toast [message]="toast.message"></app-toast>
-<div class="home_header">
-  <span>Employees</span>
+<div class="card" *ngIf="isEmployeeListShow && !isProjectListShow">
+    <div class="card-header hearder_btn">
+      <span class="custom_span_header">Employees </span>
+    </div>
+    <div class="card-block">
+      <div class="table-responsive custom_table">
+          <table class="table table-bordered">
+              <thead class="thead-default">
+                  <tr>
+                      <th width="40%">Employee Name</th>
+                      <th width="20%">Address</th>
+                      <th width="30%">Email</th>
+                      <th width="10%">Action</th>
+                  </tr>
+              </thead>
+              <tbody *ngIf="employeeList.length == 0">
+                <tr>
+                    <td colspan="4">There are no employee in the DB.</td>
+                </tr>  
+              </tbody>
+              <tbody>
+                <tr *ngFor="let emp of employeeList">
+                    <td>
+                        <span>{{emp.name}}</span>
+                    </td>
+                    <td>
+                        <span>{{emp.address}}</span>
+                    </td>
+                    <td>
+                        <span>{{emp.email}}</span>
+                    </td>  
+                    <td>
+                        <button class="btn btn-sm btn-primary" (click)="openProjectListDialog()"><i class="fa fa-briefcase icon" aria-hidden="true"></i></button> 
+                    </td>
+                </tr> 
+              </tbody>  
+          </table>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!isEmployeeListShow && isProjectListShow">
+      <div class="custom_hd ctm_hd_task">
+          <span class="custom_span_header">Projects</span>
+          <span class="custom_back_btn">
+            <button class="btn btn-sm btn-success" (click)="backEmpListPage()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
+          </span>
+      </div>
+      <div class="card">
+          <div class="card-header hearder_btn">
+              <span class="custom_span_header">My Project</span>
+          </div>
+          <div class="card-block">
+              <div class="table-responsive custom_table">
+                  <table class="table table-bordered">
+                      <thead class="thead-default">
+                      <tr>
+                          <th width="22%">Project Name</th>
+                          <th width="50%">Description</th>
+                          <th width="15%">Role</th> 
+                      </tr>
+                      </thead>
+                      <tbody *ngIf="MyProjectsList.length == 0">
+                      <tr>
+                          <td colspan="3">There are no project in the DB. Add a new project.</td>
+                      </tr>  
+                      </tbody>
+                      <tbody>
+                      <tr *ngFor="let project of MyProjectsList">
+                          <td>
+                              <span>{{project.project_name}}</span>
+                          </td>
+                          <td>
+                              <span>{{project.desc}}</span>
+                          </td>
+                          <td>
+                              <span>{{project.role}}</span>
+                          </td>
+                      </tr> 
+                      </tbody>  
+                  </table>
+              </div>
+          </div>
+      </div>
+      <div class="card">
+          <div class="card-header hearder_btn">
+              <span class="custom_span_header">Followed Project</span>
+          </div>
+          <div class="card-block">
+              <div class="table-responsive custom_table">
+                  <table class="table table-bordered">
+                      <thead class="thead-default">
+                      <tr>
+                          <th width="22%">Project Name</th>
+                          <th width="50%">Description</th>
+                          <th width="15%">Role</th>
+                      </tr>
+                      </thead>
+                      <tbody *ngIf="AssignedProjectsList.length == 0">
+                      <tr>
+                          <td colspan="3">There are no project in the DB. Add a new project.</td>
+                      </tr>  
+                      </tbody>
+                      <tbody>
+                      <tr *ngFor="let project of AssignedProjectsList">
+                          <td>
+                              <span>{{project.project_name}}</span>
+                          </td>
+                          <td>
+                              <span>{{project.desc}}</span>
+                          </td>
+                          <td>
+                              <span>{{project.role}}</span>
+                          </td>    
+                      </tr> 
+                      </tbody>  
+                  </table>
+              </div>
+          </div>
+      </div>
+  </div>
+<!-- <div class="home_header">
+  <span>Employees ({{employeeList.length}})</span>
 </div>
 <div style="height: 350px;">
     <div *ngFor="let employee_detail of employeeList">
-        <div class="card card_ctm">
-          <div class="card-body" style="margin: 20px;height: 140px;">
-            <h5 class="card-title" style="color:green;">{{employee_detail.name}}
-                <i class="fa fa-briefcase" aria-hidden="true" style="float: right;color:black" (click)="openProjectListDialog()"></i>
-            </h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <div class="card card_ctm" style="height: 225px;">
+          <div class="card-body" style="margin: 20px;">
+            <div class="row">
+              <div class="col-md-10">
+                  <span class="card-title emp_name_span" style="color:green;">{{employee_detail.name}} </span>
+              </div>
+              <div class="col-md-2">
+                  <i class="fa fa-user" aria-hidden="true" style="float: right;color:black"></i>
+              </div>
+            </div>
           </div>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Role : Developer</li>
+            <li class="list-group-item">Email : {{employee_detail.email}}</li>
+            <li class="list-group-item">Address : {{employee_detail.address}}</li>
           </ul>
+          <div class="card-body ctm_div" style="height: 40px;float: right; margin-right: 10px;">
+              <i class="fa fa-briefcase" aria-hidden="true" style="float: right;color:black" (click)="openProjectListDialog()"></i>  
+          </div>
         </div>
     </div>
     <div class="row">
@@ -42,4 +170,4 @@
           </nav>
         </div>
     </div>
-</div>
+</div> -->

@@ -56,5 +56,7 @@ export class ProjectService {
   ProjectWorkingTaskApi(reqData): Observable<any> {
     return this.http.post('/api/tasks/getDetailsByAssignTo', JSON.stringify(reqData), this.options).map(res => res.json());
   } 
-  
+  getdetailsByEmailwithPagination(reqData): Observable<any> {
+    return this.http.post('/api/employees/getdetailsByEmailwithPagination', JSON.stringify(reqData), this.options).map(res => res.json());
+  } 
 }

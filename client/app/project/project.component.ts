@@ -17,6 +17,7 @@ interface taskFormData {
   project_id : any;
   activity_id : any;
   due_date : Date;
+  assign_date : Date;
   priority : string;
   estimate_hrs : number;
   actual_hrs ? : number;
@@ -50,6 +51,7 @@ export class ProjectComponent implements OnInit {
   isEmpAutoSelect=[];
   AssignedProjectsList=[];
   MyProjectsList=[];
+  requestedProjectList=[];
   AssignedProjectView={};
   selectedProjectDetail={"_id":""};
   AssigedToOtherList=[];
@@ -81,6 +83,7 @@ export class ProjectComponent implements OnInit {
      assign_to : "",
      project_id : "",
      activity_id : "",
+     assign_date : new Date(),
      due_date : new Date(),
      priority : "",
      estimate_hrs : null,
@@ -138,9 +141,9 @@ export class ProjectComponent implements OnInit {
   
   ngOnInit() {
       this.getAllEmployeeList();
-      this.getEmployeeDetailByEmail();
+     // this.getEmployeeDetailByEmail();
+      this.getEmployeeDetailAllData();
       this.updateProjectRequeststatus();
-      // this.getRequestedProjectsFun();
       this.getProjectForm = this.formBuilder.group({
         project_id: this.project_id,
         project_name:this.project_name,
@@ -184,6 +187,7 @@ export class ProjectComponent implements OnInit {
           project_id : "",
           activity_id : "",
           due_date : new Date(),
+          assign_date : new Date(),
           priority : "",
           estimate_hrs : null,
           actual_hrs  : null,
@@ -278,6 +282,7 @@ export class ProjectComponent implements OnInit {
      this.taskFormDetail.project_id  = "";
      this.taskFormDetail.activity_id  = "";
      this.taskFormDetail.due_date  = new Date();
+     this.taskFormDetail.assign_date = new Date();
      this.taskFormDetail.priority  = "";
      this.taskFormDetail.estimate_hrs  =  null,
      this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
@@ -391,7 +396,9 @@ export class ProjectComponent implements OnInit {
             this.isProjectList=true;
             this.iscreateProject=false;
             this.toast.setMessage('Project saved successfully!', 'success')
-            this.getEmployeeDetailByEmail();
+           // this.getEmployeeDetailByEmail();
+           this.getEmployeeDetailAllData();
+
          }else if(res.failedProjects.failedData.length!=0){
             this.toast.setMessage('Project create failed.', 'danger')
          }
@@ -417,7 +424,9 @@ export class ProjectComponent implements OnInit {
           console.log(res);
           if(res){
             this.toast.setMessage('Project deleted successfully!', 'success');
-            this.getEmployeeDetailByEmail();
+            //this.getEmployeeDetailByEmail();
+            this.getEmployeeDetailAllData();
+
           }
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
@@ -536,6 +545,9 @@ export class ProjectComponent implements OnInit {
            this.taskFormDetail.priority = res.priority;
            this.taskFormDetail.task_description = res.task_description;
            this.taskFormDetail.due_date = res.due_date;
+
+           this.taskFormDetail.assign_date = res.assign_date;
+
            this.taskFormDetail.task_title= res.task_title;
            this.taskFormDetail.task_description = res.task_description;  
          //  this.taskFormDetail['_id'] = res.__id;
@@ -726,8 +738,8 @@ finishTaskFun(task){
       this.projectService.accpetProject(ProdId).subscribe(
         res => {
            this.toast.setMessage('Project request accepted successfully.', 'success')
-           this.getEmployeeDetailByEmail();
-          // this.getRequestedProjectsFun();
+          // this.getEmployeeDetailByEmail();
+           this.getEmployeeDetailAllData();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
@@ -736,8 +748,8 @@ finishTaskFun(task){
       this.projectService.rejectProject(ProdId).subscribe(
         res => {
            this.toast.setMessage('Project request rejected successfully.', 'success');
-           this.getEmployeeDetailByEmail();
-          // this.getRequestedProjectsFun();
+           //this.getEmployeeDetailByEmail();
+           this.getEmployeeDetailAllData();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
@@ -787,8 +799,8 @@ finishTaskFun(task){
       this.projectService.removeAssignUser(reqData).subscribe(
         res => {
            this.toast.setMessage('Exit project group successfully.', 'success')
-           this.getEmployeeDetailByEmail();
-          // this.getRequestedProjectsFun();
+           //this.getEmployeeDetailByEmail();
+           this.getEmployeeDetailAllData();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
@@ -799,7 +811,6 @@ finishTaskFun(task){
     }
     this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
         res => {
-          //  this.projectList=res.details.projects;
            this.MyProjectsList=res.details.MyProjects;
            this.AssignedProjectsList=res.details.AssignedProjects;
            let project_list=[];
@@ -821,6 +832,37 @@ finishTaskFun(task){
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
+  }
+  // get project data with pagination    requestedProjectList=[];
+
+  getEmployeeDetailAllData(){
+    let reqData={
+      "email":localStorage.getItem("email") ? localStorage.getItem("email") : "",
+      "page" : 1,
+   	  "limit" : 10
+   }
+   this.projectService.getdetailsByEmailwithPagination({"reqData":reqData}).subscribe(
+       res => {
+          this.MyProjectsList=res.details.MyProjects;
+          this.AssignedProjectsList=res.details.AcceptedProjects;
+          this.requestedProjectList=res.details.RequestedProjects;
+          let project_list=[];
+           if(this.MyProjectsList.length!=0){
+               for(var i=0;i<this.MyProjectsList.length;i++){
+                   project_list.push(this.MyProjectsList[i]);
+               }
+           }
+           if(this.AssignedProjectsList.length!=0){
+               for(var i=0;i<this.AssignedProjectsList.length;i++){
+                 if(this.AssignedProjectsList[i].accept==1){
+                    project_list.push(this.AssignedProjectsList[i]);
+                 }
+               }
+           }   
+           this.projectList=project_list;
+       },
+       error => this.toast.setMessage('Some thing wrong!', 'danger')
+   );
   }
   getRequestedProjectsFun(){
     this.projectService.getrequestedProjects().subscribe(

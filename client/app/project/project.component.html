@@ -1,15 +1,14 @@
 <div class="cointaner">
     <app-loading [condition]="isLoading"></app-loading>
     <app-toast [message]="toast.message"></app-toast>
+    <!-- my project list -->
     <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-        <div class="card-header hearder_btn">
+      <div class="card-header hearder_btn">
         <span class="custom_span_header">My Project</span>
         <button class="btn btn-sm btn-primary header_btn" (click)="craeteProjectBtn()">Create Project</button> 
       </div>
       <div class="card-block">
         <div class="table-responsive custom_table">
-
-
             <table class="table table-bordered">
                 <thead class="thead-default">
                 <tr>
@@ -51,9 +50,10 @@
         </div>
       </div>
     </div>
+    <!-- assigned project list -->
     <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
         <div class="card-header">
-        <span class="custom_span_header">Assigned Project</span>
+        <span class="custom_span_header">Accepted Project</span>
       </div>
       <div class="card-block">
         <div class="table-responsive custom_table">
@@ -97,6 +97,52 @@
         </div>
       </div>
     </div>
+    <!-- list requested project -->
+    <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
+            <div class="card-header">
+            <span class="custom_span_header">Requested Projects</span>
+          </div>
+          <div class="card-block">
+            <div class="table-responsive custom_table">
+            <table class="table table-bordered">
+                <thead class="thead-default">
+                  <tr>
+                    <th width="24%">Project Name</th>
+                    <th width="50%">Description</th>
+                    <th width="11%">Role</th>
+                    <th width="15%">Action</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="requestedProjectList.length == 0">
+                  <tr>
+                    <td colspan="4">There are no project in the DB. Add a new project.</td>
+                  </tr>  
+                </tbody>
+                <tbody>
+                  <tr *ngFor="let project of requestedProjectList">
+                    <td>
+                        <span>{{project.project_name}}</span>
+                    </td>
+                    <td>
+                        <span>{{project.desc}}</span>
+                    </td>
+                    <td>
+                        <span>{{project.role}}</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
+                        <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button> 
+                        <button class="btn btn-sm btn-danger" *ngIf="project.accept==1" (click)="exitProjectReq(project)"><i class="fa fa-times" aria-hidden="true"></i> Exit</button> 
+                        <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
+                        <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
+                        <button class="btn btn-sm btn-primary" *ngIf="project.accept==1" (click)="openTaskListPage(project,false)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
+                    </td>
+                  </tr> 
+                </tbody>  
+            </table>
+            </div>
+          </div>
+        </div>
     <div class="card " *ngIf="iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
         <app-loading [condition]="isLoading1"></app-loading>
         <div class="card-header">
@@ -448,16 +494,10 @@
                 <div>
                     <div class="row">
                         <div class="col-md-1"></div>
-                        <div class="col-md-5">
+                        <div class="col-md-10">
                             <div class="form-group">
                                 <label for="exampleFormControlTextarea1">Task Title</label>
                                 <input class="form-control" type="text" [(ngModel)]="taskFormDetail.task_title" placeholder="Task Title">
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label for="exampleFormControlTextarea1">Estimate Hours</label>
-                                <input class="form-control" type="number" min="0.1" [(ngModel)]="taskFormDetail.estimate_hrs" placeholder="Estimate Hours">
                             </div>
                         </div>
                         <div class="col-md-1"></div>
@@ -482,16 +522,31 @@
                         <div class="col-md-1"></div>
                         <div class="col-md-5">
                             <div class="form-group">
+                                <label for="exampleFormControlTextarea1">Estimate Hours</label>
+                                <input class="form-control" type="number" min="0.1" [(ngModel)]="taskFormDetail.estimate_hrs" placeholder="Estimate Hours">
+                            </div>
+                        </div>    
+                        <div class="col-md-5">
+                            <div class="form-group">
                                 <label>Priority</label>
                                 <select class="form-control" name="role" [(ngModel)]="taskFormDetail.priority">
                                     <option [ngValue]="priority" *ngFor="let priority of priorityList;" placeholder="Select Priority">{{priority}}</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                    <div class="row" style="    padding-bottom: 15px;">
+                        <div class="col-md-1"></div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <angular2-date-picker [(ngModel)]="taskFormDetail.assign_date" placeholder="Start Date" [settings]="settings1"></angular2-date-picker>
+                                </div>      
                             </div>
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label>Due Date</label>
-                                    <!-- <input class="form-control" type="date" [(ngModel)]="taskFormDetail.due_date"> -->
                                     <angular2-date-picker [(ngModel)]="taskFormDetail.due_date" placeholder="Due Date" [settings]="settings1"></angular2-date-picker>
                                 </div>      
                             </div>

@@ -18,24 +18,44 @@
         </div>
     </div>
     <div *ngFor="let project_detail of projectList">
-        <div class="card card_ctm">
+        <div *ngIf="isActiveReqProject!=true"  class="card card_ctm">
           <div class="card-body">
-            <h5 class="card-title" style="color:green;">{{project_detail.project_name}}
-                <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openProjectListDialog()"></i>
-            </h5>
+            <div>
+                <span class="card-title project_name_span" >{{project_detail.project_name}}</span>
+                <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openTaskListDialog(project_detail)"></i>
+            </div>
             <p class="card-text desc_elipsis">{{project_detail.desc}} </p>
           </div>
           <ul class="list-group list-group-flush">
             <li class="list-group-item">Role : {{project_detail.role}}</li>
-            <li class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
+            <li *ngIf="isActiveReqProject==false" class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
             <li class="list-group-item">Activities : </li>
           </ul>
-          <div class="card-body ctm_div" style="height: 40px;    height: 40px;
-          float: right;
-          margin-bottom: 0px;
-          margin-left: 10px;">
-            <a class="card-link cursor_ctm" (click)="openProjectListDialog()">Tasks</a>
+          <div class="card-body ctm_div" style="height: 40px;float: right; margin-bottom: 0px; margin-left: 10px;">
+            <a class="card-link cursor_ctm" (click)="openTaskListDialog(project_detail)">Tasks</a>
           </div>
+        </div>
+        <div *ngIf="isActiveReqProject==true" class="card card_ctm" style="height: 220px;">
+            <div class="card-body">
+              <div>
+                  <span class="card-title project_name_span" >{{project_detail.project_name}}
+                  </span>
+                  <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openTaskListDialog(project_detail)"></i>
+              </div>
+              <p class="card-text desc_elipsis">{{project_detail.desc}} </p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li *ngIf="isActiveReqProject==false" class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
+              <li class="list-group-item">Activities : </li>
+              <!-- <li>  
+                <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
+                <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
+              </li> -->
+            </ul>
+            <div class="card-body ctm_div" style="height: 40px;float: right; margin-right: 10px;">
+                <button class="btn btn-sm btn-success" (click)="acceptProjectReq(project_detail._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
+                <button class="btn btn-sm btn-danger" (click)="rejectProjectReq(project_detail._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
+            </div>
         </div>
     </div>
     <div *ngIf="projectList.length==0" style="margin: 20px;">
@@ -72,16 +92,16 @@
       <div class="col-md-11">
           <ul class="nav nav-tabs">
               <li class="nav-item">
-                <a class="nav-link" (click)="openAllTasks();isTaskActive[0]=true;isTaskActive[1]=false;isTaskActive[2]=false;isTaskActive[3]=false;" [ngClass]="{'isActiveClass' : isTaskActive[0]}">Pending (3)</a>
+                <a class="nav-link" (click)="openPendingTasks();isTaskActive[0]=true;isTaskActive[1]=false;isTaskActive[2]=false;isTaskActive[3]=false;" [ngClass]="{'isActiveClass' : isTaskActive[0]}">Pending</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openCompletedTasks();isTaskActive[0]=false;isTaskActive[1]=true;isTaskActive[2]=false;isTaskActive[3]=false;" [ngClass]="{'isActiveClass' : isTaskActive[1]}">Completed Tasks (3)</a>
+                <a class="nav-link" (click)="openCompletedTasks();isTaskActive[0]=false;isTaskActive[1]=true;isTaskActive[2]=false;isTaskActive[3]=false;" [ngClass]="{'isActiveClass' : isTaskActive[1]}">Completed Tasks</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openCommingTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=true;isTaskActive[3]=false;" [ngClass]="{'isActiveClass' : isTaskActive[2]}">Upcoming Tasks (3)</a>
+                <a class="nav-link" (click)="openCommingTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=true;isTaskActive[3]=false;" [ngClass]="{'isActiveClass' : isTaskActive[2]}">Upcoming Tasks</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openRunningTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=false;isTaskActive[3]=true;" [ngClass]="{'isActiveClass' : isTaskActive[3]}">Inprogress Tasks (3)</a>
+                <a class="nav-link" (click)="openRunningTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=false;isTaskActive[3]=true;" [ngClass]="{'isActiveClass' : isTaskActive[3]}">Inprogress Tasks</a>
               </li>
             </ul>
       </div>
@@ -90,17 +110,21 @@
       </span>
     </div>
   </div>
-  <div *ngIf="taskList.length!=0">
+  <div>
       <div *ngFor="let task_detail of taskList">
           <div class="card card_ctm">
-            <div class="card-body" style="margin: 20px;height: 140px;">
-              <h5 class="card-title" style="color:green;">{{task_detail.name}}
-                  <i class="fa fa-tasks" aria-hidden="true" style="float: right;color:black;" (click)="openTaskListDialog()"></i>
+            <div class="card-body" style="margin: 20px;height: 90px;">
+              <h5 class="card-title" style="color:green;">{{task_detail.task_title}}
+                  <i class="fa fa-tasks" aria-hidden="true" style="float: right;color:black;" (click)="openProjectListDialog()"></i>
               </h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <p class="card-text desc_elipsis">{{task_detail.task_description}} </p>
             </div>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item">Role : Developer</li>
+              <li class="list-group-item">Priority :{{task_detail.priority}} </li>
+              <li class="list-group-item">Estimate hours :{{task_detail.estimate_hrs}} </li>
+              <li class="list-group-item">Actual hours :{{task_detail.actual_hrs}} </li>
+              <li class="list-group-item">Last seen :{{task_detail.modify_date | date : " MMM d, y h:mm:ss a"}} </li>
+              <li class="list-group-item">Due Date :{{task_detail.due_date | date : " MMM d, y h:mm:ss a"}} </li>
             </ul>
           </div>
       </div>

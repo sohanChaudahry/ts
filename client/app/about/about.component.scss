@@ -65,3 +65,14 @@
     text-overflow: ellipsis;
     height: 50px;
 }
+.project_name_span{
+    color: green;
+    display: -webkit-box;
+    max-width: 270px;
+    margin: 0 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 40px;
+    font-size: 18px;
+    font-weight: 600;
+}
