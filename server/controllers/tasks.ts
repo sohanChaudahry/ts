@@ -551,16 +551,17 @@ getPendingTasks = (req, res) => {
   var pending = {tasks:[]};
   var count = 0 , count1 = 0;
   var reqData =  req.body.reqData;
-  var assign_to = reqData.employee_id;
+  var flag = reqData.flag;
+  var emp_id = mongoose.Types.ObjectId(reqData.employee_id);
   var project_id = reqData.project_id;
   var page = reqData.page;
   var limit = reqData.limit;
   var resdata = { };
-  var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
+  var _idstatus = mongoose.Types.ObjectId.isValid(emp_id);
   var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
   if (_idstatus == false) {
     var resData = {};
-    var err = assign_to + ' Id is invalid';
+    var err = emp_id + ' Id is invalid';
     resData['error'] = err;
     res.send(resData);
   }
@@ -571,9 +572,15 @@ getPendingTasks = (req, res) => {
     res.send(resData);
   }
   else{
-    var project_id1 = mongoose.Types.ObjectId(project_id);
-    var assign_to = mongoose.Types.ObjectId(assign_to);
-    model.paginate({"assign_to": assign_to,"project_id":project_id1,"status":0,"assign_date":{$lte:new Date()}}, { page: page, limit: limit }, function(err, data) {
+    var project_id1 = mongoose.Types.ObjectId(project_id);    
+    var query = {};
+    if(flag == 0){
+      query = {"assign_from": emp_id,"project_id":project_id1,"status":0,"assign_date":{$lte:new Date()}}
+    }
+    else{
+      query = {"assign_to": emp_id,"project_id":project_id1,"status":0,"assign_date":{$lte:new Date()}}
+    }
+    model.paginate(query, { page: page, limit: limit }, function(err, data) {
       //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
         if(data && data.docs.length > 0){
          async.forEach(data.docs, function (task, callback) {
@@ -651,7 +658,11 @@ getPendingTasks = (req, res) => {
           });  
         } 
         else{
-     
+          tasks['Pending'] = pending.tasks;
+          tasks["Pages"] = data.pages;
+          tasks["Total"] = data.total;
+          res.send(tasks);
+          return;
          }          
        })
   }
@@ -670,16 +681,17 @@ getCompletedTasks = (req, res) => {
   var completed = {tasks:[]};
   var count = 0 , count1 = 0;
   var reqData =  req.body.reqData;
-  var assign_to = reqData.employee_id;
+  var flag = reqData.flag;
   var project_id = reqData.project_id;
+  var emp_id = mongoose.Types.ObjectId(reqData.employee_id);
   var page = reqData.page;
   var limit = reqData.limit;
   var resdata = { };
-  var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
+  var _idstatus = mongoose.Types.ObjectId.isValid(emp_id);
   var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
   if (_idstatus == false) {
     var resData = {};
-    var err = assign_to + ' Id is invalid';
+    var err = emp_id + ' Id is invalid';
     resData['error'] = err;
     res.send(resData);
   }
@@ -690,9 +702,15 @@ getCompletedTasks = (req, res) => {
     res.send(resData);
   }
   else{
-    var project_id1 = mongoose.Types.ObjectId(project_id);
-    var assign_to = mongoose.Types.ObjectId(assign_to);
-    model.paginate({"assign_to": assign_to,"project_id":project_id1,"status":2}, { page: page, limit: limit }, function(err, data) {
+    var project_id1 = mongoose.Types.ObjectId(project_id);    
+    var query = {};
+    if(flag == 0){
+      query = {"assign_from": emp_id,"project_id":project_id1,"status":2}
+    }
+    else{
+      query = {"assign_to": emp_id,"project_id":project_id1,"status":2}
+    }
+    model.paginate(query, { page: page, limit: limit }, function(err, data) {
       //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
         if(data && data.docs.length > 0){
          async.forEach(data.docs, function (task, callback) {
@@ -769,7 +787,11 @@ getCompletedTasks = (req, res) => {
           });  
         } 
         else{
-     
+          tasks['Completed'] = completed.tasks;
+          tasks["Pages"] = data.pages;
+          tasks["Total"] = data.total;
+          res.send(tasks);
+          return;
          }          
        })
   }
@@ -788,16 +810,17 @@ getIn_ProgressTasks = (req, res) => {
   var in_progress = {tasks:[]};
   var count = 0 , count1 = 0;
   var reqData =  req.body.reqData;
-  var assign_to = reqData.employee_id;
+  var flag = reqData.flag;
+  var emp_id = mongoose.Types.ObjectId(reqData.employee_id);
   var project_id = reqData.project_id;
   var page = reqData.page;
   var limit = reqData.limit;
   var resdata = { };
-  var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
+  var _idstatus = mongoose.Types.ObjectId.isValid(emp_id);
   var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
   if (_idstatus == false) {
     var resData = {};
-    var err = assign_to + ' Id is invalid';
+    var err = emp_id + ' Id is invalid';
     resData['error'] = err;
     res.send(resData);
   }
@@ -808,9 +831,15 @@ getIn_ProgressTasks = (req, res) => {
     res.send(resData);
   }
   else{
-    var project_id1 = mongoose.Types.ObjectId(project_id);
-    var assign_to = mongoose.Types.ObjectId(assign_to);
-    model.paginate({"assign_to": assign_to,"project_id":project_id1,"status":1}, { page: page, limit: limit }, function(err, data) {
+    var project_id1 = mongoose.Types.ObjectId(project_id);    
+    var query = {};
+    if(flag == 0){
+      query = {"assign_from": emp_id,"project_id":project_id1,"status":1}
+    }
+    else{
+      query = {"assign_to": emp_id,"project_id":project_id1,"status":1}
+    }
+    model.paginate(query, { page: page, limit: limit }, function(err, data) {
       //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
         if(data && data.docs.length > 0){
          async.forEach(data.docs, function (task, callback) {
@@ -888,7 +917,11 @@ getIn_ProgressTasks = (req, res) => {
           });  
         } 
         else{
-     
+          tasks['In_Progress'] = in_progress.tasks;
+          tasks["Pages"] = data.pages;
+          tasks["Total"] = data.total;
+          res.send(tasks);
+          return;
          }          
        })
   }
@@ -907,16 +940,17 @@ getUpcomingTasks = (req, res) => {
   var upcoming = {tasks:[]};
   var count = 0 , count1 = 0;
   var reqData =  req.body.reqData;
-  var assign_to = reqData.employee_id;
+  var flag = reqData.flag;
+  var emp_id = mongoose.Types.ObjectId(reqData.employee_id);
   var project_id = reqData.project_id;
   var page = reqData.page;
   var limit = reqData.limit;
   var resdata = { };
-  var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
+  var _idstatus = mongoose.Types.ObjectId.isValid(emp_id);
   var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
   if (_idstatus == false) {
     var resData = {};
-    var err = assign_to + ' Id is invalid';
+    var err = emp_id + ' Id is invalid';
     resData['error'] = err;
     res.send(resData);
   }
@@ -928,8 +962,14 @@ getUpcomingTasks = (req, res) => {
   }
   else{
     var project_id1 = mongoose.Types.ObjectId(project_id);
-    var assign_to = mongoose.Types.ObjectId(assign_to);
-    model.paginate({"assign_to": assign_to,"project_id":project_id1,"status":0,"assign_date":{$gt:new Date()}}, { page: page, limit: limit }, function(err, data) {
+    var query = {};
+    if(flag == 0){
+      query = {"assign_from": emp_id,"project_id":project_id1,"status":0,"assign_date":{$gt:new Date()}}
+    }
+    else{
+      query = {"assign_to": emp_id,"project_id":project_id1,"status":0,"assign_date":{$gt:new Date()}}
+    }
+    model.paginate( query, { page: page, limit: limit }, function(err, data) {
       //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
         if(data && data.docs.length > 0){
          async.forEach(data.docs, function (task, callback) {
@@ -1006,7 +1046,11 @@ getUpcomingTasks = (req, res) => {
           });  
         } 
         else{
-     
+           tasks['Upcoming'] = upcoming.tasks;
+           tasks["Pages"] = data.pages;
+           tasks["Total"] = data.total;
+           res.send(tasks);
+           return;
          }          
        })
   }
