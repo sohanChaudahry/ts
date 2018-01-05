@@ -45,7 +45,6 @@ export default function setRoutes(app) {
   router.route('/projects/getdetails/:id').get(projectsCtrl.getProjectDetails); 
   router.route('/projects/delete/:id').get(followersCtrl.deleteProjectByProjectId); 
   
-    
 
   //Employees
   router.route('/employees/save_update_Employees').post(employeesCtrl.save_update_Employees);
@@ -62,10 +61,13 @@ export default function setRoutes(app) {
   router.route('/tasks/getdetails/:id').get(tasksCtrl.getTaskDetails); 
   router.route('/tasks/getDetailsByAssignFrom').post(tasksCtrl.getTaskDetailsByAssignFrom);
   router.route('/tasks/getDetailsByAssignTo').post(tasksCtrl.getTaskDetailsByAssignTo); 
+  router.route('/tasks/getPendingTasks').post(tasksCtrl.getPendingTasks); 
+  router.route('/tasks/getCompletedTasks').post(tasksCtrl.getCompletedTasks); 
+  router.route('/tasks/getIn_ProgressTasks').post(tasksCtrl.getIn_ProgressTasks); 
+  router.route('/tasks/getUpcomingTasks').post(tasksCtrl.getUpcomingTasks); 
   
   
   
-
  //Request to join
  router.route('/employees/request/join').post(userAcceptCtrl.request_join); 
  router.route('/employees/request/getprojectrequests').get(userAcceptCtrl.getprojectrequests);
@@ -74,7 +76,6 @@ export default function setRoutes(app) {
  router.route('/employees/request/cancel/:id').get(userAcceptCtrl.request_cancel); 
  router.route('/employees/request/updateProjectRequestsStatus').get(userAcceptCtrl.updateProjectRequestStatus); 
  
-
  
 //Followers 
 router.route('/followers/delete').post(followersCtrl.deleteFollowerByprojectId); 

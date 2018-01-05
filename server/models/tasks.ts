@@ -13,6 +13,7 @@ var taskSchema = new mongoose.Schema({
     actual_hrs :{ type: Number, default: 0 },
     priority : String,
     status : Number,
+    assign_date: Date,    
     start_date_time: Date,
     end_date_time: Date,
     create_date: Date,

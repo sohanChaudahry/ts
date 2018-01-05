@@ -67,6 +67,7 @@ export default class TasksCtrl  {
                     "project_id": task.project_id ? task.project_id : data[0]._doc.project_id,
                      "activity_id": task.activity_id ? task.activity_id : data[0]._doc.activity_id,
                      "due_date": task.due_date ? task.due_date : data[0]._doc.due_date,
+                     "assign_date" : task.assign_date ? task.assign_date : data[0]._doc.assign_date,                
                      "select": task && (task.select == 0 || task.select == 1 || task.select == 2 )? task.select : 0,
                      "estimate_hrs": task.estimate_hrs ? task.estimate_hrs : data[0]._doc.estimate_hrs,
                      //"actual_hrs": task.actual_hrs ? task.actual_hrs : data[0]._doc.actual_hrs,
@@ -135,6 +136,7 @@ export default class TasksCtrl  {
                     obj.project_id = task.project_id;
                     obj.activity_id = task.activity_id;
                     obj.due_date = task.due_date ? task.due_date : "";
+                    obj.assign_date = task.assign_date ? task.assign_date : "";                                    
                     obj.estimate_hrs = task.estimate_hrs ? task.estimate_hrs : 0;
                //     obj.actual_hrs = task.actual_hrs ? task.actual_hrs : 0;
                     obj.priority = task.priority ? task.priority : "" ;
@@ -175,6 +177,7 @@ export default class TasksCtrl  {
                 obj.project_id = task.project_id;
                 obj.activity_id = task.activity_id;
                 obj.due_date = task.due_date ? task.due_date : "";
+                obj.assign_date = task.assign_date ? task.assign_date : "";                
                 obj.estimate_hrs = task.estimate_hrs ? task.estimate_hrs : 0;
               //  obj.actual_hrs = task.actual_hrs ? task.actual_hrs : 0;
                 obj.priority = task.priority ? task.priority : "" ;
@@ -185,8 +188,9 @@ export default class TasksCtrl  {
                 obj.modify_date = current_date;   
                 obj.stime = me.toTimestamp(current_date);   
                 var project_id = mongoose.Types.ObjectId(task.project_id);
-                followers.findOneAndUpdate({ "email": req.user.emails[0].value,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data4) {
-                obj.save(function (err) {
+               followers.findOneAndUpdate({ "email": task.email,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data4) {
+              // followers.findOneAndUpdate({ "email": req.user.emails[0].value,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data4) {
+                  obj.save(function (err) {
                 if (err) {
                     count = length;
                     task.error = err;    
@@ -533,6 +537,458 @@ getTaskDetailsByAssignTo = (req, res) => {
     }          
    }).sort({stime: -1});
  };
+}
+
+
+getPendingTasks = (req, res) => {   
+  var model = this.model;  
+  var tasks = {};  
+  var pending = {tasks:[]};
+  var count = 0 , count1 = 0;
+  var reqData =  req.body.reqData;
+  var assign_to = reqData.employee_id;
+  var project_id = reqData.project_id;
+  var page = reqData.page;
+  var limit = reqData.limit;
+  var resdata = { };
+  var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
+  var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
+  if (_idstatus == false) {
+    var resData = {};
+    var err = assign_to + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
+  else if (_idstatus1 == false) {
+    var resData = {};
+    var err = project_id + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
+  else{
+    var project_id1 = mongoose.Types.ObjectId(project_id);
+    var assign_to = mongoose.Types.ObjectId(assign_to);
+    model.paginate({"assign_to": assign_to,"project_id":project_id1,"status":0,"assign_date":{$lte:new Date()}}, { page: page, limit: limit }, function(err, data) {
+      //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
+        if(data && data.docs.length > 0){
+         async.forEach(data.docs, function (task, callback) {
+          var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
+          var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
+          var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
+          empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
+          empmodel.find({ "_id": employee_id }, function (err, data1) {
+            projectsmodel.find({ "_id": project_id1 }, function (err, data2) {
+              activities.find({ "_id": act_id }, function (err, data3) {     
+                var task_id = mongoose.Types.ObjectId(task._doc._id);
+                var spendtimes = {spendtimes: [] }                
+                tasktime.find({ "pid": task_id }, function (err, data6) {
+                  if(data && data.docs.length > 0){
+                    // resdata = data[0]._doc;
+                     async.forEach(data6, function (spendtime, callback) {
+                      var dt = {};                
+                      dt['start_date_time'] = spendtime.start_date_time;
+                      dt['end_date_time'] = spendtime.end_date_time;  
+                      dt['actual_hrs'] = spendtime.actual_hrs ? spendtime.actual_hrs : 0;
+                      spendtimes.spendtimes.push(dt);
+                      count1 = count1 + 1;
+                      callback();
+                     }, function (err, cb) {
+                        if(count1 >= data6.length){
+                          task._doc.assign_from = data4[0]._doc;    
+                          if(Math.ceil(parseFloat(task._doc.actual_hrs)) === task._doc.actual_hrs){
+                            task._doc.actual_hrs = task._doc.actual_hrs + " : 0 : 0 ";
+                          }
+                          else{
+                           console.log("actual: " + task._doc.actual_hrs)                          
+                           var hours =  Math.floor(task._doc.actual_hrs);
+                           var temp = parseFloat(task._doc.actual_hrs) - Math.floor(parseFloat(task._doc.actual_hrs));
+                           var minutes = parseInt(((temp *3600)/60).toString());
+                           var seconds =  parseInt((temp * 3600).toString()) - (minutes * 60);
+                           task._doc.actual_hrs = (parseInt(hours.toString()) <= 9 ? "0" + hours : hours )+ " : " +(parseInt(minutes.toString()) <= 9 ? "0" + minutes : minutes )  + " : " + (parseInt(seconds.toString()) <= 9 ? "0" + seconds : seconds );
+                           console.log("Converted: " + task._doc.actual_hrs)                                
+                          }          
+                          task._doc.assign_to = data1[0]._doc;
+                           task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
+                          task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;  
+                          task._doc.spendtimes = spendtimes.spendtimes;    
+                            pending.tasks.push(task._doc);
+                            count = count + 1;
+                          callback();                    
+                        }  
+                     // return;
+                     });
+                  }
+                  else{
+                     count = count + 1;
+                     callback();
+                  }       
+                })  
+              })
+            })
+          })
+         })
+          }, function (err, cb) {
+             if(count >= data.docs.length){
+              if(pending && pending.tasks.length > 0){
+              pending.tasks.sort(function(a,b){
+              var c:any = new Date(a.assign_date);
+              var d:any = new Date(b.assign_date);
+              return d-c;
+              });
+              }
+               tasks['Pending'] = pending.tasks;
+               tasks["Pages"] = data.pages;
+               tasks["Total"] = data.total;
+              res.send(tasks);
+              }  
+              return;
+          });  
+        } 
+        else{
+     
+         }          
+       })
+  }
+  
+}
+
+
+getCompletedTasks = (req, res) => {   
+  var model = this.model;  
+  var tasks = {};  
+  var completed = {tasks:[]};
+  var count = 0 , count1 = 0;
+  var reqData =  req.body.reqData;
+  var assign_to = reqData.employee_id;
+  var project_id = reqData.project_id;
+  var page = reqData.page;
+  var limit = reqData.limit;
+  var resdata = { };
+  var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
+  var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
+  if (_idstatus == false) {
+    var resData = {};
+    var err = assign_to + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
+  else if (_idstatus1 == false) {
+    var resData = {};
+    var err = project_id + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
+  else{
+    var project_id1 = mongoose.Types.ObjectId(project_id);
+    var assign_to = mongoose.Types.ObjectId(assign_to);
+    model.paginate({"assign_to": assign_to,"project_id":project_id1,"status":2}, { page: page, limit: limit }, function(err, data) {
+      //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
+        if(data && data.docs.length > 0){
+         async.forEach(data.docs, function (task, callback) {
+          var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
+          var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
+          var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
+          empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
+          empmodel.find({ "_id": employee_id }, function (err, data1) {
+            projectsmodel.find({ "_id": project_id1 }, function (err, data2) {
+              activities.find({ "_id": act_id }, function (err, data3) {     
+                var task_id = mongoose.Types.ObjectId(task._doc._id);
+                var spendtimes = {spendtimes: [] }                
+                tasktime.find({ "pid": task_id }, function (err, data6) {
+                  if(data && data.docs.length > 0){
+                    // resdata = data[0]._doc;
+                     async.forEach(data6, function (spendtime, callback) {
+                      var dt = {};                
+                      dt['start_date_time'] = spendtime.start_date_time;
+                      dt['end_date_time'] = spendtime.end_date_time;  
+                      dt['actual_hrs'] = spendtime.actual_hrs ? spendtime.actual_hrs : 0;
+                      spendtimes.spendtimes.push(dt);
+                      count1 = count1 + 1;
+                      callback();
+                     }, function (err, cb) {
+                        if(count1 >= data6.length){
+                          task._doc.assign_from = data4[0]._doc;    
+                          if(Math.ceil(parseFloat(task._doc.actual_hrs)) === task._doc.actual_hrs){
+                            task._doc.actual_hrs = task._doc.actual_hrs + " : 0 : 0 ";
+                          }
+                          else{
+                           console.log("actual: " + task._doc.actual_hrs)                          
+                           var hours =  Math.floor(task._doc.actual_hrs);
+                           var temp = parseFloat(task._doc.actual_hrs) - Math.floor(parseFloat(task._doc.actual_hrs));
+                           var minutes = parseInt(((temp *3600)/60).toString());
+                           var seconds =  parseInt((temp * 3600).toString()) - (minutes * 60);
+                           task._doc.actual_hrs = (parseInt(hours.toString()) <= 9 ? "0" + hours : hours )+ " : " +(parseInt(minutes.toString()) <= 9 ? "0" + minutes : minutes )  + " : " + (parseInt(seconds.toString()) <= 9 ? "0" + seconds : seconds );
+                           console.log("Converted: " + task._doc.actual_hrs)                                
+                          }          
+                          task._doc.assign_to = data1[0]._doc;
+                           task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
+                          task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;  
+                          task._doc.spendtimes = spendtimes.spendtimes;    
+                          completed.tasks.push(task._doc);
+                            count = count + 1;
+                          callback();                    
+                        }  
+                     // return;
+                     });
+                  }
+                  else{
+                     count = count + 1;
+                     callback();
+                  }       
+                })  
+              })
+            })
+          })
+         })
+          }, function (err, cb) {
+             if(count >= data.docs.length){
+              if(completed && completed.tasks.length > 0){
+                completed.tasks.sort(function(a,b){
+              var c:any = new Date(a.assign_date);
+              var d:any = new Date(b.assign_date);
+              return d-c;
+              });
+              }
+               tasks['Completed'] = completed.tasks;
+               tasks["Pages"] = data.pages;
+               tasks["Total"] = data.total;
+              res.send(tasks);
+              }  
+              return;
+          });  
+        } 
+        else{
+     
+         }          
+       })
+  }
+  
+}
+
+
+getIn_ProgressTasks = (req, res) => {   
+  var model = this.model;  
+  var tasks = {};  
+  var in_progress = {tasks:[]};
+  var count = 0 , count1 = 0;
+  var reqData =  req.body.reqData;
+  var assign_to = reqData.employee_id;
+  var project_id = reqData.project_id;
+  var page = reqData.page;
+  var limit = reqData.limit;
+  var resdata = { };
+  var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
+  var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
+  if (_idstatus == false) {
+    var resData = {};
+    var err = assign_to + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
+  else if (_idstatus1 == false) {
+    var resData = {};
+    var err = project_id + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
+  else{
+    var project_id1 = mongoose.Types.ObjectId(project_id);
+    var assign_to = mongoose.Types.ObjectId(assign_to);
+    model.paginate({"assign_to": assign_to,"project_id":project_id1,"status":1}, { page: page, limit: limit }, function(err, data) {
+      //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
+        if(data && data.docs.length > 0){
+         async.forEach(data.docs, function (task, callback) {
+          var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
+          var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
+          var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
+          empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
+          empmodel.find({ "_id": employee_id }, function (err, data1) {
+            projectsmodel.find({ "_id": project_id1 }, function (err, data2) {
+              activities.find({ "_id": act_id }, function (err, data3) {     
+                var task_id = mongoose.Types.ObjectId(task._doc._id);
+                var spendtimes = {spendtimes: [] }                
+                tasktime.find({ "pid": task_id }, function (err, data6) {
+                  if(data && data.docs.length > 0){
+                    // resdata = data[0]._doc;
+                     async.forEach(data6, function (spendtime, callback) {
+                      var dt = {};                
+                      dt['start_date_time'] = spendtime.start_date_time;
+                      dt['end_date_time'] = spendtime.end_date_time;  
+                      dt['actual_hrs'] = spendtime.actual_hrs ? spendtime.actual_hrs : 0;
+                      spendtimes.spendtimes.push(dt);
+                      count1 = count1 + 1;
+                      callback();
+                     }, function (err, cb) {
+                        if(count1 >= data6.length){
+                          task._doc.assign_from = data4[0]._doc;    
+                          if(Math.ceil(parseFloat(task._doc.actual_hrs)) === task._doc.actual_hrs){
+                            task._doc.actual_hrs = task._doc.actual_hrs + " : 0 : 0 ";
+                          }
+                          else{
+                           console.log("actual: " + task._doc.actual_hrs)                          
+                           var hours =  Math.floor(task._doc.actual_hrs);
+                           var temp = parseFloat(task._doc.actual_hrs) - Math.floor(parseFloat(task._doc.actual_hrs));
+                           var minutes = parseInt(((temp *3600)/60).toString());
+                           var seconds =  parseInt((temp * 3600).toString()) - (minutes * 60);
+                           task._doc.actual_hrs = (parseInt(hours.toString()) <= 9 ? "0" + hours : hours )+ " : " +(parseInt(minutes.toString()) <= 9 ? "0" + minutes : minutes )  + " : " + (parseInt(seconds.toString()) <= 9 ? "0" + seconds : seconds );
+                           console.log("Converted: " + task._doc.actual_hrs)                                
+                          }          
+                          task._doc.assign_to = data1[0]._doc;
+                           task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
+                          task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;  
+                          task._doc.spendtimes = spendtimes.spendtimes;    
+                          in_progress.tasks.push(task._doc);
+                            count = count + 1;
+                          callback();                    
+                        }  
+                     // return;
+                     });
+                  }
+                  else{
+                     count = count + 1;
+                     callback();
+                  }       
+                })  
+              })
+            })
+          })
+         })
+          }, function (err, cb) {
+             if(count >= data.docs.length){
+              if(in_progress && in_progress.tasks.length > 0){
+                in_progress.tasks.sort(function(a,b){
+              var c:any = new Date(a.assign_date);
+              var d:any = new Date(b.assign_date);
+              return d-c;
+              });
+              }
+               tasks['In_Progress'] = in_progress.tasks;
+               tasks["Pages"] = data.pages;
+               tasks["Total"] = data.total;
+              res.send(tasks);
+              }  
+              return;
+          });  
+        } 
+        else{
+     
+         }          
+       })
+  }
+  
+}
+
+
+getUpcomingTasks = (req, res) => {   
+  var model = this.model;  
+  var tasks = {};  
+  var upcoming = {tasks:[]};
+  var count = 0 , count1 = 0;
+  var reqData =  req.body.reqData;
+  var assign_to = reqData.employee_id;
+  var project_id = reqData.project_id;
+  var page = reqData.page;
+  var limit = reqData.limit;
+  var resdata = { };
+  var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
+  var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
+  if (_idstatus == false) {
+    var resData = {};
+    var err = assign_to + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
+  else if (_idstatus1 == false) {
+    var resData = {};
+    var err = project_id + ' Id is invalid';
+    resData['error'] = err;
+    res.send(resData);
+  }
+  else{
+    var project_id1 = mongoose.Types.ObjectId(project_id);
+    var assign_to = mongoose.Types.ObjectId(assign_to);
+    model.paginate({"assign_to": assign_to,"project_id":project_id1,"status":0,"assign_date":{$gt:new Date()}}, { page: page, limit: limit }, function(err, data) {
+      //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
+        if(data && data.docs.length > 0){
+         async.forEach(data.docs, function (task, callback) {
+          var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
+          var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
+          var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
+          empmodel.find({ "_id": employee_id1 }, function (err, data4) {          
+          empmodel.find({ "_id": employee_id }, function (err, data1) {
+            projectsmodel.find({ "_id": project_id1 }, function (err, data2) {
+              activities.find({ "_id": act_id }, function (err, data3) {     
+                var task_id = mongoose.Types.ObjectId(task._doc._id);
+                var spendtimes = {spendtimes: [] }                
+                tasktime.find({ "pid": task_id }, function (err, data6) {
+                  if(data && data.docs.length > 0){
+                    // resdata = data[0]._doc;
+                     async.forEach(data6, function (spendtime, callback) {
+                      var dt = {};                
+                      dt['start_date_time'] = spendtime.start_date_time;
+                      dt['end_date_time'] = spendtime.end_date_time;  
+                      dt['actual_hrs'] = spendtime.actual_hrs ? spendtime.actual_hrs : 0;
+                      spendtimes.spendtimes.push(dt);
+                      count1 = count1 + 1;
+                      callback();
+                     }, function (err, cb) {
+                        if(count1 >= data6.length){
+                          task._doc.assign_from = data4[0]._doc;    
+                          if(Math.ceil(parseFloat(task._doc.actual_hrs)) === task._doc.actual_hrs){
+                            task._doc.actual_hrs = task._doc.actual_hrs + " : 0 : 0 ";
+                          }
+                          else{
+                           console.log("actual: " + task._doc.actual_hrs)                          
+                           var hours =  Math.floor(task._doc.actual_hrs);
+                           var temp = parseFloat(task._doc.actual_hrs) - Math.floor(parseFloat(task._doc.actual_hrs));
+                           var minutes = parseInt(((temp *3600)/60).toString());
+                           var seconds =  parseInt((temp * 3600).toString()) - (minutes * 60);
+                           task._doc.actual_hrs = (parseInt(hours.toString()) <= 9 ? "0" + hours : hours )+ " : " +(parseInt(minutes.toString()) <= 9 ? "0" + minutes : minutes )  + " : " + (parseInt(seconds.toString()) <= 9 ? "0" + seconds : seconds );
+                           console.log("Converted: " + task._doc.actual_hrs)                                
+                          }          
+                          task._doc.assign_to = data1[0]._doc;
+                           task._doc.project_id = (data2.length > 0) ? data2[0]._doc : project_id1 ;
+                          task._doc.activity_id = (data3.length > 0) ? data3[0]._doc : act_id ;;  
+                          task._doc.spendtimes = spendtimes.spendtimes;    
+                          upcoming.tasks.push(task._doc);
+                            count = count + 1;
+                          callback();                    
+                        }  
+                     // return;
+                     });
+                  }
+                  else{
+                     count = count + 1;
+                     callback();
+                  }       
+                })  
+              })
+            })
+          })
+         })
+          }, function (err, cb) {
+             if(count >= data.docs.length){
+              if(upcoming && upcoming.tasks.length > 0){
+                upcoming.tasks.sort(function(a,b){
+              var c:any = new Date(a.assign_date);
+              var d:any = new Date(b.assign_date);
+              return d-c;
+              });
+              }
+               tasks['Upcoming'] = upcoming.tasks;
+               tasks["Pages"] = data.pages;
+               tasks["Total"] = data.total;
+              res.send(tasks);
+              }  
+              return;
+          });  
+        } 
+        else{
+     
+         }          
+       })
+  }
+  
 }
 
 }
