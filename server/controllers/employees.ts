@@ -875,7 +875,7 @@ getRequestDetails = (req, res) => {
     }
 }
   
-
+  
 /*
   @author : Vaibhav Mali 
   @date : 12 Dec 2017
@@ -913,6 +913,53 @@ getAllEmployeeDetails = (req, res) => {
     res.send(employees);
  }
 };
+
+
+/*
+  @author : Vaibhav Mali 
+  @date : 05 Jan 2018
+  @API : getAllEmployeeDetailswithPagination
+  @desc : Get all employee details with pagination.
+  */
+getAllEmployeeDetailswithPagination = (req, res) => {   
+  var model = this.model;
+  var employees = {};
+  var employeetemp = {employees:[]};
+  var limit = req.body.reqData.limit;
+  var pagenumber = req.body.reqData.page;
+  var count = 0;
+  if(req && req.user){
+   model.paginate({email:{"$ne":req.user.emails[0].value}}, { page: pagenumber, limit: limit }, function(err, data) {
+ //  model.find({email:{"$ne":req.user.emails[0].value}}, function (err, data) {
+    if(data && data.docs.length){
+     async.forEach(data.docs, function (employee, callback) {
+          employeetemp.employees.push(employee._doc);
+          count = count + 1;
+          callback();
+     }, function (err, cb) {
+        if(count >= data.docs.length){
+          employees['employees'] = employeetemp.employees;
+          employees['Pages'] = data.pages;
+          employees['Total'] = data.total;
+          res.send(employees);
+        }  
+        return;
+     });  
+   } 
+   else{
+       employees['employees'] = employeetemp.employees;
+       employees['Pages'] = data.pages;
+       employees['Total'] = data.total;
+       res.send(employees);
+   }          
+  });
+ }
+ else{
+    employees['error'] = "Please login and continue";
+    res.send(employees);
+ }
+};
+
 
 /*
   @author : Vaibhav Mali 

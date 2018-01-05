@@ -10,5 +10,7 @@ var employeeSchema = new mongoose.Schema({
     create_date : Date,
     modify_date: Date
 });
+var mongoosePaginate = require('mongoose-paginate');
+employeeSchema.plugin(mongoosePaginate);
 var employees = mongoose.model('employees', employeeSchema);
 export default employees;
