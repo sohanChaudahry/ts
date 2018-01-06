@@ -47,6 +47,8 @@ export class ProjectComponent implements OnInit {
   private _disabledV:string = '0';
   private disabled:boolean = false;
   isLoading=false;
+  isProjectRunning = null; 
+  iscurrentProject = 0;
   isLoading1=false;  
   employeesList=[];
   projectList=[];
@@ -116,8 +118,8 @@ export class ProjectComponent implements OnInit {
   assign_to = new FormControl([]);
   settings1 = {
     bigBanner: true,
-    timePicker: false,
-    format: 'dd-MM-yyyy',
+    timePicker: true,
+    format: 'dd-MMM-yyyy hh:mm a',
     defaultOpen: false,
     closeOnSelect:true
 }
@@ -285,6 +287,12 @@ export class ProjectComponent implements OnInit {
     this.isAssignProjView=false;
   }
   openTaskListPage(project_detail,flag){
+     if(this.isProjectRunning == project_detail._id){
+       this.iscurrentProject = 1;
+     }
+     else{
+       this.iscurrentProject = 0;
+     }
      this.isShowAssignedTask=flag;
      this.selectedProjectDetail=project_detail;
      this.iscreateProject=false; 
@@ -410,7 +418,6 @@ export class ProjectComponent implements OnInit {
     this.projectDetail.role="Manager";
     this.projectDetail.activities=this.activityData;
     this.projectDetail.assign_to=this.addAssignUserList;
-    console.log(this.projectDetail);
     if(this.projectDetail._id){
         this.projectDetail.project_id=this.projectDetail._id;
     }
@@ -423,7 +430,6 @@ export class ProjectComponent implements OnInit {
       res => {
         this.isLoading1=false;   
         //  this.spinnerService.hide();
-        console.log(res);
          if(res.successProjects.successData.length!=0){
           this.isProjectList=true;
           this.iscreateProject=false;
@@ -453,12 +459,10 @@ export class ProjectComponent implements OnInit {
   deleteProjects(selected_project){
        this.projectService.deleteProject(selected_project._id).subscribe(
         res => {
-          console.log(res);
           if(res){
             this.toast.setMessage('Project deleted successfully!', 'success');
             //this.getEmployeeDetailByEmail();
             this.getEmployeeDetailAllData();
-            
           }
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
@@ -479,16 +483,16 @@ export class ProjectComponent implements OnInit {
   @desc :To check whether current project have followers or not.
   */
   IsFollowerExist(selectedProject){
-    this.projectService.getProjectDetailById(selectedProject._id).subscribe(
-      res => {
-         if(res && res.followers.length > 0) 
-           return 1;
-         else
-           return 0;
-      },
-      error => this.toast.setMessage('Some thing wrong!', 'danger')
-    );
-}
+      this.projectService.getProjectDetailById(selectedProject._id).subscribe(
+        res => {
+          if(res && res.followers.length > 0) 
+            return 1;
+          else
+            return 0;
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
+  }
   showAssignedProjectView(selected_data){
       this.isProjectList=false;
       this.iscreateProject=false;
@@ -667,6 +671,7 @@ UpdateAssignedTaskDetail(){
 }
 startTaskFun(task){
   this.AssignedtaskFormDetail._id = task._id;
+  this.isProjectRunning = task.project_id;
   this.AssignedtaskFormDetail.status = 1;
   this.AssignedtaskFormDetail.select = 1;
  // this.projectService.getTaskDetailsByTaskId(task._id).subscribe(
@@ -690,6 +695,7 @@ startTaskFun(task){
 pauseTaskFun(task){
   var me =this;
   this.AssignedtaskFormDetail._id = task._id;
+  this.isProjectRunning = null;
   this.AssignedtaskFormDetail.status = 1;
   this.AssignedtaskFormDetail.select = 0;  
   this.paused = 1;
@@ -711,6 +717,7 @@ pauseTaskFun(task){
   this.UpdateAssignedTaskDetail();  
 }
 finishTaskFun(task){
+  this.isProjectRunning = null;
   this.AssignedtaskFormDetail._id = task._id;
   this.AssignedtaskFormDetail.status = 2;
   this.AssignedtaskFormDetail.select = 0;  

@@ -16,12 +16,12 @@
                     <th width="25%">Project Name</th>
                     <th width="45%">Description</th>
                     <th width="15%">Role</th>
-                    <th width="15%">Action</th>
+                    <th width="15%" style="text-align: center;">Action</th>
                 </tr>
                 </thead>
                 <tbody *ngIf="MyProjectsList.length == 0">
                 <tr>
-                    <td colspan="4">There are no project in the DB. Add a new project.</td>
+                    <td colspan="4" style="text-align: center;">There are no project in the DB. Add a new project.</td>
                 </tr>  
                 </tbody>
                 <tbody>
@@ -35,7 +35,7 @@
                         <td>
                             <span>{{project.role}}</span>
                         </td>
-                        <td>
+                        <td style="text-align: center;">
                             <!-- deleteProjects(project)  -->
                             <button class="btn btn-sm btn-warning" (click)="projectEditBtm(project)"><i class="fa fa-pencil"></i></button> 
                             <button class="btn btn-sm btn-danger" (click)="openPopup(project)"><i class="fa fa-times" aria-hidden="true"></i></button> 
@@ -64,12 +64,12 @@
                 <th width="25%">Project Name</th>
                 <th width="45%">Description</th>
                 <th width="15%">Role</th>
-                <th width="15%">Action</th>
+                <th width="15%" style="text-align: center;">Action</th>
               </tr>
             </thead>
             <tbody *ngIf="AssignedProjectsList.length == 0">
               <tr>
-                <td colspan="4">There are no project in the DB. Add a new project.</td>
+                <td colspan="4" style="text-align: center;">There are no project in the DB. Add a new project.</td>
               </tr>  
             </tbody>
             <tbody>
@@ -83,7 +83,7 @@
                 <td>
                     <span>{{project.role}}</span>
                 </td>
-                <td>
+                <td style="text-align: center;">
                     <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
                     <!-- <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button>  -->
                     <button class="btn btn-sm btn-danger" *ngIf="project.accept==1" (click)="exitProjectReq(project)"><i class="fa fa-times" aria-hidden="true"></i> Exit</button> 
@@ -111,12 +111,12 @@
                     <th width="30%">Project Name</th>
                     <th width="50%">Description</th>
                     <!-- <th width="11%">Role</th> -->
-                    <th width="20%">Action</th>
+                    <th width="20%" style="text-align: center;">Action</th>
                   </tr>
                 </thead>
                 <tbody *ngIf="requestedProjectList.length == 0">
                   <tr>
-                    <td colspan="3">There are no project in the DB. Add a new project.</td>
+                    <td colspan="3" style="text-align: center;">There are no project in the DB. Add a new project.</td>
                   </tr>  
                 </tbody>
                 <tbody>
@@ -130,7 +130,7 @@
                     <!-- <td>
                         <span>{{project.role}}</span>
                     </td> -->
-                    <td>
+                    <td style="text-align: center;">
                         <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
                         <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button> 
                         <button class="btn btn-sm btn-danger" *ngIf="project.accept==1" (click)="exitProjectReq(project)"><i class="fa fa-times" aria-hidden="true"></i> Exit</button> 
@@ -358,7 +358,7 @@
                         </thead>
                         <tbody *ngIf="projectWorkingTaskList.length == 0">
                             <tr>
-                                <td colspan="4">There are no record in the DB.</td>
+                                <td colspan="4" style="text-align: center;">There are no record in the DB.</td>
                             </tr>  
                         </tbody>
                         <tbody>
@@ -402,12 +402,12 @@
                             <th width="35%">Task Description</th>
                             <th width="20%">Assign To</th>
                             <th width="15%">Due Date</th>
-                            <th width="8%">Action</th>
+                            <th width="8%" style="text-align: center;">Action</th>
                             </tr>
                         </thead>  
                         <tbody *ngIf="getTaskAssigedToUsList.length==0">
                             <tr>
-                            <td colspan="5">There are no task in the DB. Add a new task.</td>
+                            <td colspan="5" style="text-align: center;">There are no task in the DB. Add a new task.</td>
                             </tr>  
                         </tbody>
                         <tbody>
@@ -424,7 +424,7 @@
                             <td>
                                 <span>{{task.due_date | date}}</span>
                             </td>
-                            <td>
+                            <td style="text-align: center;">
                                 <button class="btn btn-sm btn-warning" (click)="editMyTaskBtn(task)"><i class="fa fa-pencil"></i></button> 
                             </td>  
                             </tr> 
@@ -435,27 +435,24 @@
         </div>
         <div class="card"  *ngIf="!iscreateProject && !isProjectList && !isAssignProjView  && !isAssignedTaskEdit && !isMyTaskEdit && isTaskListView && isTaskCardShow">
             <div class="card-header">
-                <span class="custom_span_header">Assigned Task</span>
-                <button class="btn btn-sm btn-primary" style="float:right;margin-right:10px"> :{{secondsDisplay}}</button>                
-                <button class="btn btn-sm btn-primary" style="float:right;margin-right:2px"> :{{minutesDisplay}}</button>                
-                <button class="btn btn-sm btn-primary" style="float:right;margin-right:2px">{{hoursDisplay}}</button>
+                <span class="custom_span_header">Assigned Task</span>   
             </div>
             <div class="card-block">
                 <div class="table-responsive custom_table">
                  <table class="table table-bordered">
                     <thead class="thead-default">
                         <tr> 
-                            <th width="17%">Task Name</th>
-                            <th width="30%">Task Description</th>
+                            <th width="15%">Task Name</th>
+                            <th width="20%">Task Description</th>
                             <th width="15%">Assign From</th>
                             <th width="15%">Actual Hours</th>
                             <th width="10%">Due Date</th> 
-                            <th width="18%">Action</th>
+                            <th width="25%" style="text-align: center;">Action</th>
                         </tr>
                     </thead>
                     <tbody *ngIf="AssigedToOtherList.length==0">
                         <tr>
-                            <td colspan="6">There are no task in the DB. Add a new task.</td>
+                            <td colspan="6" style="text-align: center;">There are no task in the DB. Add a new task.</td>
                         </tr>  
                     </tbody>
                     <tbody>
@@ -475,10 +472,14 @@
                             <td>
                                 <span>{{task.due_date | date}}</span>
                             </td>
-                            <td>
+                            <td style="text-align: center;">
                                 <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
                                 <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="pauseTaskFun(task)"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
                                 <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="finishTaskFun(task)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
+
+                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> :{{secondsDisplay}}</button>                
+                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px"> :{{minutesDisplay}}</button>                
+                                 <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px">{{hoursDisplay}}</button>
                             </td>  
                         </tr> 
                     </tbody>  

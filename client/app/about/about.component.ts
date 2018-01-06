@@ -21,7 +21,7 @@ export class AboutComponent implements OnInit{
   AcceptedProjectList=[];
   RequestedProjectList=[];
   projectList=[];
-
+  allTask=[];
   upcomingTasksList=[];
   pendingTasksList=[];
   completedTasksList=[];
@@ -32,7 +32,7 @@ export class AboutComponent implements OnInit{
   isActiveMyProject=true;
   isActiveAcceptProject=false;
   isActiveReqProject=false;
-  isTaskActive=[true,false,false,false];
+  isTaskActive=[true,false,false,false,false];
   taskList=[];
   constructor(public toast: ToastComponent,
   private homeService:HomeService,
@@ -40,6 +40,7 @@ export class AboutComponent implements OnInit{
   private projectService:ProjectService) { }
 
   ngOnInit() {
+
     this.auth.getLogedinUserData();
     setTimeout(()=>{    
       this.getProjectDetail();
@@ -53,8 +54,44 @@ export class AboutComponent implements OnInit{
     this.selectedProjectId=selected_project._id;
     this.isShowproject=false;
     this.isShowList=true;
-    this.isTaskActive=[true,false,false,false];
-    this.openPendingTasks();
+    this.isTaskActive=[true,false,false,false,false];
+    this.openAllTasks();
+  }
+  openAllTasks(){
+    this.getTaskDetailsByAssignFromAPi();
+  }
+  getTaskDetailsByAssignFromAPi(){
+      let reqData={  
+        "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
+        "project_id":this.selectedProjectId ? this.selectedProjectId : ""
+      }
+      this.projectService.getTaskDetailsByAssignFrom({"reqData":reqData}).subscribe(
+          res => {      
+              if(res){
+                for(var i=0;i<res.tasks.length;i++){
+                  this.taskList.push(res.tasks[i]);
+                }
+              }
+              this.getDetailsByAssignToApi();
+          },
+          error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
+  }
+  getDetailsByAssignToApi(){
+      let reqData={
+        "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
+        "project_id":this.selectedProjectId ? this.selectedProjectId : ""
+      }
+      this.projectService.getDetailsByAssignTo({"reqData":reqData}).subscribe(
+          res => {
+            if(res){
+              for(var i=0;i<res.tasks.length;i++){
+                this.taskList.push(res.tasks[i]);
+              }
+          }
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+        );
   }
   openPendingTasks(){
     let reqData= {
