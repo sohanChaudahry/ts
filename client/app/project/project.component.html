@@ -12,10 +12,10 @@
             <table class="table table-bordered">
                 <thead class="thead-default">
                 <tr>
-                    <th width="22%">Project Name</th>
-                    <th width="50%">Description</th>
+                    <th width="25%">Project Name</th>
+                    <th width="45%">Description</th>
                     <th width="15%">Role</th>
-                    <th width="12%">Action</th>
+                    <th width="15%">Action</th>
                 </tr>
                 </thead>
                 <tbody *ngIf="MyProjectsList.length == 0">
@@ -60,10 +60,10 @@
         <table class="table table-bordered">
             <thead class="thead-default">
               <tr>
-                <th width="24%">Project Name</th>
-                <th width="50%">Description</th>
-                <th width="11%">Role</th>
-                <th width="15%">Action</th>
+                <th width="25%">Project Name</th>
+                <th width="45%">Description</th>
+                <th width="10%">Role</th>
+                <th width="20%">Action</th>
               </tr>
             </thead>
             <tbody *ngIf="AssignedProjectsList.length == 0">
@@ -107,15 +107,15 @@
             <table class="table table-bordered">
                 <thead class="thead-default">
                   <tr>
-                    <th width="24%">Project Name</th>
+                    <th width="30%">Project Name</th>
                     <th width="50%">Description</th>
-                    <th width="11%">Role</th>
-                    <th width="15%">Action</th>
+                    <!-- <th width="11%">Role</th> -->
+                    <th width="20%">Action</th>
                   </tr>
                 </thead>
                 <tbody *ngIf="requestedProjectList.length == 0">
                   <tr>
-                    <td colspan="4">There are no project in the DB. Add a new project.</td>
+                    <td colspan="3">There are no project in the DB. Add a new project.</td>
                   </tr>  
                 </tbody>
                 <tbody>
@@ -126,9 +126,9 @@
                     <td>
                         <span>{{project.desc}}</span>
                     </td>
-                    <td>
+                    <!-- <td>
                         <span>{{project.role}}</span>
-                    </td>
+                    </td> -->
                     <td>
                         <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
                         <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button> 
@@ -183,31 +183,31 @@
               <div class="col-md-10">
                   <label>Activities</label>
                   <div class="">
-                  <table class="table table-fixed table-bordered activity_ctm">
-                      <thead class="thead-default">
-                          <tr>
-                            <th class="col-md-1">&nbsp;</th>
-                            <th class="col-md-9">Name</th>
-                            <th class="col-md-2" style="text-align:center">Action</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <tr *ngFor="let act of activityData;let i=index;">
-                            <td class="col-md-1">
-                                {{i+1}}
-                            </td>
-                            <td class="col-md-9">
-                                <div class="form-group ctm_input">
-                                  <input class="form-control" type="text" [(ngModel)]="act.name" placeholder="Name">
-                                </div>
-                            </td>
-                            <td class="col-md-2">
-                                <button class="btn btn-sm btn-danger" (click)="removeActivity(index);"><i class="fa fa-times" aria-hidden="true"></i></button>
-                                <button class="btn btn-sm btn-info" (click)="addActivity();" *ngIf="activityData.length==i+1"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                            </td>
-                          </tr> 
-                      </tbody>  
-                  </table>
+                    <table class="table table-fixed table-bordered activity_ctm">
+                        <thead class="thead-default">
+                            <tr>
+                                <th class="col-md-1">&nbsp;</th>
+                                <th class="col-md-9">Name</th>
+                                <th class="col-md-2" style="text-align:center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let act of activityData;let i=index;">
+                                <td class="col-md-1">
+                                    {{i+1}}
+                                </td>
+                                <td class="col-md-9">
+                                    <div class="form-group ctm_input">
+                                    <input class="form-control" type="text" [(ngModel)]="act.name" placeholder="Name">
+                                    </div>
+                                </td>
+                                <td class="col-md-2">
+                                    <button class="btn btn-sm btn-danger" (click)="removeActivity(index);"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                    <button class="btn btn-sm btn-info" (click)="addActivity();" *ngIf="activityData.length==i+1"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                </td>
+                            </tr> 
+                        </tbody>  
+                    </table>
                   </div>
               </div>
               <div class="col-md-1"></div>

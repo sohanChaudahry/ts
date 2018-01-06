@@ -10,19 +10,18 @@ import { UserService } from '../services/user.service';
 export class AuthService {
   loggedIn = false;
   isAdmin = false;
-
   jwtHelper: JwtHelper = new JwtHelper();
-
+  current_user_name="";
   constructor(private userService: UserService,
               private router: Router) {
        
   }
-    login_google() {
+  login_google() {
      return this.userService.loginGoogle().map(
-      res => {
-        return res;
-      }
-    );
+        res => {
+          return res;
+        }
+      );
   }
 
   public checkIsLogin=0;
@@ -31,6 +30,7 @@ export class AuthService {
      this.userService.getLogedinUser().subscribe(
       res => {
         if(res && res.login_status){
+            this.current_user_name=res.name;
             localStorage.setItem('_id', res._id);
             localStorage.setItem('name', res.name);
             localStorage.setItem('login_status', res.login_status); 

@@ -129,7 +129,7 @@ table{
   padding-left: 0;
   padding-right: 0;
   margin-top: 0;
-  z-index:99;
+  z-index:98;
 }
 .winkel-calendar {
     .wc-date-container{
@@ -142,4 +142,12 @@ table{
         color: #333 !important;
       }
   }
+}
+@media only screen and (max-width: 768px){
+  .table {
+    min-width : 1100px;
+  }
+}
+.table{
+  min-width : 1200px;
 }

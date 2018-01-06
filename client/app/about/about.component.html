@@ -113,10 +113,14 @@
   <div>
       <div *ngFor="let task_detail of taskList">
           <div class="card card_ctm">
-            <div class="card-body" style="margin: 20px;height: 90px;">
-              <h5 class="card-title" style="color:green;">{{task_detail.task_title}}
+            <div class="card-body">
+              <div>
+                  <span class="card-title project_name_span" >{{task_detail.task_title}}</span>
                   <i class="fa fa-tasks" aria-hidden="true" style="float: right;color:black;" (click)="openProjectListDialog()"></i>
-              </h5>
+              </div>
+              <!-- <h5 class="card-title " [ngClass]="{'task_exp_title':task_detail.expire==1}">{{task_detail.task_title}}
+                  <i class="fa fa-tasks" aria-hidden="true" style="float: right;color:black;" (click)="openProjectListDialog()"></i>
+              </h5> -->
               <p class="card-text desc_elipsis">{{task_detail.task_description}} </p>
             </div>
             <ul class="list-group list-group-flush">

@@ -15,6 +15,7 @@ export class EmployeeComponent implements OnInit {
   isLoading=false;
   isEmployeeListShow=true;
   isProjectListShow=false;
+  selectedEmployee={};
   constructor(public toast: ToastComponent,
   private employeeService : EmployeeService) { }
 
@@ -34,7 +35,8 @@ export class EmployeeComponent implements OnInit {
        error => this.toast.setMessage('Some thing wrong!', 'danger')
    );
   }
-  openProjectListDialog(){
+  openProjectListDialog(emp){
+    this.selectedEmployee=emp.email;
     this.isEmployeeListShow=false;
     this.isProjectListShow=true;
     this.getEmployeeDetailAllDataProject();
@@ -45,7 +47,7 @@ export class EmployeeComponent implements OnInit {
   }
   getEmployeeDetailAllDataProject(){
     let reqData={
-      "email":localStorage.getItem("email") ? localStorage.getItem("email") : "",
+      "email": this.selectedEmployee,
       "page" : 1,
    	  "limit" : 10
    }
