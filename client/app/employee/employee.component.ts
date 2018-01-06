@@ -26,7 +26,7 @@ export class EmployeeComponent implements OnInit {
   getEmployeeDetailAllData(){
     let reqData={
       "page" : 1,
-   	  "limit" : 10
+   	  "limit" : 20
    }
    this.employeeService.getAllEmployeeDetailswithPagination({"reqData":reqData}).subscribe(
        res => {
@@ -49,7 +49,7 @@ export class EmployeeComponent implements OnInit {
     let reqData={
       "email": this.selectedEmployee,
       "page" : 1,
-   	  "limit" : 10
+   	  "limit" : 20
    }
    this.employeeService.getdetailsByEmailwithPagination({"reqData":reqData}).subscribe(
        res => {

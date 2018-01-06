@@ -1,7 +1,7 @@
 <div class="cointaner">
-    <!-- <app-loading [condition]="isLoading"></app-loading> -->
+    <app-loading [condition]="isLoading"></app-loading>
     <app-toast [message]="toast.message"></app-toast>
-    <ng4-loading-spinner> </ng4-loading-spinner>
+    <!-- <ng4-loading-spinner> </ng4-loading-spinner> -->
     <!-- my project list -->
     <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
       <div class="card-header hearder_btn">
