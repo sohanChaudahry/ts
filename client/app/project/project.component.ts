@@ -18,7 +18,7 @@ interface taskFormData {
   project_id : any;
   activity_id : any;
   due_date : Date;
-  assign_date : Date;
+  assign_date : Date;  
   priority : string;
   estimate_hrs : number;
   actual_hrs ? : number;
@@ -34,25 +34,26 @@ interface taskFormData {
   styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit {
-
-  
+  //Vaibhav Mali 06 Jan 2018 ...Start
+  timer;
   ticks = 0;
-  minutesDisplay: number = 0;
-  hoursDisplay: number = 0;
-  secondsDisplay: number = 0;
-  sub: Subscription;  
+  hoursDisplay: number = localStorage.getItem("hoursDisplay") ? parseInt(localStorage.getItem("hoursDisplay")) : 0;    
+  minutesDisplay: number = localStorage.getItem("minutesDisplay") ? parseInt(localStorage.getItem("minutesDisplay")) : 0;    
+  secondsDisplay: number = localStorage.getItem("secondsDisplay") ? parseInt(localStorage.getItem("secondsDisplay")) : 0;    
+  sub: Subscription; 
+  //Vaibhav Mali 06 Jan 2018 ...End
   public employeesToshow  :Array<any>=[];
   private value:any = {};
   private _disabledV:string = '0';
   private disabled:boolean = false;
   isLoading=false;
-  isLoading1=false;
+  isLoading1=false;  
   employeesList=[];
   projectList=[];
   isEmpAutoSelect=[];
   AssignedProjectsList=[];
   MyProjectsList=[];
-  requestedProjectList=[];
+  requestedProjectList=[];  
   AssignedProjectView={};
   selectedProjectDetail={"_id":""};
   AssigedToOtherList=[];
@@ -67,6 +68,7 @@ export class ProjectComponent implements OnInit {
   statusList=[{"val":0,"name":"Assigned"},{"val":1,"name":"In Progress"},{"val":2,"name":"Completed"},{"val":3,"name":"Failed"}];
   priorityList=["P0","P1","P2","P3","P4","P5"];
   isProjectList=true;
+  me = this;
   iscreateProject=false;
   isAssignProjView=false;
   isMyTaskEdit=false; 
@@ -75,6 +77,8 @@ export class ProjectComponent implements OnInit {
   isAssignedTaskEdit=false;
   isTaskCardShow=false;
   isProjectWorkingTask=false;
+  init = 0;
+  selectvalue = 0;
   task_id = "";
   paused = 0;  
   taskFormDetail : taskFormData = {
@@ -84,7 +88,7 @@ export class ProjectComponent implements OnInit {
      assign_to : "",
      project_id : "",
      activity_id : "",
-     assign_date : new Date(),
+     assign_date : new Date(),     
      due_date : new Date(),
      priority : "",
      estimate_hrs : null,
@@ -142,9 +146,11 @@ export class ProjectComponent implements OnInit {
   
   ngOnInit() {
       this.getAllEmployeeList();
-     // this.getEmployeeDetailByEmail();
-      this.getEmployeeDetailAllData();
+      // this.getEmployeeDetailByEmail();
+      this.getEmployeeDetailAllData();      
       this.updateProjectRequeststatus();
+      this.setTimerValue();
+      // this.getRequestedProjectsFun();
       this.getProjectForm = this.formBuilder.group({
         project_id: this.project_id,
         project_name:this.project_name,
@@ -166,6 +172,18 @@ export class ProjectComponent implements OnInit {
         cancleBtnClass: "btn btn-default", // you class for styling the cancel button 
         animation: "fadeInDown" // 'fadeInLeft', 'fadeInRight', 'fadeInUp', 'bounceIn','bounceInDown' 
       };
+      //Vaibhav Mali 06 Jan 2018 ...Start
+      this.selectvalue = localStorage.getItem("select") ? parseInt( localStorage.getItem("select")) : 0;      
+      if(parseInt(this.selectvalue.toString()) == 1){
+        this.AssignedtaskFormDetail._id = localStorage.getItem("task_id").toString();
+        this.AssignedtaskFormDetail.select = 1;
+        this.ticks = this.secondsDisplay;
+       // this.sub.unsubscribe();
+        this.setTimerValue()
+        this.startTimer(0);
+      
+      }
+      //Vaibhav Mali 06 Jan 2018 ...End
   }
   private get disabledV():string {
     return this._disabledV;
@@ -188,7 +206,7 @@ export class ProjectComponent implements OnInit {
           project_id : "",
           activity_id : "",
           due_date : new Date(),
-          assign_date : new Date(),
+          assign_date : new Date(),          
           priority : "",
           estimate_hrs : null,
           actual_hrs  : null,
@@ -226,6 +244,17 @@ export class ProjectComponent implements OnInit {
     this.value = value;
   }
 
+  setTimerValue() { 
+  var me =this; 
+  this.ticks = this.secondsDisplay ? this.secondsDisplay :0;  
+  this.hoursDisplay = localStorage.getItem("hoursDisplay") ? parseInt(localStorage.getItem("hoursDisplay")) : 0;      
+  this.minutesDisplay = localStorage.getItem("minutesDisplay") ? parseInt(localStorage.getItem("minutesDisplay")) : 0;    
+  this.secondsDisplay = localStorage.getItem("secondsDisplay") ? parseInt(localStorage.getItem("secondsDisplay")) : 0;    
+  setTimeout(function() {
+    me.setTimerValue()
+   }, 60*60*0.3);
+  }
+  
   addActivity(){
     this.activityData.push({"name":"","activity_id":""});
   }
@@ -283,7 +312,7 @@ export class ProjectComponent implements OnInit {
      this.taskFormDetail.project_id  = "";
      this.taskFormDetail.activity_id  = "";
      this.taskFormDetail.due_date  = new Date();
-     this.taskFormDetail.assign_date = new Date();
+     this.taskFormDetail.assign_date = new Date();     
      this.taskFormDetail.priority  = "";
      this.taskFormDetail.estimate_hrs  =  null,
      this.getProjectDetailByIdForTask(this.selectedProjectDetail._id);
@@ -388,22 +417,22 @@ export class ProjectComponent implements OnInit {
     for(var i=0;i<this.projectDetail.activities.length;i++){
         this.projectDetail.activities[i].activity_name=this.projectDetail.activities[i].name;
     }
-    this.isLoading1=true;
+    this.isLoading1=true;   
     // this.spinnerService.show();
     this.projectService.saveProjectDetails({"reqData":[this.projectDetail]}).subscribe(
       res => {
-         this.isLoading1=false;
+        this.isLoading1=false;   
         //  this.spinnerService.hide();
-         console.log(res);
+        console.log(res);
          if(res.successProjects.successData.length!=0){
-            this.isProjectList=true;
-            this.iscreateProject=false;
-            this.toast.setMessage('Project saved successfully!', 'success')
-           // this.getEmployeeDetailByEmail();
-           this.getEmployeeDetailAllData();
-
+          this.isProjectList=true;
+          this.iscreateProject=false;
+          this.toast.setMessage('Project saved successfully!', 'success')
+          // this.getEmployeeDetailByEmail();
+          this.getEmployeeDetailAllData();
+          
          }else if(res.failedProjects.failedData.length!=0){
-            this.toast.setMessage('Project create failed.', 'danger')
+          this.toast.setMessage('Project create failed.', 'danger')
          }
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
@@ -429,7 +458,7 @@ export class ProjectComponent implements OnInit {
             this.toast.setMessage('Project deleted successfully!', 'success');
             //this.getEmployeeDetailByEmail();
             this.getEmployeeDetailAllData();
-
+            
           }
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
@@ -459,7 +488,7 @@ export class ProjectComponent implements OnInit {
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
-  }
+}
   showAssignedProjectView(selected_data){
       this.isProjectList=false;
       this.iscreateProject=false;
@@ -550,7 +579,7 @@ export class ProjectComponent implements OnInit {
            this.taskFormDetail.due_date = res.due_date;
 
            this.taskFormDetail.assign_date = res.assign_date;
-
+           
            this.taskFormDetail.task_title= res.task_title;
            this.taskFormDetail.task_description = res.task_description;  
          //  this.taskFormDetail['_id'] = res.__id;
@@ -564,20 +593,41 @@ export class ProjectComponent implements OnInit {
   @author : Vaibhav Mali 
   @date : 29 Dec 2017
   @fn : startTimer,getSeconds,getMinutes,getHours,pad,UpdateAssignedTaskDetail,startTaskFun,
-        pauseTaskFun,finishTaskFun
+        pauseTaskFun,finishTaskFun,setTimerValue
   */
-private startTimer() {
-    
-  let timer = Observable.timer(1, 1000);
-       this.sub = timer.subscribe(
-             t => {
-               this.ticks = t;
-               this.secondsDisplay = this.getSeconds(this.ticks);
-               this.minutesDisplay = this.getMinutes(this.ticks);
-               this.hoursDisplay = this.getHours(this.ticks);
-               console.log(this.hoursDisplay + " : " + this.minutesDisplay + " : " + this.secondsDisplay);
-          }
-      );
+private startTimer(value) {
+          if(value != 1){
+              var me = this;
+               var hoursDisplay,secondsDisplay,minutesDisplay;
+                 secondsDisplay =   parseInt(this.secondsDisplay.toString()) + 1;
+                 hoursDisplay = this.hoursDisplay;
+                 minutesDisplay = this.minutesDisplay;
+                if(this.secondsDisplay == 60){
+                  minutesDisplay =  parseInt(this.minutesDisplay.toString()) + 1; 
+                  secondsDisplay = 0                  
+                }
+                if(this.minutesDisplay == 60){
+                   hoursDisplay = parseInt(this.hoursDisplay.toString()) + 1;  
+                  minutesDisplay =  0;                 
+         
+                }   
+               localStorage.setItem("hoursDisplay",(hoursDisplay).toString());
+               localStorage.setItem("minutesDisplay",(minutesDisplay).toString()); 
+               localStorage.setItem("secondsDisplay",(secondsDisplay).toString());               
+               localStorage.setItem("actual_hrs",(this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600)).toString());
+             
+                this.timer =  setTimeout(function() {
+                  if(value == 1){
+                     clearTimeout(this.timer);   
+                  } 
+                  else{
+                    me.startTimer(0) 
+                  }    
+                }, 60*60*0.2);
+              }
+              else{
+                clearTimeout(this.timer);                   
+              }
   }
   
   private getSeconds(ticks: number) {
@@ -627,22 +677,35 @@ startTaskFun(task){
       else{
         this.AssignedtaskFormDetail['start_date_time'] = new Date();             
       }
-      this.startTimer();      
+      this.startTimer(0);      
       delete this.AssignedtaskFormDetail['end_date_time'];
       this.AssignedtaskFormDetail.spendtime = {};
       this.spendtime['start_date_time'] = new Date();
+      localStorage.setItem('select', (1).toString());
+      localStorage.setItem('task_id',task._id.toString());      
+      localStorage.setItem('spend_start_date_time', this.spendtime['start_date_time'].toDateString());      
       this.UpdateAssignedTaskDetail();
 //  })
 }
 pauseTaskFun(task){
+  var me =this;
   this.AssignedtaskFormDetail._id = task._id;
   this.AssignedtaskFormDetail.status = 1;
   this.AssignedtaskFormDetail.select = 0;  
   this.paused = 1;
   delete this.AssignedtaskFormDetail['start_date_time'];
+  localStorage.setItem('spend_start_date_time', "");        
   this.spendtime['end_date_time'] = new Date();
-  this.sub.unsubscribe(); 
+  localStorage.setItem('select', null);  
+  localStorage.setItem("hoursDisplay",(0).toString());
+  localStorage.setItem("minutesDisplay",(0).toString()); 
+  localStorage.setItem("secondsDisplay",(0).toString());             
+//  this.sub.unsubscribe(); 
+  me.startTimer(1)
   this.spendtime.actual_hrs = this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600);
+  this.hoursDisplay = 0;            
+  this.minutesDisplay = 0;               
+  this.secondsDisplay = 0;  
   console.log(this.spendtime.actual_hrs);
   this.AssignedtaskFormDetail.spendtime = this.spendtime;
   this.UpdateAssignedTaskDetail();  
@@ -654,7 +717,8 @@ finishTaskFun(task){
   delete this.AssignedtaskFormDetail['start_date_time'];
   this.AssignedtaskFormDetail['end_date_time'] = new Date(); 
   this.spendtime['end_date_time'] = new Date();
-  this.sub.unsubscribe();   
+ // this.sub.unsubscribe();   
+  this.startTimer(1)  
   this.spendtime.actual_hrs = this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600);
   console.log(this.spendtime.actual_hrs);
   if(this.paused == 1)
@@ -742,7 +806,7 @@ finishTaskFun(task){
         res => {
            this.toast.setMessage('Project request accepted successfully.', 'success')
           // this.getEmployeeDetailByEmail();
-           this.getEmployeeDetailAllData();
+          this.getEmployeeDetailAllData();
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
@@ -753,7 +817,7 @@ finishTaskFun(task){
            this.toast.setMessage('Project request rejected successfully.', 'success');
            //this.getEmployeeDetailByEmail();
            this.getEmployeeDetailAllData();
-        },
+          },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
@@ -842,8 +906,8 @@ finishTaskFun(task){
     let reqData={
       "email":localStorage.getItem("email") ? localStorage.getItem("email") : "",
       "page" : 1,
-   	  "limit" : 20
-   }
+      "limit" : 20
+    }
   //  this.spinnerService.show();
    this.projectService.getdetailsByEmailwithPagination({"reqData":reqData}).subscribe(
        res => {

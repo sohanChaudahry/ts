@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { RecursiveService } from './services/recursive.service';
+import { TaskService } from './services/task.service';
+import { UserService } from './services/user.service';
 import {Observable} from 'rxjs/Rx';
 import { Router, NavigationEnd} from '@angular/router';
 
@@ -12,6 +14,8 @@ export class AppComponent {
 
   constructor(public auth: AuthService,
   private recursiveService :RecursiveService,
+  private taskService : TaskService,
+  private userService: UserService,  
   private router : Router) { 
 
   }
@@ -31,10 +35,47 @@ export class AppComponent {
       }
     });
   }
+  // Vaibhav Mali 06 Jan 2018 ...Start
   logout(){
-    window.location.href='http://localhost:3000/logout';
-    localStorage.clear();
+    var  AssignedtaskFormDetail = {
+      _id:"",
+      select:0,
+      status:0,
+      spendtime : {}
+    };
+    var Id = localStorage.getItem("_id");    
+    var  reqData = {
+      _id:""
+    };
+    var select = localStorage.getItem("select");
+    if(parseInt(select) == 1){
+           AssignedtaskFormDetail.select = 0;
+           AssignedtaskFormDetail.status = 1;
+           AssignedtaskFormDetail.spendtime['start_date_time'] = localStorage.getItem('spend_start_date_time');  
+           AssignedtaskFormDetail.spendtime['end_date_time'] = new Date();  
+           AssignedtaskFormDetail.spendtime['actual_hrs'] = parseFloat(localStorage.getItem("actual_hrs"));
+           AssignedtaskFormDetail._id = localStorage.getItem('task_id');  
+           this.taskService.saveTaskDetail({reqData:[AssignedtaskFormDetail]}).subscribe(
+            res => { 
+           //      reqData._id = _id;
+                 this.userService.emplogout(Id).subscribe(
+                  res => { 
+                      localStorage.clear();
+                      window.location.href='http://localhost:3000/logout';                      
+                  })
+                }
+           )
+    }
+    else{
+      this.userService.emplogout(Id).subscribe(
+        res => { 
+            localStorage.clear();
+            window.location.href='http://localhost:3000/logout';                      
+        })      
+    }
+  
   }
+   // Vaibhav Mali 06 Jan 2018 ...End
    /*
      @author : Vaibhav Mali 
      @date : 27 Dec 2017

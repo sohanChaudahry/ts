@@ -8,6 +8,7 @@ import { ToastComponent } from '../shared/toast/toast.component';
 
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
+import { TaskService } from '../services/task.service';
 
 @Injectable()
 export class RecursiveService {
@@ -15,19 +16,56 @@ export class RecursiveService {
   constructor(private router: Router,
               private userService: UserService,
               private authService:AuthService,
+              private taskService : TaskService,              
               public toast:ToastComponent) {
        
   }
 
   checkUserLogedIn(){
     //Vaibhav Mali. 27 Dec 2017 ...Updated.
+    // Vaibhav Mali 06 Jan 2018 ...Start
     //this.authService.getLogedinUserData();
     let me=this;
     this.authService.getLogedinUserData(function() {
         var current_status = localStorage.getItem("login_status");    
         if(!current_status){
-            this.router.navigate(['/login']);
-            return;
+          var  AssignedtaskFormDetail = {
+            _id:"",
+            select:0,
+            status:0,
+            spendtime : {}
+          };
+          var Id = localStorage.getItem("_id");    
+          var  reqData = {
+            _id:""
+          };
+          var select = localStorage.getItem("select");
+            if(parseInt(select) == 1){
+                 AssignedtaskFormDetail.select = 0;
+                 AssignedtaskFormDetail.status = 1;
+                 AssignedtaskFormDetail.spendtime['start_date_time'] = localStorage.getItem('spend_start_date_time');  
+                 AssignedtaskFormDetail.spendtime['end_date_time'] = new Date();  
+                 AssignedtaskFormDetail.spendtime['actual_hrs'] = parseFloat(localStorage.getItem("actual_hrs"));
+                 AssignedtaskFormDetail._id = localStorage.getItem('task_id');  
+                 this.taskService.saveTaskDetail({reqData:[AssignedtaskFormDetail]}).subscribe(
+                  res => {  
+                           //reqData._id = _id;
+                           this.userService.emplogout(Id).subscribe(
+                            res => { 
+                                    localStorage.clear();
+                                    this.router.navigate(['/login']);
+                            })
+                       //  return;
+                      }
+                 )
+            }
+            else{
+              this.userService.emplogout(Id).subscribe(
+                res => { 
+                        localStorage.clear();
+                        this.router.navigate(['/login']);
+                })
+            } 
         }
         else{
            me.getProjectRequests();    
@@ -37,6 +75,7 @@ export class RecursiveService {
             me.checkUserLogedIn();
         }, 60*60*5);
     })
+    // Vaibhav Mali 06 Jan 2018 ...End
    
  }
 

@@ -57,6 +57,11 @@ export class UserService {
   get_Accept_Cancel_ProjectRequests(): Observable<any> {
     return this.http.get('/api/employees/request/getAccept_Cancel_Projectrequests', this.options).map(res => res.json());
   }
+
+  emplogout(Id): Observable<any> {
+    return this.http.get(`/api/employees/logout/${Id}`,this.options).map(res => res.json());
+  }
+
   //Vaibhav Mali 27 Dec 2017 ...End
 
   getUser(user): Observable<any> {

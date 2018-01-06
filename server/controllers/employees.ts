@@ -874,8 +874,44 @@ getRequestDetails = (req, res) => {
       res.send(resData);
     }
 }
-  
-  
+  /*
+  @author : Vaibhav Mali 
+  @date : 01 Jan 2018
+  @API : logout
+  @desc : To logout user.
+  */
+logout = (req, res) => { 
+  var resData;
+  var _id = req.params.id;
+  var _idstatus = mongoose.Types.ObjectId.isValid(_id);
+  if (_idstatus == false) {
+        var err = _id + ' Employee Id is invalid';  
+        res.send(err)  
+        //cb(err)        
+  }
+  var employee_id = mongoose.Types.ObjectId(_id);
+  empmodel.find({ "_id": employee_id }, function (err, data) {
+        if(data && data.length > 0){
+            empmodel.findOneAndUpdate({ "_id": employee_id}, { "$set": { "act_status": 0 } }).exec(function (err, data3) {
+                   if (err) {
+                       res.send(err)   
+                     //cb(err)  
+                   }
+                   else {
+                          var dt = {success:""};
+                          dt.success = "true";
+                          res.send(dt)   
+                         // cb(null,dt)
+                    }
+            });
+   
+        }
+  })
+
+}  
+
+
+
 /*
   @author : Vaibhav Mali 
   @date : 12 Dec 2017

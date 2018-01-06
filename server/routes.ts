@@ -55,6 +55,7 @@ export default function setRoutes(app) {
   router.route('/employees/getAllEmployeeDetails/').get(employeesCtrl.getAllEmployeeDetails); 
   router.route('/employees/getAllEmployeeDetailswithPagination/').post(employeesCtrl.getAllEmployeeDetailswithPagination);   
   router.route('/employees/getCurrentLoginDetails/').get(employeesCtrl.getCurrentLoginDetails); 
+  router.route('/employees/logout/:id').get(employeesCtrl.logout); 
   
 
   //Tasks

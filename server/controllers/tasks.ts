@@ -1,6 +1,9 @@
 import Tasks from '../models/tasks';
 import tasktime from '../models/tasktime';
 import followers from '../models/followers';
+import employees from '../models/employees';
+import projects from '../models/projects';
+import activities1 from '../models/activities';
 
 
 var async = require("async");
@@ -15,8 +18,11 @@ export default class TasksCtrl  {
 
   model = Tasks;
   TaskTime = tasktime;
+  emp1= employees;
+  pr = projects;
+  act1 = activities1;
 
-
+  
 
   /*
   @author : Vaibhav Mali 
@@ -214,6 +220,202 @@ export default class TasksCtrl  {
         result['failed'] = failedData;
           if(count >= length){
             res.send(result);
+          }  
+        return;
+    });
+  };
+
+  save_update_Tasks1 = (req, res) => {
+    var tasktime = this.TaskTime; 
+    var tasks = req.body.reqData;
+    const current_date = new Date();
+    //console.log(current_date);    
+    //current_date.setDate(Number(current_date.getDate()) + 60);
+   // console.log(current_date);
+    var model = this.model;
+    var count = 0;
+    var dt = {
+        success: ""
+    };
+    var successData = {
+        successData : []
+    }
+    var failedData = {
+        failedData : []
+    }
+    var length = tasks.length ? tasks.length : 0;
+    var me = this;
+    async.forEach(tasks, function (task, callback) {
+        if(task && task._id != "" && task._id != null && task._id != undefined){
+          var spendtime  = task.spendtime;
+          //If Task is already exist
+        var _idstatus = mongoose.Types.ObjectId.isValid(task._id);
+        if (_idstatus == false) {
+               count = length;
+              var err = task._id + ' Task Id is invalid';    
+              task.error = err;           
+              failedData.failedData.push(task);
+              callback();
+        }
+        var task_id = mongoose.Types.ObjectId(task._id);
+        model.find({ "_id": task_id }, function (err, data) {
+              if(data && data.length > 0){
+                    model.findOneAndUpdate({ "_id": task_id}, { "$set": 
+                    { "assign_from":task.assign_from  ? task.assign_from : data[0]._doc.assign_from ,
+                    "assign_to":task.assign_to ? task.assign_to : data[0]._doc.assign_to ,
+                    "task_title": task.task_title ? task.task_title : data[0]._doc.task_title,
+                    "task_description": task.task_description ? task.task_description : data[0]._doc.task_description,                    
+                    "project_id": task.project_id ? task.project_id : data[0]._doc.project_id,
+                     "activity_id": task.activity_id ? task.activity_id : data[0]._doc.activity_id,
+                     "due_date": task.due_date ? task.due_date : data[0]._doc.due_date,
+                     "assign_date" : task.assign_date ? task.assign_date : data[0]._doc.assign_date,                
+                     "select": task && (task.select == 0 || task.select == 1 || task.select == 2 )? task.select : 0,
+                     "estimate_hrs": task.estimate_hrs ? task.estimate_hrs : data[0]._doc.estimate_hrs,
+                     //"actual_hrs": task.actual_hrs ? task.actual_hrs : data[0]._doc.actual_hrs,
+                     "priority": task.priority ? task.priority : data[0]._doc.priority,
+                     "status": task.status ? task.status : data[0]._doc.status,
+                     "start_date_time": task.start_date_time ? task.start_date_time : data[0]._doc.start_date_time,
+                     "end_date_time":task.end_date_time ? task.end_date_time : data[0]._doc.end_date_time,
+                      "modify_date" : current_date ,
+                       "stime" : me.toTimestamp(current_date)} }).exec(function (err, data3) {
+                         if (err) {
+                               count = length; 
+                               task.error = err;                                       
+                               failedData.failedData.push(task);
+                               callback();
+                         }
+                         else {
+                              var project_id = mongoose.Types.ObjectId(task.project_id);
+                              followers.findOneAndUpdate({ "email": req.user.emails[0].value,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data11) {
+                              //If spendtime is not null
+                                 if(spendtime && spendtime.start_date_time != null && spendtime.start_date_time != "" && spendtime.start_date_time != undefined && spendtime.end_date_time != null && spendtime.end_date_time != "" && spendtime.end_date_time != undefined){
+                                  var obj = new tasktime();
+                                  obj.pid = task_id;
+                                  obj.start_date_time = spendtime.start_date_time ? spendtime.start_date_time : "";
+                                  obj.end_date_time = spendtime.end_date_time ? spendtime.end_date_time : "";  
+                                  obj.actual_hrs = spendtime.actual_hrs ? spendtime.actual_hrs : 0;
+                                  obj.save(function (err) {
+                                    if (err) {
+                                      task.error = err;    
+                                      failedData.failedData.push(task);
+                                      callback();
+                                    }
+                                    else {
+
+                                      model.findOneAndUpdate({ "_id": task_id}, { "$set": { 
+                                        "actual_hrs": spendtime.actual_hrs ? (parseFloat(data[0]._doc.actual_hrs) + parseFloat(spendtime.actual_hrs)) : data[0]._doc.actual_hrs } }).exec(function (err, data3) {
+                                            if (err) {
+                                                  task.error = err;                                       
+                                                  failedData.failedData.push(task);
+                                                  callback();
+                                            }
+                                            else {
+                                              dt.success = "true";
+                                              successData.successData.push(task);
+                                              callback();
+                                            }
+                                          })
+                                    }
+                                  })
+                                }
+                                else{
+                                  dt.success = "true";
+                                  successData.successData.push(task);
+                                  callback();
+                                }
+                              })
+                           }
+                      });
+              }
+              else{
+                    //If Task is new
+                    var obj = new model();
+                    obj.assign_from = task.assign_from;
+                    obj.assign_to = task.assign_to;
+                    obj.task_title = task.task_title,
+                    obj.task_description = task.task_description ? task.task_description : "",                    
+                    obj.project_id = task.project_id;
+                    obj.activity_id = task.activity_id;
+                    obj.due_date = task.due_date ? task.due_date : "";
+                    obj.assign_date = task.assign_date ? task.assign_date : "";                                    
+                    obj.estimate_hrs = task.estimate_hrs ? task.estimate_hrs : 0;
+               //     obj.actual_hrs = task.actual_hrs ? task.actual_hrs : 0;
+                    obj.priority = task.priority ? task.priority : "" ;
+                    obj.status = task.status ? task.status : 0;
+                    obj.start_date_time = task.start_date_time ? task.start_date_time : "";
+                    obj.end_date_time = task.end_date_time ? task.end_date_time : "";  
+                    obj.create_date = current_date;
+                    obj.modify_date = current_date; 
+                    obj.stime = me.toTimestamp(current_date);   
+                    var project_id = mongoose.Types.ObjectId(task.project_id);
+                    followers.findOneAndUpdate({ "email": req.user.emails[0].value,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data4) {
+                    obj.save(function (err) {
+                     if (err) {
+                       count = length;
+                       task.error = err;    
+                       failedData.failedData.push(task);
+                       callback();
+                     }
+                     else {
+                        dt.success = "true";
+                        successData.successData.push(task);
+                        callback();
+                     }
+                   });
+
+                  })
+                 }
+  
+            })
+         }
+         else{
+               //If Task is new
+                var obj = new model();
+                obj.assign_from = task.assign_from;
+                obj.assign_to = task.assign_to;
+                obj.task_title = task.task_title,
+                obj.task_description = task.task_description ? task.task_description : "",                    
+                obj.project_id = task.project_id;
+                obj.activity_id = task.activity_id;
+                obj.due_date = task.due_date ? task.due_date : "";
+                obj.assign_date = task.assign_date ? task.assign_date : "";                
+                obj.estimate_hrs = task.estimate_hrs ? task.estimate_hrs : 0;
+              //  obj.actual_hrs = task.actual_hrs ? task.actual_hrs : 0;
+                obj.priority = task.priority ? task.priority : "" ;
+                obj.status = task.status ? task.status : 0;
+                obj.start_date_time = task.start_date_time ? task.start_date_time : "";
+                obj.end_date_time = task.end_date_time ? task.end_date_time : ""; 
+                obj.create_date = current_date;
+                obj.modify_date = current_date;   
+                obj.stime = me.toTimestamp(current_date);   
+                var project_id = mongoose.Types.ObjectId(task.project_id);
+               followers.findOneAndUpdate({ "email": task.email,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data4) {
+              // followers.findOneAndUpdate({ "email": req.user.emails[0].value,"project_id":project_id}, { "$set": { "modify_date": current_date }}).exec(function (err, data4) {
+                  obj.save(function (err) {
+                if (err) {
+                    count = length;
+                    task.error = err;    
+                    failedData.failedData.push(task);
+                    callback();
+                 }
+                else {
+                    dt.success = "true";
+                    successData.successData.push(task);
+                    callback();
+                 }
+                });
+              })
+         }
+  
+      count = count + 1;
+  
+    }, function (err, cb) {
+        var result = {};
+        result['success'] = successData;
+        result['failed'] = failedData;
+          if(count >= length){
+           // res.send(result);
+           cb(null,result)
           }  
         return;
     });
