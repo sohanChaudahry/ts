@@ -22,7 +22,7 @@ export default class TasksCtrl  {
   pr = projects;
   act1 = activities1;
 
-  
+
 
   /*
   @author : Vaibhav Mali 
@@ -521,6 +521,8 @@ export default class TasksCtrl  {
   var reqData =  req.body.reqData;
   var assign_from = reqData.employee_id;
   var project_id = reqData.project_id;
+  var page = reqData.page;
+  var limit = reqData.limit;
   var resdata = { };
   var _idstatus = mongoose.Types.ObjectId.isValid(assign_from);
   var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
@@ -539,9 +541,10 @@ export default class TasksCtrl  {
   else{
       var project_id1 = mongoose.Types.ObjectId(project_id);
       var assign_from = mongoose.Types.ObjectId(assign_from);
-      model.find({"assign_from": assign_from,"project_id":project_id1}, function (err, data) {
-      if(data && data.length > 0){
-       async.forEach(data, function (task, callback) {
+      model.paginate({"assign_from": assign_from,"project_id":project_id1}, { page: page, limit: limit }, function(err, data) {                
+   //   model.find({"assign_from": assign_from,"project_id":project_id1}, function (err, data) {
+      if(data && data.docs.length > 0){
+       async.forEach(data.docs, function (task, callback) {
         var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
         var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
         var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
@@ -552,8 +555,8 @@ export default class TasksCtrl  {
               var task_id = mongoose.Types.ObjectId(task._doc._id);
               var spendtimes = {spendtimes: [] }                
               tasktime.find({ "pid": task_id }, function (err, data6) {
-                if(data && data.length > 0){
-                   resdata = data[0]._doc;
+                if(data && data.docs.length > 0){
+                 //  resdata = data[0]._doc;
                    async.forEach(data6, function (spendtime, callback) {
                     var dt = {};                
                     dt['start_date_time'] = spendtime.start_date_time;
@@ -566,7 +569,7 @@ export default class TasksCtrl  {
                       if(count1 >= data6.length){
                         task._doc.assign_from = data4[0]._doc;  
                         if(Math.ceil(parseFloat(task._doc.actual_hrs)) === task._doc.actual_hrs){
-                           task._doc.actual_hrs = task._doc.actual_hrs + " : 0 : 0 ";
+                          task._doc.actual_hrs = task._doc.actual_hrs.toString() + " : 0 : 0 ";
                         }
                         else{
                           console.log("actual: " + task._doc.actual_hrs)                          
@@ -598,29 +601,27 @@ export default class TasksCtrl  {
         })
        })
         }, function (err, cb) {
-        if(count >= data.length){
-          var i = 0,j = 0;
-          for (i = 0; i < tasktemp.tasks.length - 1; i++) {
-            for (j = i + 1; j < tasktemp.tasks.length; j++) {
-                var temp;
-                if (tasktemp.tasks[i].stime < tasktemp.tasks[j].stime) {
-                    temp = tasktemp.tasks[i];
-                    tasktemp.tasks[i] = tasktemp.tasks[j];
-                    tasktemp.tasks[j] = temp;
-                }
-            }
-        }
+        if(count >= data.docs.length){
+          tasktemp.tasks.sort(function(a,b){
+            var c:any = new Date(a.due_date);
+            var d:any = new Date(b.due_date);
+            return c-d;
+          })
           tasks['tasks'] = tasktemp.tasks;
-          res.send(tasks);
+          tasks['Pages'] = data.pages;
+          tasks['Total'] = data.total;
+          res.send(tasks);          
         }  
         return;
       });  
     } 
     else{
        tasks['tasks'] = tasktemp.tasks;
+       tasks['Pages'] = data.pages;
+       tasks['Total'] = data.total;
        res.send(tasks);
     }          
-   }).sort({stime: -1});
+   });
  };
 }
  
@@ -638,6 +639,8 @@ getTaskDetailsByAssignTo = (req, res) => {
   var reqData =  req.body.reqData;
   var assign_to = reqData.employee_id;
   var project_id = reqData.project_id;
+  var page = reqData.page;
+  var limit = reqData.limit;
   var resdata = { };
   var _idstatus = mongoose.Types.ObjectId.isValid(assign_to);
   var _idstatus1 = mongoose.Types.ObjectId.isValid(project_id);  
@@ -656,9 +659,9 @@ getTaskDetailsByAssignTo = (req, res) => {
   else{
       var project_id1 = mongoose.Types.ObjectId(project_id);
       var assign_to = mongoose.Types.ObjectId(assign_to);
-      model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
-      if(data && data.length > 0){
-       async.forEach(data, function (task, callback) {
+    model.paginate({"assign_to": assign_to,"project_id":project_id1}, { page: page, limit: limit }, function(err, data) {        
+      if(data && data.docs.length > 0){
+       async.forEach(data.docs, function (task, callback) {
         var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
         var employee_id = mongoose.Types.ObjectId(task._doc.assign_to);
         var act_id = mongoose.Types.ObjectId(task._doc.activity_id);    
@@ -669,8 +672,8 @@ getTaskDetailsByAssignTo = (req, res) => {
               var task_id = mongoose.Types.ObjectId(task._doc._id);
               var spendtimes = {spendtimes: [] }                
               tasktime.find({ "pid": task_id }, function (err, data6) {
-                if(data && data.length > 0){
-                   resdata = data[0]._doc;
+                if(data && data.docs.length > 0){
+                   //resdata = data[0]._doc;
                    async.forEach(data6, function (spendtime, callback) {
                     var dt = {};                
                     dt['start_date_time'] = spendtime.start_date_time;
@@ -683,7 +686,7 @@ getTaskDetailsByAssignTo = (req, res) => {
                       if(count1 >= data6.length){
                         task._doc.assign_from = data4[0]._doc;    
                         if(Math.ceil(parseFloat(task._doc.actual_hrs)) === task._doc.actual_hrs){
-                          task._doc.actual_hrs = task._doc.actual_hrs + " : 0 : 0 ";
+                          task._doc.actual_hrs = task._doc.actual_hrs.toString() + ": 0 : 0 ";
                         }
                         else{
                          console.log("actual: " + task._doc.actual_hrs)                          
@@ -715,19 +718,15 @@ getTaskDetailsByAssignTo = (req, res) => {
         })
        })
         }, function (err, cb) {
-        if(count >= data.length){
-          var i = 0,j = 0;
-          for (i = 0; i < tasktemp.tasks.length - 1; i++) {
-            for (j = i + 1; j < tasktemp.tasks.length; j++) {
-                var temp;
-                if (tasktemp.tasks[i].stime < tasktemp.tasks[j].stime) {
-                    temp = tasktemp.tasks[i];
-                    tasktemp.tasks[i] = tasktemp.tasks[j];
-                    tasktemp.tasks[j] = temp;
-                }
-            }
-        }
+        if(count >= data.docs.length){
+          tasktemp.tasks.sort(function(a,b){
+            var c:any = new Date(a.due_date);
+            var d:any = new Date(b.due_date);
+            return c-d;
+          })
           tasks['tasks'] = tasktemp.tasks;
+          tasks['Pages'] = data.pages;
+          tasks['Total'] = data.total;
           res.send(tasks);
         }  
         return;
@@ -735,9 +734,11 @@ getTaskDetailsByAssignTo = (req, res) => {
     } 
     else{
       tasks['tasks'] = tasktemp.tasks;
+      tasks['Pages'] = data.pages;
+      tasks['Total'] = data.total;
       res.send(tasks);
     }          
-   }).sort({stime: -1});
+   })
  };
 }
 
