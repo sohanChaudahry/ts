@@ -5,6 +5,7 @@ import { TaskService } from '../services/task.service';
 import {Popup} from 'ng2-opd-popup';
 
 import { Observable, Subscription } from 'rxjs/Rx';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { UserService } from '../services/user.service';
@@ -137,7 +138,7 @@ export class ProjectComponent implements OnInit {
   private taskService : TaskService,
   private userService: UserService,
   private recursiveService :RecursiveService,
-  private popup:Popup,) { }
+  private popup:Popup,private spinnerService: Ng4LoadingSpinnerService) { }
   
   ngOnInit() {
       this.getAllEmployeeList();
@@ -388,9 +389,11 @@ export class ProjectComponent implements OnInit {
         this.projectDetail.activities[i].activity_name=this.projectDetail.activities[i].name;
     }
     this.isLoading1=true;
+    this.spinnerService.show();
     this.projectService.saveProjectDetails({"reqData":[this.projectDetail]}).subscribe(
       res => {
          this.isLoading1=false;
+         this.spinnerService.hide();
          console.log(res);
          if(res.successProjects.successData.length!=0){
             this.isProjectList=true;
@@ -841,8 +844,10 @@ finishTaskFun(task){
       "page" : 1,
    	  "limit" : 10
    }
+  //  this.spinnerService.show();
    this.projectService.getdetailsByEmailwithPagination({"reqData":reqData}).subscribe(
        res => {
+          // this.spinnerService.hide();
           this.MyProjectsList=res.details.MyProjects;
           this.AssignedProjectsList=res.details.AcceptedProjects;
           this.requestedProjectList=res.details.RequestedProjects;

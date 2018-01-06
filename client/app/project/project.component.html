@@ -1,6 +1,7 @@
 <div class="cointaner">
-    <app-loading [condition]="isLoading"></app-loading>
+    <!-- <app-loading [condition]="isLoading"></app-loading> -->
     <app-toast [message]="toast.message"></app-toast>
+    <ng4-loading-spinner> </ng4-loading-spinner>
     <!-- my project list -->
     <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
       <div class="card-header hearder_btn">
@@ -24,23 +25,23 @@
                 </tr>  
                 </tbody>
                 <tbody>
-                <tr *ngFor="let project of MyProjectsList">
-                    <td>
-                        <span>{{project.project_name}}</span>
-                    </td>
-                    <td>
-                        <span>{{project.desc}}</span>
-                    </td>
-                    <td>
-                        <span>{{project.role}}</span>
-                    </td>
-                    <td>
-                        <!-- deleteProjects(project)  -->
-                        <button class="btn btn-sm btn-warning" (click)="projectEditBtm(project)"><i class="fa fa-pencil"></i></button> 
-                        <button class="btn btn-sm btn-danger" (click)="openPopup(project)"><i class="fa fa-times" aria-hidden="true"></i></button> 
-                        <button class="btn btn-sm btn-primary" (click)="openTaskListPage(project,true)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
-                    </td>
-                </tr> 
+                    <tr *ngFor="let project of MyProjectsList">
+                        <td>
+                            <span>{{project.project_name}}</span>
+                        </td>
+                        <td>
+                            <span>{{project.desc}}</span>
+                        </td>
+                        <td>
+                            <span>{{project.role}}</span>
+                        </td>
+                        <td>
+                            <!-- deleteProjects(project)  -->
+                            <button class="btn btn-sm btn-warning" (click)="projectEditBtm(project)"><i class="fa fa-pencil"></i></button> 
+                            <button class="btn btn-sm btn-danger" (click)="openPopup(project)"><i class="fa fa-times" aria-hidden="true"></i></button> 
+                            <button class="btn btn-sm btn-primary" (click)="openTaskListPage(project,true)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
+                        </td>
+                    </tr> 
                 </tbody>  
                 <popup (confirmClick)="conformPopup()" (cancelClick)="cancelPopup()">
                     <span>Do you want to delete project ?</span>
@@ -62,8 +63,8 @@
               <tr>
                 <th width="25%">Project Name</th>
                 <th width="45%">Description</th>
-                <th width="10%">Role</th>
-                <th width="20%">Action</th>
+                <th width="15%">Role</th>
+                <th width="15%">Action</th>
               </tr>
             </thead>
             <tbody *ngIf="AssignedProjectsList.length == 0">
@@ -84,7 +85,7 @@
                 </td>
                 <td>
                     <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
-                    <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button> 
+                    <!-- <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button>  -->
                     <button class="btn btn-sm btn-danger" *ngIf="project.accept==1" (click)="exitProjectReq(project)"><i class="fa fa-times" aria-hidden="true"></i> Exit</button> 
                     <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
                     <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
@@ -144,7 +145,7 @@
           </div>
         </div>
     <div class="card " *ngIf="iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-        <app-loading [condition]="isLoading1"></app-loading>
+        <!-- <app-loading [condition]="isLoading1"></app-loading> -->
         <div class="card-header">
             <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
         </div>
@@ -335,7 +336,7 @@
       </div>
         <!-- ProjectWorkingTask -->
         <div class="card" *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && isProjectWorkingTask">
-            <app-loading [condition]="isLoading"></app-loading>
+            <!-- <app-loading [condition]="isLoading"></app-loading> -->
             <div class="card-header">
                 <span class="custom_span_header">Employee task status</span>
                 <span class="custom_back_btn">

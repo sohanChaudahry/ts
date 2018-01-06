@@ -19,6 +19,8 @@ import { AuthService } from './services/auth.service';
 import { AuthGuardLogin } from './services/auth-guard-login.service';
 import { AuthGuardAdmin } from './services/auth-guard-admin.service';
 import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
+import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
+
 // import {A2Edatetimepicker} from 'ng2-eonasdan-datetimepicker';
  
 import { AppComponent } from './app.component';
@@ -40,6 +42,7 @@ import { EmployeeComponent } from './employee/employee.component';
     RoutingModule,
     SharedModule,
     PopupModule.forRoot(),
+    Ng4LoadingSpinnerModule.forRoot(),
     SelectModule,
      // DatePickerModule,
      FormsModule,
