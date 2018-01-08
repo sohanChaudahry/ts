@@ -99,6 +99,7 @@ export default class TasksCtrl  {
                                   obj.start_date_time = spendtime.start_date_time ? spendtime.start_date_time : "";
                                   obj.end_date_time = spendtime.end_date_time ? spendtime.end_date_time : "";  
                                   obj.actual_hrs = spendtime.actual_hrs ? spendtime.actual_hrs : 0;
+                                  obj.comment = spendtime.comment ? spendtime.comment : "";                                  
                                   obj.save(function (err) {
                                     if (err) {
                                       task.error = err;    
@@ -294,6 +295,7 @@ export default class TasksCtrl  {
                                   obj.start_date_time = spendtime.start_date_time ? spendtime.start_date_time : "";
                                   obj.end_date_time = spendtime.end_date_time ? spendtime.end_date_time : "";  
                                   obj.actual_hrs = spendtime.actual_hrs ? spendtime.actual_hrs : 0;
+                                  obj.comment = spendtime.comment ? spendtime.comment : "";                                                                    
                                   obj.save(function (err) {
                                     if (err) {
                                       task.error = err;    

@@ -106,7 +106,8 @@ export class ProjectComponent implements OnInit {
  spendtime = {
   start_date_time : new Date(),
   end_date_time : new Date(),
-  actual_hrs : 0
+  actual_hrs : 0,
+  comment : ""
 }
   getProjectForm: FormGroup;
   project_id = new FormControl('');
@@ -287,12 +288,12 @@ export class ProjectComponent implements OnInit {
     this.isAssignProjView=false;
   }
   openTaskListPage(project_detail,flag){
-     if(this.isProjectRunning == project_detail._id){
-       this.iscurrentProject = 1;
-     }
-     else{
-       this.iscurrentProject = 0;
-     }
+    if(this.isProjectRunning == project_detail._id){
+      this.iscurrentProject = 1;
+    }
+    else{
+      this.iscurrentProject = 0;
+    }
      this.isShowAssignedTask=flag;
      this.selectedProjectDetail=project_detail;
      this.iscreateProject=false; 
@@ -483,16 +484,16 @@ export class ProjectComponent implements OnInit {
   @desc :To check whether current project have followers or not.
   */
   IsFollowerExist(selectedProject){
-      this.projectService.getProjectDetailById(selectedProject._id).subscribe(
-        res => {
-          if(res && res.followers.length > 0) 
-            return 1;
-          else
-            return 0;
-        },
-        error => this.toast.setMessage('Some thing wrong!', 'danger')
-      );
-  }
+    this.projectService.getProjectDetailById(selectedProject._id).subscribe(
+      res => {
+         if(res && res.followers.length > 0) 
+           return 1;
+         else
+           return 0;
+      },
+      error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
+}
   showAssignedProjectView(selected_data){
       this.isProjectList=false;
       this.iscreateProject=false;
@@ -532,7 +533,9 @@ export class ProjectComponent implements OnInit {
   getTaskDetailsByAssignFromAPi(){
       let reqData={  
         "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
-        "project_id":this.selectedProjectDetail._id ? this.selectedProjectDetail._id : ""
+        "project_id":this.selectedProjectDetail._id ? this.selectedProjectDetail._id : "",
+        "page" : 1,
+        "limit" : 20
       }
       this.projectService.getTaskDetailsByAssignFrom({"reqData":reqData}).subscribe(
           res => {      
@@ -546,7 +549,9 @@ export class ProjectComponent implements OnInit {
   getDetailsByAssignToApi(){
       let reqData={
         "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
-        "project_id":this.selectedProjectDetail._id ? this.selectedProjectDetail._id : ""
+        "project_id":this.selectedProjectDetail._id ? this.selectedProjectDetail._id : "",
+        "page" : 1,
+        "limit" : 20
       }
       this.projectService.getDetailsByAssignTo({"reqData":reqData}).subscribe(
           res => {
@@ -671,7 +676,7 @@ UpdateAssignedTaskDetail(){
 }
 startTaskFun(task){
   this.AssignedtaskFormDetail._id = task._id;
-  this.isProjectRunning = task.project_id;
+  this.isProjectRunning = task.project_id;  
   this.AssignedtaskFormDetail.status = 1;
   this.AssignedtaskFormDetail.select = 1;
  // this.projectService.getTaskDetailsByTaskId(task._id).subscribe(
@@ -694,14 +699,20 @@ startTaskFun(task){
 }
 pauseTaskFun(task){
   var me =this;
+  var comment = prompt("Plese add pause comment:", "");
+  if (comment == null || comment == "") {
+      console.log("User cancelled the pause.");
+  } else {
   this.AssignedtaskFormDetail._id = task._id;
-  this.isProjectRunning = null;
+  this.isProjectRunning = null;  
   this.AssignedtaskFormDetail.status = 1;
   this.AssignedtaskFormDetail.select = 0;  
   this.paused = 1;
   delete this.AssignedtaskFormDetail['start_date_time'];
   localStorage.setItem('spend_start_date_time', "");        
   this.spendtime['end_date_time'] = new Date();
+    console.log("comment:"+ comment);    
+  this.spendtime['comment'] = comment;  
   localStorage.setItem('select', null);  
   localStorage.setItem("hoursDisplay",(0).toString());
   localStorage.setItem("minutesDisplay",(0).toString()); 
@@ -715,15 +726,18 @@ pauseTaskFun(task){
   console.log(this.spendtime.actual_hrs);
   this.AssignedtaskFormDetail.spendtime = this.spendtime;
   this.UpdateAssignedTaskDetail();  
+ // console.log(this.spendtime.actual_hrs);
+  }
 }
 finishTaskFun(task){
-  this.isProjectRunning = null;
+  this.isProjectRunning = null;  
   this.AssignedtaskFormDetail._id = task._id;
   this.AssignedtaskFormDetail.status = 2;
   this.AssignedtaskFormDetail.select = 0;  
   delete this.AssignedtaskFormDetail['start_date_time'];
   this.AssignedtaskFormDetail['end_date_time'] = new Date(); 
   this.spendtime['end_date_time'] = new Date();
+  this.spendtime['comment'] = "Finish";    
  // this.sub.unsubscribe();   
   this.startTimer(1)  
   this.spendtime.actual_hrs = this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600);
