@@ -1,8 +1,10 @@
-import { Component, OnInit,ViewContainerRef } from '@angular/core';
+import { Component, OnInit, ViewChild  } from '@angular/core';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ProjectService } from '../services/project.service';
 import { ProfileService } from '../services/profile.service';
+
+import {Popup} from 'ng2-opd-popup';
 
 interface profileFormData {
   name : string;
@@ -25,6 +27,10 @@ export class ProfileComponent implements OnInit {
       defaultOpen: false,
       closeOnSelect:false
   }
+
+
+  // @ViewChild('popup1') popup1: Popup;
+  // @ViewChild('popup2') popup2: Popup;
 
   profileFormData: FormGroup;
   isLoading = false;
@@ -55,6 +61,15 @@ export class ProfileComponent implements OnInit {
           _id : localStorage.getItem("_id") ? localStorage.getItem("_id") : ""
       });
   }
+
+  // ClickButton(){
+  //   this.popup1.show();
+  // }
+ 
+  // ClickAnotherButton(){
+  //   this.popup2.show();
+  // }
+
   saveProfile(){
     console.log(this.profileFormData.value);
     this.profileService.saveProfile({"reqData":[this.profileFormData.value]}).subscribe(

@@ -43,11 +43,10 @@
                         </td>
                     </tr> 
                 </tbody>  
-                <popup (confirmClick)="conformPopup()" (cancelClick)="cancelPopup()">
+                <popup  #popup1 (confirmClick)="conformPopup()" (cancelClick)="cancelPopup()">
                     <span>Do you want to delete project ?</span>
                 </popup>
             </table>
-
         </div>
       </div>
     </div>
@@ -149,6 +148,24 @@
         <div class="card-header">
             <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
         </div>
+        <popup  #popup2 (confirmClick)="conformPopupInviteUSer()" (cancelClick)="cancelPopupInviteUSer()">
+            <div class="row">
+                <!-- <div class="col-md-1"></div> -->
+                <div class="col-md-7">
+                    <div class="form-group">
+                        <label>Email Id</label>
+                        <input class="form-control" type="text" name="email"  placeholder="Email Id" [(ngModel)]="inviteUserData.to_email">
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <span class="Assign">Role</span>
+                    <select class="form-control" [(ngModel)]="inviteUserData.role">
+                        <option *ngFor="let role of roleList;" [ngValue]="role" placeholder="Role">{{role}}</option>
+                    </select>
+                </div>
+                <!-- <div class="col-md-1"></div> -->
+            </div>
+        </popup>
         <div class="ctm_form">
           <br>
           <div class="row">
@@ -229,15 +246,16 @@
                         placeholder="No employee selected">
                   </ng-select>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-2">
                    <span class="Assign">Role</span>
                    <select class="form-control" [(ngModel)]="searchEmpDetail.role">
                         <option *ngFor="let role of roleList;" [ngValue]="role" placeholder="Role">{{role}}</option>
                    </select>
               </div>
-              <div class="col-md-1">
+              <div class="col-md-2">
                   <span class="Assign">&nbsp;</span>
                   <button class="btn btn-sm btn-danger" (click)="addSelectedEmp()">Add</button>
+                  <button class="btn btn-sm btn-success" (click)="openPopupInviteUser()">Invite User</button>
               </div>
               <div class="col-md-1"></div>
           </div>
@@ -250,25 +268,25 @@
                           <div class="col-md-5">Selected Employees</div>
                           <div class="col-md-5">Role</div>
                           <div class="col-md-2" style="text-align:right;padding-right: 7%;">Action</div>
-                        </div>
+                    </div>
                      <div *ngIf="addAssignUserList.length==0" class="city-data-div user_table">
                          <div class="col-md-4"></div>
                          <div class="col-md-8">No employee selected for assign project.</div>
-                        </div> 
+                    </div> 
                     <div *ngIf="addAssignUserList.length!=0" >
-                    <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
-                        <div class="col-md-5">{{user.name}}</div>
-                        <div class="col-md-5">{{user.role}}</div>
-                        <div class="col-md-1" (click)="removeAssignUserFun(user,projectDetail)" style="padding-left:5%;color:red">
-                            <i class="fa fa-times" aria-hidden="true"></i>
-                        </div>    
-                         <div class="col-md-1" style="color: blue;" (click)="openProjectWorkingTask(projectDetail,user)">
-                            <i class="fa fa-tasks" aria-hidden="true"></i>
+                        <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
+                            <div class="col-md-5">{{user.name}}</div>
+                            <div class="col-md-5">{{user.role}}</div>
+                            <div class="col-md-1" (click)="removeAssignUserFun(user,projectDetail)" style="padding-left:5%;color:red">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </div>    
+                            <div class="col-md-1" style="color: blue;" (click)="openProjectWorkingTask(projectDetail,user)">
+                                <i class="fa fa-tasks" aria-hidden="true"></i>
+                            </div>
                         </div>
+                    </div>
                 </div>
             </div>
-           </div>
-         </div>
             <div class="col-md-1"></div>
           </div>
           <div class="row">
@@ -431,6 +449,18 @@
                         </tbody>  
                     </table>
                 </div>
+                <div style="float:right">
+                    <pagination *ngIf="getTaskAssigedToUsList.length!=0" class="pagination-sm"
+                            [(ngModel)]="my_task_pagination.page"
+                            [totalItems]="my_task_pagination.length"
+                            [itemsPerPage]="my_task_pagination.itemsPerPage"
+                            [maxSize]="my_task_pagination.maxSize"
+                            [boundaryLinks]="true"
+                            [rotate]="false"
+                            (pageChanged)="getTaskDetailsByAssignFromAPi($event)"
+                            (numPages)="my_task_pagination.numPages = $event">
+                    </pagination>
+                </div>
             </div>
         </div>
         <div class="card"  *ngIf="!iscreateProject && !isProjectList && !isAssignProjView  && !isAssignedTaskEdit && !isMyTaskEdit && isTaskListView && isTaskCardShow">
@@ -473,9 +503,17 @@
                                 <span>{{task.due_date | date}}</span>
                             </td>
                             <td style="text-align: center;">
-                                <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
+                                <!-- <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
                                 <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="pauseTaskFun(task)"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
                                 <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="finishTaskFun(task)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
+
+                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> :{{secondsDisplay}}</button>                
+                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px"> :{{minutesDisplay}}</button>                
+                                 <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px">{{hoursDisplay}}</button> -->
+
+                                 <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
+                                <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='PAUSE';"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
+                                <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='FINISH';"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
 
                                 <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> :{{secondsDisplay}}</button>                
                                 <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px"> :{{minutesDisplay}}</button>                
@@ -484,6 +522,28 @@
                         </tr> 
                     </tbody>  
                   </table>
+                  <popup #popup3 (confirmClick)="conformGetComent()" (cancelClick)="cancelGetComent()">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Comment</label>
+                                    <textarea class="form-control" rows="2" name="desc" [(ngModel)]="comment_data" placeholder="Comment" ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </popup>
+                </div>
+                <div style="float:right">
+                    <pagination *ngIf="AssigedToOtherList.length!=0" class="pagination-sm"
+                            [(ngModel)]="assigned_task_pagination.page"
+                            [totalItems]="assigned_task_pagination.length"
+                            [itemsPerPage]="assigned_task_pagination.itemsPerPage"
+                            [maxSize]="assigned_task_pagination.maxSize"
+                            [boundaryLinks]="true"
+                            [rotate]="false"
+                            (pageChanged)="getDetailsByAssignToApi($event)"
+                            (numPages)="assigned_task_pagination.numPages = $event">
+                    </pagination>
                 </div>
             </div>
         </div>

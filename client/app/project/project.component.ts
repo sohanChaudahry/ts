@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , ViewChild } from '@angular/core';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { ProjectService } from '../services/project.service';
 import { TaskService } from '../services/task.service';
@@ -42,7 +42,12 @@ export class ProjectComponent implements OnInit {
   secondsDisplay: number = localStorage.getItem("secondsDisplay") ? parseInt(localStorage.getItem("secondsDisplay")) : 0;    
   sub: Subscription; 
   //Vaibhav Mali 06 Jan 2018 ...End
-  public employeesToshow  :Array<any>=[];
+
+  @ViewChild('popup1') popup1: Popup;
+  @ViewChild('popup2') popup2: Popup;
+  @ViewChild('popup3') popup3: Popup;
+
+  public employeesToshow:Array<any>=[];
   private value:any = {};
   private _disabledV:string = '0';
   private disabled:boolean = false;
@@ -61,16 +66,20 @@ export class ProjectComponent implements OnInit {
   AssigedToOtherList=[];
   getTaskAssigedToUsList=[];
   selected_proj_delete={};
+  inviteUserData={"to_email":"",role:"","name":""}
   roleList=["Developer","Tester"];
   addAssignUserList=[];
   activityData=[{"name":"","activity_id":""}];
   activityList=[];
   addAssignTaskUserList=[];
   projectWorkingTaskList=[];  
+  selectedTaskDetail={};
   statusList=[{"val":0,"name":"Assigned"},{"val":1,"name":"In Progress"},{"val":2,"name":"Completed"},{"val":3,"name":"Failed"}];
   priorityList=["P0","P1","P2","P3","P4","P5"];
   isProjectList=true;
   me = this;
+  comment_data="";
+  checkCommnetAssign=null;
   iscreateProject=false;
   isAssignProjView=false;
   isMyTaskEdit=false; 
@@ -104,11 +113,11 @@ export class ProjectComponent implements OnInit {
     spendtime : {}
  };
  spendtime = {
-  start_date_time : new Date(),
-  end_date_time : new Date(),
-  actual_hrs : 0,
-  comment : ""
-}
+    start_date_time : new Date(),
+    end_date_time : new Date(),
+    actual_hrs : 0,
+    comment : ""
+  }
   getProjectForm: FormGroup;
   project_id = new FormControl('');
   project_name = new FormControl('', Validators.required);
@@ -139,13 +148,26 @@ export class ProjectComponent implements OnInit {
     "role":"",
     "to_email":""
   }
+  public my_task_pagination = {
+    page:1,
+    itemsPerPage:10,
+    maxSize:5,
+    numPages:5,
+    length : 0,
+  }
+  public assigned_task_pagination ={
+    page:1,
+    itemsPerPage:10,
+    maxSize:5,
+    numPages:5,
+    length : 0,
+  }
   constructor(public toast:ToastComponent,
   private projectService:ProjectService,
   private formBuilder:FormBuilder,
   private taskService : TaskService,
   private userService: UserService,
-  private recursiveService :RecursiveService,
-  private popup:Popup) { }
+  private recursiveService :RecursiveService) { }
   
   ngOnInit() {
       this.getAllEmployeeList();
@@ -163,31 +185,19 @@ export class ProjectComponent implements OnInit {
         activities:this.activities,
         assign_to:this.assign_to,
       });
-      this.popup.options = {
-        header: "Delete Project",
-        color: "#5cb85c", // red, blue.... 
-        widthProsentage: 40, // The with of the popou measured by browser width 
-        animationDuration: 1, // in seconds, 0 = no animation 
-        showButtons: true, // You can hide this in case you want to use custom buttons 
-        confirmBtnContent: "OK", // The text on your confirm button 
-        cancleBtnContent: "Cancel", // the text on your cancel button 
-        confirmBtnClass: "btn btn-default", // your class for styling the confirm button 
-        cancleBtnClass: "btn btn-default", // you class for styling the cancel button 
-        animation: "fadeInDown" // 'fadeInLeft', 'fadeInRight', 'fadeInUp', 'bounceIn','bounceInDown' 
-      };
+   
       //Vaibhav Mali 06 Jan 2018 ...Start
       this.selectvalue = localStorage.getItem("select") ? parseInt( localStorage.getItem("select")) : 0;      
       if(parseInt(this.selectvalue.toString()) == 1){
         this.AssignedtaskFormDetail._id = localStorage.getItem("task_id").toString();
         this.AssignedtaskFormDetail.select = 1;
         this.ticks = this.secondsDisplay;
-       // this.sub.unsubscribe();
         this.setTimerValue()
         this.startTimer(0);
-      
       }
       //Vaibhav Mali 06 Jan 2018 ...End
   }
+
   private get disabledV():string {
     return this._disabledV;
   }
@@ -221,14 +231,49 @@ export class ProjectComponent implements OnInit {
   }
   openPopup(project_detail){
     this.selected_proj_delete=project_detail;
-    this.popup.show();
+    this.popup1.show();
   }
   conformPopup(){
-    this.popup.hide();
+    this.popup1.hide();
     this.deleteProjects(this.selected_proj_delete);
   }
+  showGetComment(task_detail){
+    this.selectedTaskDetail=task_detail;
+    this.popup3.show();
+  }
+  conformGetComent(){
+    if(this.checkCommnetAssign=="PAUSE"){
+      this.pauseTaskFun(this.selectedTaskDetail);
+    }else if(this.checkCommnetAssign=="FINISH"){
+      this.finishTaskFun(this.selectedTaskDetail);
+    }
+    this.popup3.hide();
+  }
+  cancelGetComent(){
+    this.popup3.hide();
+  }
   cancelPopup(){
-    this.popup.hide();
+    this.popup1.hide();
+  }
+  openPopupInviteUser(){
+    this.popup2.show();
+  }
+  conformPopupInviteUSer(){
+    if(this.inviteUserData.to_email=='' || this.inviteUserData.to_email==null || this.inviteUserData.to_email==undefined){
+      this.toast.setMessage('Email Id should not be blank !', 'danger');
+      return;
+    }
+    if(this.inviteUserData.role=='' || this.inviteUserData.role==null || this.inviteUserData.role==undefined){
+      this.toast.setMessage('Role should not be blank !', 'danger');
+      return;
+    }
+    this.inviteUserData.name=this.inviteUserData.to_email;
+    this.addAssignUserList.push(this.inviteUserData);
+    this.popup2.hide();
+    this.inviteUserData={"to_email":"",role:"","name":""}
+  }
+  cancelPopupInviteUSer(){
+    this.popup2.hide();
   }
   public selected(value:any):void {
     console.log('Selected value is: ', value);
@@ -248,14 +293,14 @@ export class ProjectComponent implements OnInit {
   }
 
   setTimerValue() { 
-  var me =this; 
-  this.ticks = this.secondsDisplay ? this.secondsDisplay :0;  
-  this.hoursDisplay = localStorage.getItem("hoursDisplay") ? parseInt(localStorage.getItem("hoursDisplay")) : 0;      
-  this.minutesDisplay = localStorage.getItem("minutesDisplay") ? parseInt(localStorage.getItem("minutesDisplay")) : 0;    
-  this.secondsDisplay = localStorage.getItem("secondsDisplay") ? parseInt(localStorage.getItem("secondsDisplay")) : 0;    
-  setTimeout(function() {
-    me.setTimerValue()
-   }, 60*60*0.3);
+    var me =this; 
+    this.ticks = this.secondsDisplay ? this.secondsDisplay :0;  
+    this.hoursDisplay = localStorage.getItem("hoursDisplay") ? parseInt(localStorage.getItem("hoursDisplay")) : 0;      
+    this.minutesDisplay = localStorage.getItem("minutesDisplay") ? parseInt(localStorage.getItem("minutesDisplay")) : 0;    
+    this.secondsDisplay = localStorage.getItem("secondsDisplay") ? parseInt(localStorage.getItem("secondsDisplay")) : 0;    
+    setTimeout(function() {
+      me.setTimerValue()
+    }, 60*60*0.3);
   }
   
   addActivity(){
@@ -385,7 +430,7 @@ export class ProjectComponent implements OnInit {
      this.isTaskCardShow=false;
   }
   backProjectWorkingTaskPage(){
-    this.iscreateProject=true; 
+     this.iscreateProject=true; 
      this.isProjectList=false;  
      this.isAssignedTaskEdit=false; 
      this.isMyTaskEdit=false; 
@@ -470,12 +515,12 @@ export class ProjectComponent implements OnInit {
       );
   }
   projectEditBtm(selectedProject){
-      this.isProjectList=false;
-      this.iscreateProject=true;
-      this.isAssignProjView=false;
-      this.addAssignUserList=[];
-      this.activityData=[];
-      this.getProjectDetailById(selectedProject._id)
+    this.isProjectList=false;
+    this.iscreateProject=true;
+    this.isAssignProjView=false;
+    this.addAssignUserList=[];
+    this.activityData=[];
+    this.getProjectDetailById(selectedProject._id)
   }
    /*
   @author : Vaibhav Mali 
@@ -530,38 +575,37 @@ export class ProjectComponent implements OnInit {
       this.activityData=[{"name":"","activity_id":""}];
       this.addAssignUserList=[];
   }
-  getTaskDetailsByAssignFromAPi(){
+  getTaskDetailsByAssignFromAPi(page?:any){
       let reqData={  
-        "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
-        "project_id":this.selectedProjectDetail._id ? this.selectedProjectDetail._id : "",
-        "page" : 1,
-        "limit" : 20
+          "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
+          "project_id":this.selectedProjectDetail._id ? this.selectedProjectDetail._id : "",
+          "page" : page ? page.page :1 ,
+          "limit" : this.my_task_pagination.itemsPerPage
       }
+      console.log(reqData);
       this.projectService.getTaskDetailsByAssignFrom({"reqData":reqData}).subscribe(
           res => {      
               if(res){
                   this.getTaskAssigedToUsList=res.tasks;
+                  this.my_task_pagination.length=res.Total
               }
           },
           error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
-  getDetailsByAssignToApi(){
+  getDetailsByAssignToApi(page?:any){
       let reqData={
         "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
         "project_id":this.selectedProjectDetail._id ? this.selectedProjectDetail._id : "",
-        "page" : 1,
-        "limit" : 20
+        "page" : page ? page.page :1,
+        "limit" : this.assigned_task_pagination.itemsPerPage
       }
+      console.log(reqData);
       this.projectService.getDetailsByAssignTo({"reqData":reqData}).subscribe(
           res => {
             if(res){
                 this.AssigedToOtherList=res.tasks;
-                for(var i=0;i<this.AssigedToOtherList.length;i++){
-                  this.AssigedToOtherList[i].isStart=false;
-                  this.AssigedToOtherList[i].isPause=false;
-                  this.AssigedToOtherList[i].isFinish=false;
-                 }
+                this.assigned_task_pagination.length=res.Total
           }
           console.log(this.AssigedToOtherList);
         },
@@ -669,6 +713,9 @@ UpdateAssignedTaskDetail(){
           this.isTaskListView=true;
           this.isAssignProjView=false;
           this.isTaskCardShow=true;
+          this.selectedTaskDetail=true;
+          this.comment_data="";
+          this.checkCommnetAssign="";
         }
     },
     error => this.toast.setMessage('Some thing wrong!', 'danger')
@@ -699,57 +746,57 @@ startTaskFun(task){
 }
 pauseTaskFun(task){
   var me =this;
-  var comment = prompt("Plese add pause comment:", "");
-  if (comment == null || comment == "") {
-      console.log("User cancelled the pause.");
-  } else {
-  this.AssignedtaskFormDetail._id = task._id;
-  this.isProjectRunning = null;  
-  this.AssignedtaskFormDetail.status = 1;
-  this.AssignedtaskFormDetail.select = 0;  
-  this.paused = 1;
-  delete this.AssignedtaskFormDetail['start_date_time'];
-  localStorage.setItem('spend_start_date_time', "");        
-  this.spendtime['end_date_time'] = new Date();
-    console.log("comment:"+ comment);    
-  this.spendtime['comment'] = comment;  
-  localStorage.setItem('select', null);  
-  localStorage.setItem("hoursDisplay",(0).toString());
-  localStorage.setItem("minutesDisplay",(0).toString()); 
-  localStorage.setItem("secondsDisplay",(0).toString());             
-//  this.sub.unsubscribe(); 
-  me.startTimer(1)
-  this.spendtime.actual_hrs = this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600);
-  this.hoursDisplay = 0;            
-  this.minutesDisplay = 0;               
-  this.secondsDisplay = 0;  
-  console.log(this.spendtime.actual_hrs);
-  this.AssignedtaskFormDetail.spendtime = this.spendtime;
-  this.UpdateAssignedTaskDetail();  
- // console.log(this.spendtime.actual_hrs);
+  if (this.comment_data == null || this.comment_data == "" || this.comment_data ==undefined) {
+    this.toast.setMessage('Comment should not be blank!', 'danger');
+    return ;
+  }else{
+    this.AssignedtaskFormDetail._id = task._id;
+    this.isProjectRunning = null;  
+    this.AssignedtaskFormDetail.status = 1;
+    this.AssignedtaskFormDetail.select = 0;  
+    this.paused = 1;
+    delete this.AssignedtaskFormDetail['start_date_time'];
+    localStorage.setItem('spend_start_date_time', "");        
+    this.spendtime['end_date_time'] = new Date();
+    this.spendtime['comment'] = this.comment_data;  
+    localStorage.setItem('select', null);  
+    localStorage.setItem("hoursDisplay",(0).toString());
+    localStorage.setItem("minutesDisplay",(0).toString()); 
+    localStorage.setItem("secondsDisplay",(0).toString());             
+    me.startTimer(1)
+    this.spendtime.actual_hrs = this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600);
+    this.hoursDisplay = 0;            
+    this.minutesDisplay = 0;               
+    this.secondsDisplay = 0;  
+    this.AssignedtaskFormDetail.spendtime = this.spendtime;
+    this.UpdateAssignedTaskDetail();  
   }
 }
 finishTaskFun(task){
-  this.isProjectRunning = null;  
-  this.AssignedtaskFormDetail._id = task._id;
-  this.AssignedtaskFormDetail.status = 2;
-  this.AssignedtaskFormDetail.select = 0;  
-  delete this.AssignedtaskFormDetail['start_date_time'];
-  this.AssignedtaskFormDetail['end_date_time'] = new Date(); 
-  this.spendtime['end_date_time'] = new Date();
-  this.spendtime['comment'] = "Finish";    
- // this.sub.unsubscribe();   
-  this.startTimer(1)  
-  this.spendtime.actual_hrs = this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600);
-  console.log(this.spendtime.actual_hrs);
-  if(this.paused == 1)
-    this.AssignedtaskFormDetail.spendtime = {};
-  else
-    this.AssignedtaskFormDetail.spendtime = this.spendtime;      
-  this.paused = 0;
-  this.UpdateAssignedTaskDetail();
+  if (this.comment_data == null || this.comment_data == "" || this.comment_data ==undefined) {
+    this.toast.setMessage('Comment should not be blank!', 'danger');
+    return ;
+  }else{
+    this.isProjectRunning = null;  
+    this.AssignedtaskFormDetail._id = task._id;
+    this.AssignedtaskFormDetail.status = 2;
+    this.AssignedtaskFormDetail.select = 0;  
+    delete this.AssignedtaskFormDetail['start_date_time'];
+    this.AssignedtaskFormDetail['end_date_time'] = new Date(); 
+    this.spendtime['end_date_time'] = new Date();
+    this.spendtime['comment'] = this.comment_data;    
+    this.startTimer(1)  
+    this.spendtime.actual_hrs = this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600);
+    if(this.paused == 1)
+      this.AssignedtaskFormDetail.spendtime = {};
+    else
+      this.AssignedtaskFormDetail.spendtime = this.spendtime;      
+    this.paused = 0;
+    this.UpdateAssignedTaskDetail();
+  }
 }
-  addSelectedEmp(){
+
+addSelectedEmp(){
     if(this.searchEmpDetail.name && this.searchEmpDetail.role){
       for(var i=0;i<this.addAssignUserList.length;i++){
         if(this.addAssignUserList[i].name==this.searchEmpDetail.name){
@@ -757,23 +804,23 @@ finishTaskFun(task){
           return;
         }
       }
-        for(var i=0;i<this.employeesList.length;i++){
-            if(this.employeesList[i].name==this.searchEmpDetail.name){
-                this.searchEmpDetail.to_email=this.employeesList[i].email;
-                break;
-            }
-        }
-        this.addAssignUserList.push(this.searchEmpDetail);
-        this.searchEmpDetail={
-          "name":"",
-          "role":"",
-          "to_email":""
-        }
-        this.isEmpAutoSelect=[];
-      }else{
-        this.toast.setMessage('Please select all value!', 'danger')
+      for(var i=0;i<this.employeesList.length;i++){
+          if(this.employeesList[i].name==this.searchEmpDetail.name){
+              this.searchEmpDetail.to_email=this.employeesList[i].email;
+              break;
+          }
       }
-  }
+      this.addAssignUserList.push(this.searchEmpDetail);
+      this.searchEmpDetail={
+        "name":"",
+        "role":"",
+        "to_email":""
+      }
+      this.isEmpAutoSelect=[];
+    }else{
+      this.toast.setMessage('Please select all value!', 'danger')
+    }
+}
   
   getProjectDetailById(ProdId){
       this.projectService.getProjectDetailById(ProdId).subscribe(

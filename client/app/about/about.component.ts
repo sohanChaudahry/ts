@@ -38,7 +38,13 @@ export class AboutComponent implements OnInit{
   private homeService:HomeService,
   private auth:AuthService,
   private projectService:ProjectService) { }
-
+  task_pagination={
+    page:1,
+    itemsPerPage:10,
+    maxSize:5,
+    numPages:5,
+    length:0
+  }
   ngOnInit() {
 
     this.auth.getLogedinUserData();
@@ -57,13 +63,20 @@ export class AboutComponent implements OnInit{
     this.isTaskActive=[true,false,false,false,false];
     this.openAllTasks();
   }
-  openAllTasks(){
-    this.getTaskDetailsByAssignFromAPi();
+  openAllTasks(page ? :any){
+    this.taskList=[];
+    if(this.isActiveMyProject){
+      this.getTaskDetailsByAssignFromAPi(page);
+    }else if(this.isActiveAcceptProject){
+      this.getDetailsByAssignToApi(page);
+    }
   }
-  getTaskDetailsByAssignFromAPi(){
+  getTaskDetailsByAssignFromAPi(page ? :any){
       let reqData={  
         "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
-        "project_id":this.selectedProjectId ? this.selectedProjectId : ""
+        "project_id":this.selectedProjectId ? this.selectedProjectId : "",
+        "page" : page ? page.page : 1,
+        "limit" : this.task_pagination.itemsPerPage
       }
       this.projectService.getTaskDetailsByAssignFrom({"reqData":reqData}).subscribe(
           res => {      
@@ -71,35 +84,52 @@ export class AboutComponent implements OnInit{
                 for(var i=0;i<res.tasks.length;i++){
                   this.taskList.push(res.tasks[i]);
                 }
+                this.task_pagination.length=res.Total;
               }
-              this.getDetailsByAssignToApi();
           },
           error => this.toast.setMessage('Some thing wrong!', 'danger')
       );
   }
-  getDetailsByAssignToApi(){
+  getDetailsByAssignToApi(page ? :any){
       let reqData={
         "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
-        "project_id":this.selectedProjectId ? this.selectedProjectId : ""
+        "project_id":this.selectedProjectId ? this.selectedProjectId : "",
+        "page" : page ? page.page : 1,
+        "limit" : this.task_pagination.itemsPerPage
       }
       this.projectService.getDetailsByAssignTo({"reqData":reqData}).subscribe(
           res => {
             if(res){
-              for(var i=0;i<res.tasks.length;i++){
-                this.taskList.push(res.tasks[i]);
-              }
-          }
+                for(var i=0;i<res.tasks.length;i++){
+                  this.taskList.push(res.tasks[i]);
+                }
+                this.task_pagination.length=res.Total;
+            }
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
         );
   }
-  openPendingTasks(){
+  callPaginationFun(page){
+    if(this.isTaskActive[0]){
+       this.openAllTasks(page);
+    }else if(this.isTaskActive[1]){
+      this.openRunningTasks(page);
+    }else if(this.isTaskActive[2]){
+      this.openPendingTasks(page);
+    }else if(this.isTaskActive[3]){
+      this.openCommingTasks(page);
+    }else if(this.isTaskActive[4]){
+      this.openCompletedTasks(page);
+    }
+  }
+  openPendingTasks(page ? :any){
+    this.taskList=[];
     let reqData= {
         "reqData":{
            "employee_id" : localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
            "project_id" : this.selectedProjectId ? this.selectedProjectId : "",
-           "page" : 1,
-           "limit" : 10,
+           "page" : page ? page.page : 1,
+           "limit" : this.task_pagination.itemsPerPage,
            "flag" : this.isActiveMyProject==true ? 0 : 1
            }
     }
@@ -108,18 +138,20 @@ export class AboutComponent implements OnInit{
       res => {
         if(res){
           this.taskList=res.Pending;
+          this.task_pagination.length=res.Total;
         }
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
   }
-  openCompletedTasks(){
+  openCompletedTasks(page ? :any){
+    this.taskList=[];
     let reqData= {
         "reqData":{
           "employee_id" : localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
           "project_id" : this.selectedProjectId ? this.selectedProjectId : "",
-          "page" : 1,
-          "limit" : 10,
+          "page" : page ? page.page : 1,
+        "limit" : this.task_pagination.itemsPerPage,
           "flag" : this.isActiveMyProject==true ? 0 : 1
           }
     }
@@ -128,18 +160,20 @@ export class AboutComponent implements OnInit{
       res => {
         if(res){
           this.taskList=res.Completed;
+          this.task_pagination.length=res.Total;
         }
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
   }
-  openCommingTasks(){
+  openCommingTasks(page ? :any){
+    this.taskList=[];
     let reqData= {
         "reqData":{
           "employee_id" : localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
           "project_id" : this.selectedProjectId ? this.selectedProjectId : "",
-          "page" : 1,
-          "limit" : 10,
+          "page" : page ? page.page : 1,
+         "limit" : this.task_pagination.itemsPerPage,
           "flag" : this.isActiveMyProject==true ? 0 : 1
           }
     }
@@ -148,18 +182,20 @@ export class AboutComponent implements OnInit{
       res => {
         if(res){
           this.taskList=res.Upcoming;
+          this.task_pagination.length=res.Total;
         }
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
   }
-  openRunningTasks(){
+  openRunningTasks(page ? :any){
+    this.taskList=[];
     let reqData= {
         "reqData":{
           "employee_id" : localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
           "project_id" : this.selectedProjectId ? this.selectedProjectId : "",
-          "page" : 1,
-          "limit" : 10,
+          "page" : page ? page.page : 1,
+          "limit" : this.task_pagination.itemsPerPage,
           "flag" : this.isActiveMyProject==true ? 0 : 1
           }
     }
@@ -168,6 +204,7 @@ export class AboutComponent implements OnInit{
       res => {
         if(res){
           this.taskList=res.In_Progress;
+          this.task_pagination.length=res.Total;
         }
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')

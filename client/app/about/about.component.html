@@ -97,23 +97,23 @@
               </li>
               <li class="nav-item">
                   <a class="nav-link" (click)="openRunningTasks();isTaskActive[0]=false;isTaskActive[1]=true;isTaskActive[2]=false;
-                  isTaskActive[3]=false;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[3]}">Inprogress Tasks</a>
+                  isTaskActive[3]=false;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[1]}">Inprogress Tasks</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" (click)="openPendingTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=true;
-                isTaskActive[3]=false;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[0]}">Pending</a>
+                isTaskActive[3]=false;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[2]}">Pending</a>
               </li>
               <li class="nav-item">
                   <a class="nav-link" (click)="openCommingTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=false;
-                  isTaskActive[3]=true;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[2]}">Upcoming Tasks</a>
+                  isTaskActive[3]=true;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[3]}">Upcoming Tasks</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" (click)="openCompletedTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=false;
-                isTaskActive[3]=false;isTaskActive[4]=true;" [ngClass]="{'isActiveClass' : isTaskActive[1]}">Completed Tasks</a>
+                isTaskActive[3]=false;isTaskActive[4]=true;" [ngClass]="{'isActiveClass' : isTaskActive[4]}">Completed Tasks</a>
               </li>
             </ul>
       </div>
-      <span class="col-md-1">
+      <span class="col-md-1" style="padding-left:50px;">
         <button class="btn btn-sm btn-success" (click)="backBtn()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
       </span>
     </div>
@@ -148,8 +148,8 @@
                       <tr> 
                           <th width="15%">Task Name</th>
                           <th width="20%">Task Description</th>
-                          <th width="15%">Assign From</th>
-                          <th width="15%">Actual Hours</th>
+                          <th width="20%">Assign From</th>
+                          <th width="10%">Actual Hours</th>
                           <th width="10%">Due Date</th> 
                           <th width="25%" style="text-align: center;">Action</th>
                       </tr>
@@ -190,30 +190,18 @@
                 </table>
               </div>
           </div>
+          <div style="float:right">
+              <pagination  *ngIf="taskList.length!=0" class="pagination-sm"
+                  [(ngModel)]="task_pagination.page"
+                  [totalItems]="task_pagination.length"
+                  [itemsPerPage]="task_pagination.itemsPerPage"
+                  [maxSize]="task_pagination.maxSize"
+                  [boundaryLinks]="true"
+                  [rotate]="false"
+                  (pageChanged)="callPaginationFun($event)"
+                  (numPages)="task_pagination.numPages = $event">
+              </pagination>
+          </div>
       </div>
-      <!-- <div *ngIf="taskList.length!=0" class="row">
-        <div class="col-md-10"></div>
-        <div class="col-md-2">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                  <li class="page-item">
-                    <a class="page-link" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                      <span class="sr-only">Previous</span>
-                    </a>
-                  </li>
-                  <li class="page-item"><a class="page-link">1</a></li>
-                  <li class="page-item"><a class="page-link">2</a></li>
-                  <li class="page-item"><a class="page-link">3</a></li>
-                  <li class="page-item">
-                    <a class="page-link" aria-label="Next">
-                      <span aria-hidden="true">&raquo;</span>
-                      <span class="sr-only">Next</span>
-                    </a>
-                  </li>
-                </ul>
-            </nav>
-        </div>
-      </div> -->
   </div>
 </div>

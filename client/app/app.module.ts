@@ -7,6 +7,7 @@ import {PopupModule} from 'ng2-opd-popup';
 // import {DatePickerModule} from 'ng2-datepicker-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { Ng2TableModule } from 'ng2-table/ng2-table';
+import { PaginationModule } from "ng2-bootstrap/pagination";
 
 import { UserService } from './services/user.service';
 import { ProjectService } from './services/project.service';
@@ -46,8 +47,10 @@ import { EmployeeComponent } from './employee/employee.component';
     // Ng4LoadingSpinnerModule.forRoot(),
     SelectModule,
      // DatePickerModule,
-     FormsModule,
-      AngularDateTimePickerModule,Ng2TableModule
+    FormsModule,
+    AngularDateTimePickerModule,
+    Ng2TableModule,
+    PaginationModule.forRoot(),
     //  A2Edatetimepicker
 
   ],

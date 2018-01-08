@@ -24,7 +24,7 @@ export default class UserAcceptCtrl  {
     var me =this;
    // var req_data = req.body.reqData;
     var req_data = req;    
-    req_data.to_email = "vaibhavmali376@gmail.com"
+    //req_data.to_email = "vaibhavmali376@gmail.com"
     const current_date = new Date();
     var tempfrom = "";
     var tempto = "";

@@ -132,9 +132,9 @@ export default class ProjectsCtrl  {
                                                                             if(assignto && assignto.length > 0){
                                                                                 var assigncount = 0;
                                                                                 async.forEach(assignto, function (assignee, callback) {
-                                                                                  empmodel.find({ "email": assignee.to_email }, function (err, data) {                   
+                                                                                /*  empmodel.find({ "email": assignee.to_email }, function (err, data) {                   
                                                                                    //Check whether email is registered or not.
-                                                                                   if(data && data.length > 0){
+                                                                                   if(data && data.length > 0){*/
                                                                                     // If registered
                                                                                     User_accept.find({ "from_email": req.user.emails[0].value,"to_email": assignee.to_email,"project_id": project_id,"accept" : 0 }, function (err, data3) {
                                                                                       User_accept.find({ "from_email": req.user.emails[0].value,"to_email": assignee.to_email,"project_id": project_id,"accept" : 1 }, function (err, data4) {
@@ -166,13 +166,13 @@ export default class ProjectsCtrl  {
                                                                                             }
                                                                                         })
                                                                                     })
-                                                                                   }
+                                                                                  /* }
                                                                                    else{
                                                                                         assignee.error = "Assignee email is not registered";
                                                                                         failedAssign.failedAssign.push(assignee);
                                                                                         callback();  
                                                                                     }
-                                                                                  }) 
+                                                                                  }) */
                                                                                      assigncount = assigncount + 1; 
                                                                                   }, function (err, cb) {
                                                                                       if(assigncount >= assignto.length){
@@ -303,9 +303,9 @@ export default class ProjectsCtrl  {
                                                               if(assignto && assignto.length > 0){
                                                                   var assigncount = 0;
                                                                   async.forEach(assignto, function (assignee, callback) {
-                                                                    empmodel.find({ "email": assignee.to_email }, function (err, data) {                   
+                                                                   /* empmodel.find({ "email": assignee.to_email }, function (err, data) {                   
                                                                      //Check whether email is registered or not.
-                                                                     if(data && data.length > 0){
+                                                                     if(data && data.length > 0){*/
                                                                       // If registered
                                                                        var reqData = {};
                                                                        reqData["from_email"] = req.user.emails[0].value;
@@ -328,7 +328,7 @@ export default class ProjectsCtrl  {
                                                                        callback();
                                                                        })
                                                                                 
-                                                                     }
+                                                                   /*  }
                                                                      else{
                                                                           assignee.error = "Assignee email is not registered";
                                                                           failedAssign.failedAssign.push(assignee);
@@ -336,7 +336,7 @@ export default class ProjectsCtrl  {
                              
                                                                       }
                                                                     
-                                                                    }) 
+                                                                    }) */
                                                                        assigncount = assigncount + 1; 
                                                                     }, function (err, cb) {
                                                                         if(assigncount >= assignto.length){
@@ -436,6 +436,12 @@ export default class ProjectsCtrl  {
                                   count1 = count1 + 1;                                  
                                   callback();                                                   
                               }
+                             /* else if(data8 && data8.length <= 0){
+                                 follower._doc['accept'] = 0 ;
+                                 followertemp.followers.push(follower._doc)
+                                 count1 = count1 + 1;
+                                 callback();
+                              }*/
                               else{
                                 follower._doc.employee_id = data8[0]._id;
                                 follower._doc.name = data8[0].name;
@@ -455,7 +461,7 @@ export default class ProjectsCtrl  {
                               async.forEach(data9, function (requestuser, callback) { 
                                 followers.find({ "project_id":project_id,"email":requestuser._doc.to_email }, function (err, data10) {                         
                                   empmodel.find({ "email": requestuser._doc.to_email}, function (err, data11) {
-                                      if(data10 && (data10.length == 0) && (requestuser._doc.accept == 0)){
+                                      if(data10 && (data10.length == 0) && (requestuser._doc.accept == 0) && (data11 && data11.length > 0) ){
                                         var followert = {};
                                         followert["employee_id"] = data11[0]._id;
                                         followert["name"] = data11[0].name;
@@ -463,12 +469,24 @@ export default class ProjectsCtrl  {
                                         followert["email"] = data11[0].email;                                                                             
                                         followert["act_status"] = data11[0].act_status;
                                         followert["type"] = data11[0].type;
+                                        followert["registered"] = 1;       
                                         followert["accept"] = 0;
                                         count2 = count2 + 1;
                                         followertemp.followers.push(followert);
                                         callback(); 
                                       } 
-                                      else if(requestuser._doc.accept == -1)
+                                      else if( (data10 && data10.length <= 0) && (data11 && data11.length <= 0)){
+                                        var followert = {};
+                                        followert["name"] = requestuser._doc.to_email;   
+                                        followert["email"] = requestuser._doc.to_email;       
+                                        followert["role"] = requestuser._doc.role;     
+                                        followert["accept"] = 0;     
+                                        followert["registered"] = 0;       
+                                        count2 = count2 + 1;                    
+                                        followertemp.followers.push(followert);
+                                        callback(); 
+                                      }
+                                      else if((data11 && data11.length > 0) && requestuser._doc.accept == -1)
                                       {
                                        /* followert["employee_id"] = data11[0]._id;
                                         followert["name"] = data11[0].name;
@@ -538,6 +556,15 @@ export default class ProjectsCtrl  {
                           count = count + 1;                          
                           callback();                                                   
                       }
+                    /*  else if(data8 && data8.length <= 0){
+                        follower._doc['accept'] = 0 ;
+                        follower._doc["email"] = requestuser._doc.email;       
+                        follower["role"] = requestuser._doc.role;     
+                        follower["accept"] = 0;          
+                        followertemp.followers.push(follower._doc)
+                        count = count + 1;   
+                        callback();
+                       }*/
                       else{
                         follower._doc.employee_id = data8[0]._id;
                         follower._doc.name = data8[0].name;
