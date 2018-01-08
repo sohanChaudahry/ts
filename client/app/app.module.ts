@@ -6,6 +6,7 @@ import { SharedModule } from './shared/shared.module';
 import {PopupModule} from 'ng2-opd-popup';
 // import {DatePickerModule} from 'ng2-datepicker-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { Ng2TableModule } from 'ng2-table/ng2-table';
 
 import { UserService } from './services/user.service';
 import { ProjectService } from './services/project.service';
@@ -46,7 +47,7 @@ import { EmployeeComponent } from './employee/employee.component';
     SelectModule,
      // DatePickerModule,
      FormsModule,
-      AngularDateTimePickerModule,
+      AngularDateTimePickerModule,Ng2TableModule
     //  A2Edatetimepicker
 
   ],
