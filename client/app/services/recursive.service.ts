@@ -46,6 +46,7 @@ export class RecursiveService {
                  AssignedtaskFormDetail.spendtime['start_date_time'] = localStorage.getItem('spend_start_date_time');  
                  AssignedtaskFormDetail.spendtime['end_date_time'] = new Date();  
                  AssignedtaskFormDetail.spendtime['actual_hrs'] = parseFloat(localStorage.getItem("actual_hrs"));
+                 AssignedtaskFormDetail.spendtime['comment'] = "User logged out";                 
                  AssignedtaskFormDetail._id = localStorage.getItem('task_id');  
                  this.taskService.saveTaskDetail({reqData:[AssignedtaskFormDetail]}).subscribe(
                   res => {  
