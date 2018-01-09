@@ -94,14 +94,15 @@
                 <td>
                     <span>{{project.role}}</span>
                 </td>
-                <td style="text-align: center;">
+                <td style="text-align: center;">      
                     <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
                     <!-- <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button>  -->
                     <button class="btn btn-sm btn-danger" *ngIf="project.accept==1" (click)="exitProjectReq(project)"><i class="fa fa-times" aria-hidden="true"></i> Exit</button> 
                     <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
                     <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
                     <!-- <button class="btn btn-sm btn-primary" *ngIf="project.accept==1" (click)="openTaskListPage(project)"><i class="fa fa-tasks" aria-hidden="true"></i></button>  -->
-                    <button class="btn btn-sm btn-primary" *ngIf="project.accept==1" (click)="openTaskListPage(project,false)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
+                    <button class="btn btn-sm btn-primary" *ngIf="project.accept==1 && !check_new_tasks(project._id)" (click)="openTaskListPage(project,false)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
+                    <button class="btn btn-sm btn-primary" *ngIf="project.accept==1 && check_new_tasks(project._id)" (click)="openTaskListPage(project,false)" style="color:red"><i class="fa fa-tasks" aria-hidden="true"></i></button>                     
                 </td>
               </tr> 
             </tbody>  
