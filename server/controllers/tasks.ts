@@ -1273,16 +1273,77 @@ getUpcomingTasks = (req, res) => {
     var reqData =  req.body.reqData;
     var page = reqData.page;
     var limit = reqData.limit;
-    var task_id = mongoose.Types.ObjectId(reqData._id);    
+    var task_id = mongoose.Types.ObjectId(reqData._id); 
+    var count = 0;   
     tasktime.paginate( { "pid": task_id }, { page: page, limit: limit }, function(err, data) {
-      data.docs.sort(function(a,b){
-        var c:any = new Date(a.end_date_time);
-        var d:any = new Date(b.end_date_time);
-        return d-c;
-        });
-      res.send(data);      
-      return;
+        async.forEach(data.docs, function (task, callback) {
+          if(Math.ceil(parseFloat(task._doc.actual_hrs)) === task._doc.actual_hrs){
+            task._doc.actual_hrs = task._doc.actual_hrs + " : 0 : 0 ";
+          }
+          else{
+            console.log("actual: " + task._doc.actual_hrs)                          
+            var hours =  Math.floor(task._doc.actual_hrs);
+            var temp = parseFloat(task._doc.actual_hrs) - Math.floor(parseFloat(task._doc.actual_hrs));
+            var minutes = parseInt(((temp *3600)/60).toString());
+            var seconds =  parseInt((temp * 3600).toString()) - (minutes * 60);
+            task._doc.actual_hrs = (parseInt(hours.toString()) <= 9 ? "0" + hours : hours )+ " : " +(parseInt(minutes.toString()) <= 9 ? "0" + minutes : minutes )  + " : " + (parseInt(seconds.toString()) <= 9 ? "0" + seconds : seconds );
+            console.log("Converted: " + task._doc.actual_hrs) 
+          }        
+          count = count + 1;
+          callback();                       
+        }, function (err, cb) {
+          if(count >= data.docs.length){
+              data.docs.sort(function(a,b){
+              var c:any = new Date(a.end_date_time);
+              var d:any = new Date(b.end_date_time);
+              return d-c;
+              });
+              res.send(data);      
+              return;
+          }
+        })
     })
   }
-  
+
+
+  /*
+  @author : Vaibhav Mali 
+  @date : 09 Jan 2018
+  @API : getNewTasks
+  @desc :Get In continue flow new tasks coming to us.
+  */
+getNewTasks = (req, res) => {   
+  var model = this.model;  
+  var emp_id1 = req.params.id;
+  var emp_id = mongoose.Types.ObjectId(emp_id1);
+  var tasks = {tasks:[]};
+  model.find({ "assign_to": emp_id,"flag" :0 }, function (err, data) {
+    var count = 0;
+    if(data && data.length > 0){
+      async.forEach(data, function (task, callback) {     
+        var task_id = mongoose.Types.ObjectId(data._doc._id);
+        model.findOneAndUpdate({ "_id": task_id}, { "$set": { "flag" : 1}}).exec(function (err, data1) {
+          var employee_id = mongoose.Types.ObjectId(task._doc.assign_from);  
+          var project_id = mongoose.Types.ObjectId(task._doc.project_id);     
+          empmodel.find({ "_id": employee_id }, function (err, data2) {          
+             projectsmodel.find({ "_id": project_id }, function (err, data3) {
+                task._doc['message'] = "New task assigned by " + data2[0]._doc.name + " for project "+data3[0]._doc.project_name;
+                tasks.tasks.push(task);
+                count = count + 1;
+                callback();
+              })
+          })
+        })
+      }, function (err, cb) {
+         if(count >= data.length){
+         }
+      });
+    }
+    else{
+
+    }
+  })
+}
+
+
 }
