@@ -135,6 +135,41 @@
       <div class="card">
           <div class="card-block">
               <div class="table-responsive custom_table">
+                    <popup #popup1 (confirmClick)="conformTaskHistoryDialog()" (cancelClick)="cancelTaskHistoryDialog()">
+                            <div class="table-responsive custom_table">
+                                <table class="table table-bordered" style="min-width: 1000px">
+                                    <thead class="thead-default">
+                                        <tr>
+                                            <th width="25%">Comment</th>
+                                            <th width="45%">Actual hours</th>
+                                            <th width="15%">Start Date</th>
+                                            <th width="15%">End Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody *ngIf="taskHistoryDetail.length == 0">
+                                        <tr>
+                                            <td colspan="4" style="text-align: center;">There are no project in the DB. Add a new project.</td>
+                                        </tr>  
+                                    </tbody>
+                                    <tbody>
+                                        <tr *ngFor="let task of taskHistoryDetail">
+                                            <td>
+                                                <span>{{task.comment}}</span>
+                                            </td>
+                                            <td>
+                                                <span>{{task.actual_hrs}}</span>
+                                            </td>
+                                            <td>
+                                                <span>{{task.start_date_time | date : " MMM d, y h:mm:ss a"}}</span> 
+                                            </td>
+                                            <td>
+                                                <span>{{task.end_date_time | date : " MMM d, y h:mm:ss a"}}</span> 
+                                            </td>
+                                        </tr> 
+                                    </tbody>  
+                                </table>
+                            </div>
+                        </popup>
                <table class="table table-bordered">
                   <thead class="thead-default">
                       <tr> 
@@ -179,6 +214,8 @@
                               <span>{{task.due_date | date : " MMM d, y h:mm:ss a"}}</span>
                           </td>
                           <td style="text-align: center;" *ngIf="!isActiveMyProject">
+                                
+                            <button class="btn btn-sm btn-success" (click)="openTaskHistoryDialog(task)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
                             <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
                             <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='PAUSE';"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
                             <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='FINISH';"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
@@ -188,7 +225,7 @@
                       </tr> 
                   </tbody>  
                 </table>
-                <popup #popup3 (confirmClick)="conformGetComent()" (cancelClick)="cancelGetComent()">
+                <popup #popup3 (confirmClick)="conformTaskHistoryDialog()" (cancelClick)="cancelTaskHistoryDialog()">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">

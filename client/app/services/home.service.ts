@@ -28,4 +28,7 @@ export class HomeService {
   getPendingTasks(reqData): Observable<any> {
     return this.http.post('/api/tasks/getPendingTasks', JSON.stringify(reqData), this.options).map(res => res.json());
   }
+  getTaskHistory(reqData): Observable<any> {
+    return this.http.post('/api/tasks/getTaskHistory', JSON.stringify(reqData), this.options).map(res => res.json());
+  }
 }

@@ -20,7 +20,9 @@ export class AboutComponent implements OnInit{
 
   //Vaibhav Mali 09 Jan 2018 ...Start
 
-  @ViewChild('popup3') popup3: Popup;  
+  @ViewChild('popup3') popup3: Popup; 
+  @ViewChild('popup1') popup1: Popup;  
+ 
   timer;
   ticks = 0;
   init = 0;
@@ -29,6 +31,7 @@ export class AboutComponent implements OnInit{
   paused = 0;  
   checkCommnetAssign=null;  
   selectedTaskDetail={};  
+  taskHistoryDetail=[];
   hoursDisplay: number = localStorage.getItem("hoursDisplay") ? parseInt(localStorage.getItem("hoursDisplay")) : 0;    
   minutesDisplay: number = localStorage.getItem("minutesDisplay") ? parseInt(localStorage.getItem("minutesDisplay")) : 0;    
   secondsDisplay: number = localStorage.getItem("secondsDisplay") ? parseInt(localStorage.getItem("secondsDisplay")) : 0;    
@@ -281,6 +284,40 @@ finishTaskFun(task){
   openProjectListDialog(){
     this.isShowproject=true;
     this.isShowList=false;
+  }
+  openTaskHistoryDialog(task_detail){
+    this.popup1.options = {
+        header: "Task History",
+        widthProsentage: 70, // The with of the popou measured by browser width 
+        animationDuration: 1, // in seconds, 0 = no animation 
+        showButtons: true, // You can hide this in case you want to use custom buttons 
+        confirmBtnContent: "OK", // The text on your confirm button 
+        confirmBtnClass: "btn btn-default", // your class for styling the confirm button 
+        cancleBtnClass: "btn btn-default", // you class for styling the cancel button 
+        animation: "fadeInDown" // 'fadeInLeft', 'fadeInRight', 'fadeInUp', 'bounceIn','bounceInDown' 
+    };
+    this.popup1.show(this.popup1.options);
+    this.getTaskHistory(task_detail);
+  }
+  getTaskHistory(task_detail){
+    let reqData={  
+      "_id" : task_detail._id ? task_detail._id : "",
+      "page" :  1,
+      "limit" : 10
+    }
+    this.homeService.getTaskHistory({"reqData":reqData}).subscribe(
+        res => {     
+          console.log(res); 
+            this.taskHistoryDetail=res.docs;
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
+  }
+  conformTaskHistoryDialog(){
+    this.popup1.hide();
+  }
+  cancelTaskHistoryDialog(){
+    this.popup1.hide();
   }
   openTaskListDialog(selected_project){
     this.selected_project_detail=selected_project;
