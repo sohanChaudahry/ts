@@ -7,5 +7,7 @@ var taskSchema = new mongoose.Schema({
     start_date_time: Date,
     end_date_time: Date
 });
+var mongoosePaginate = require('mongoose-paginate');
+taskSchema.plugin(mongoosePaginate);
 var tasktime = mongoose.model('tasktime', taskSchema);
 export default tasktime;

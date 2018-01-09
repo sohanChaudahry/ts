@@ -67,6 +67,7 @@ export default function setRoutes(app) {
   router.route('/tasks/getCompletedTasks').post(tasksCtrl.getCompletedTasks); 
   router.route('/tasks/getIn_ProgressTasks').post(tasksCtrl.getIn_ProgressTasks); 
   router.route('/tasks/getUpcomingTasks').post(tasksCtrl.getUpcomingTasks); 
+  router.route('/tasks/getTaskHistory').post(tasksCtrl.getTaskHistory); 
   
   
   
