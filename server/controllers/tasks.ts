@@ -1321,8 +1321,8 @@ getNewTasks = (req, res) => {
     var count = 0;
     if(data && data.length > 0){
       async.forEach(data, function (task, callback) {     
-        var task_id = mongoose.Types.ObjectId(data._doc._id);
-        model.findOneAndUpdate({ "_id": task_id}, { "$set": { "flag" : 1}}).exec(function (err, data1) {
+        var task_id = mongoose.Types.ObjectId(task._doc._id);
+        model.findOneAndUpdate({ "_id": task_id}, { "$set": { "read" : 1}}).exec(function (err, data1) {
           var employee_id = mongoose.Types.ObjectId(task._doc.assign_from);  
           var project_id = mongoose.Types.ObjectId(task._doc.project_id);     
           empmodel.find({ "_id": employee_id }, function (err, data2) {          
@@ -1336,14 +1336,31 @@ getNewTasks = (req, res) => {
         })
       }, function (err, cb) {
          if(count >= data.length){
+           res.send(tasks);
          }
       });
     }
     else{
-
+      res.send(tasks);      
     }
   })
 }
+
+/*
+  @author : Vaibhav Mali 
+  @date : 09 Jan 2018
+  @API : updateTaskReadStatus
+  @desc :Update task status which read.
+  */
+  updateTaskReadStatus = (req, res) => {   
+    var model = this.model;  
+    var project_id = mongoose.Types.ObjectId(req.params.id);
+    var resData = {};
+    model.update({ "project_id": project_id}, { "$set": { "flag" : 1}},{multi:true}).exec(function (err, data) {
+      resData['success'] = true;
+      res.send(resData);
+    })
+  }
 
 
 }

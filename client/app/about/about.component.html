@@ -32,7 +32,8 @@
                 <li class="list-group-item">Activities : </li>
             </ul>
             <div class="card-body ctm_div" style="height: 40px;float: right; margin-bottom: 0px; margin-left: 10px;">
-                <a class="card-link cursor_ctm" (click)="openTaskListDialog(project_detail)">Tasks</a>
+                <a class="card-link cursor_ctm" *ngIf = "!check_new_tasks(project_detail._id)" (click)="openTaskListDialog(project_detail)">Tasks</a>
+                <a class="card-link cursor_ctm" *ngIf = "check_new_tasks(project_detail._id)" style="color:red" (click)="openTaskListDialog(project_detail)">Tasks</a>                
             </div>
         </div>
         <div *ngIf="isActiveReqProject==true" class="card card_ctm" style="height: 220px;">

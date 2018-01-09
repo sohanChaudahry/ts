@@ -71,6 +71,8 @@ export class RecursiveService {
         else{
            me.getProjectRequests();    
            me.getAccept_or_cancel_ProjectRequests(); 
+           var _id = localStorage.getItem("_id"); 
+           me.getNewTasks(_id);
         } 
         setTimeout(function() {
             me.checkUserLogedIn();
@@ -152,5 +154,33 @@ export class RecursiveService {
           console.log(res);
         });
       }
+
+
+         /*
+     @author : Vaibhav Mali 
+     @date : 09 Jan 2018
+     @API : getNewTasks
+     @desc : To get new tasks.
+   */
+    getNewTasks(_id){
+      this.userService.getnewTasks(_id).subscribe(
+        res => {
+          var current_status = localStorage.getItem("login_status");
+          if(current_status){
+            var messages = "";
+            if(res && res.tasks.length > 0 ){
+               for (let task of res.tasks) {
+                localStorage.setItem(task.project_id,(1).toString())       
+                  if(task.read != 1)                       
+                    messages = messages + '<br/>' + task.message + '<br/>';
+                }
+            }
+            if(messages != "")
+            this.toast.setMessage(messages, 'success top',4000)  
+          }
+          console.log(res);
+        });
+      }
+
 
 }

@@ -68,7 +68,9 @@ export default function setRoutes(app) {
   router.route('/tasks/getIn_ProgressTasks').post(tasksCtrl.getIn_ProgressTasks); 
   router.route('/tasks/getUpcomingTasks').post(tasksCtrl.getUpcomingTasks); 
   router.route('/tasks/getTaskHistory').post(tasksCtrl.getTaskHistory); 
-  router.route('/tasks/getNewTasks').get(tasksCtrl.getNewTasks); 
+  router.route('/tasks/getNewTasks/:id').get(tasksCtrl.getNewTasks); 
+  router.route('/tasks/updateTaskReadStatus/:id').get(tasksCtrl.updateTaskReadStatus); 
+  
   
   
  //Request to join

@@ -59,4 +59,7 @@ export class ProjectService {
   getdetailsByEmailwithPagination(reqData): Observable<any> {
     return this.http.post('/api/employees/getdetailsByEmailwithPagination', JSON.stringify(reqData), this.options).map(res => res.json());
   } 
+  updateTaskReadStatus(_id): Observable<any> {
+    return this.http.get(`/api/tasks/updateTaskReadStatus/${_id}`,this.options).map(res => res.json());    
+  }
 }

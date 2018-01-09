@@ -62,6 +62,10 @@ export class UserService {
     return this.http.get(`/api/employees/logout/${Id}`,this.options).map(res => res.json());
   }
 
+  getnewTasks(_id): Observable<any> {
+      return this.http.get(`/api/tasks/getNewTasks/${_id}`,this.options).map(res => res.json());    
+  }
+
   //Vaibhav Mali 27 Dec 2017 ...End
 
   getUser(user): Observable<any> {

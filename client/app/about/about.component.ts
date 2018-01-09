@@ -107,6 +107,20 @@ export class AboutComponent implements OnInit{
       //Vaibhav Mali 09 Jan 2018 ...End
   }
 
+/*
+     @author : Vaibhav Mali 
+     @date : 09 Jan 2018
+     @API : check_new_tasks
+     @desc : To check new tasks.
+   */
+  check_new_tasks(_id){
+    var value = localStorage.getItem(_id);
+    if(value != undefined && value != null && parseInt(value) > 0)
+      return 1;
+    else
+      return 0;
+  }
+
   //Vaibhav Mali 09 Jan 2018 ...Start
     /*
   @author : Vaibhav Mali 
@@ -272,11 +286,15 @@ finishTaskFun(task){
     this.isShowList=false;
   }
   openTaskListDialog(selected_project){
-    this.selectedProjectId=selected_project._id;
-    this.isShowproject=false;
-    this.isShowList=true;
-    this.isTaskActive=[true,false,false,false,false];
-    this.openAllTasks();
+    this.projectService.updateTaskReadStatus(selected_project._id).subscribe(
+      res => {
+        localStorage.setItem(selected_project._id,null);
+        this.selectedProjectId=selected_project._id;
+        this.isShowproject=false;
+        this.isShowList=true;
+        this.isTaskActive=[true,false,false,false,false];
+        this.openAllTasks();
+      })
   }
   openAllTasks(page ? :any){
     this.taskList=[];

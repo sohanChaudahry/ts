@@ -226,6 +226,19 @@ export class ProjectComponent implements OnInit {
   updateProjectRequeststatus(){
     this.recursiveService.UpdateProjectRequestFlag();
   }
+    /*
+     @author : Vaibhav Mali 
+     @date : 09 Jan 2018
+     @API : check_new_tasks
+     @desc : To check new tasks.
+   */
+  check_new_tasks(_id){
+    var value = localStorage.getItem(_id);
+    if(value != undefined && value != null && parseInt(value) > 0)
+      return 1;
+    else
+      return 0;
+  }
   //Vaibhav Mali 27 Dec 2017 ...End
   private set disabledV(value:string) {
     this._disabledV = value;
@@ -360,6 +373,9 @@ export class ProjectComponent implements OnInit {
     else{
       this.iscurrentProject = 0;
     }
+    this.projectService.updateTaskReadStatus(project_detail._id).subscribe(
+      res => {
+     localStorage.setItem(project_detail._id,null);
      this.isShowAssignedTask=flag;
      this.selectedProjectDetail=project_detail;
      this.iscreateProject=false; 
@@ -371,6 +387,7 @@ export class ProjectComponent implements OnInit {
      this.isTaskCardShow=true;
      this.getTaskDetailsByAssignFromAPi();
      this.getDetailsByAssignToApi();
+      })
   }
   openCreateTaskPage(){
      this.iscreateProject=false; 
@@ -465,6 +482,9 @@ export class ProjectComponent implements OnInit {
     if(this.projectDetail.project_name=='' || this.projectDetail.project_name==null || !this.projectDetail.project_name){
       this.toast.setMessage('Project name should not be blank!', 'danger');
       return;
+    }
+    if(this.projectDetail._id=="" || this.projectDetail._id==null || this.projectDetail._id==undefined){
+      delete this.projectDetail['project_id'];
     }
     if(this.projectDetail.desc=='' || this.projectDetail.desc==null || !this.projectDetail.desc){
       this.toast.setMessage('Project description should not be blank!', 'danger');
