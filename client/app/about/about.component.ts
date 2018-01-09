@@ -45,11 +45,18 @@ export class AboutComponent implements OnInit{
     numPages:5,
     length:0
   }
+  project_pagination={
+    page:1,
+    itemsPerPage:10,
+    maxSize:5,
+    numPages:5,
+    length:0
+  }
   ngOnInit() {
 
     this.auth.getLogedinUserData();
     setTimeout(()=>{    
-      this.getProjectDetail();
+      this.openMyProject();
     },50);
   }
   openProjectListDialog(){
@@ -214,40 +221,57 @@ export class AboutComponent implements OnInit{
     this.isActiveMyProject=true;
     this.isActiveAcceptProject=false;
     this.isActiveReqProject=false;
-    this.projectList=this.myProjectList;
+    // this.projectList=this.myProjectList;
+    this.getProjectDetail(null,"MYPROJECT");
   }
   openAcceptedProject(){
     this.isActiveMyProject=false;
     this.isActiveAcceptProject=true;
     this.isActiveReqProject=false;
-    this.projectList=this.AcceptedProjectList;
+    this.getProjectDetail(null,"ACCEPTEDPROJECT");
+    // this.projectList=this.AcceptedProjectList;
   }
   openRequestedProject(){
     this.isActiveMyProject=false;
     this.isActiveAcceptProject=false;
     this.isActiveReqProject=true;
-    this.projectList=this.RequestedProjectList;
+    this.getProjectDetail(null,"REQUESTEDPROJECT");    
+    // this.projectList=this.RequestedProjectList;
   }
   backBtn(){
     this.isShowproject=true;
     this.isShowList=false;
     this.taskList=[];
   }
-  getProjectDetail(){
+  getProjectDetail(page?:any,selected_project_pagination ? : any){
     let reqData={
         "reqData":{
         "email" : localStorage.getItem("email") ? localStorage.getItem("email") : "",
-        "page" : 1,
-        "limit" : 10
+        "page" : page ? page.page : 1,
+        "limit" : this.project_pagination.itemsPerPage
         }
     }
     this.homeService.getProjects(reqData).subscribe(
       res => {
         this.employeeDetail=res.details;
-        this.myProjectList=res.details.MyProjects;
-        this.AcceptedProjectList=res.details.AcceptedProjects;
-        this.RequestedProjectList=res.details.RequestedProjects;
-        this.openMyProject();
+        if(selected_project_pagination=="MYPROJECT" || this.isActiveMyProject){
+          this.projectList=res.details.MyProjects;
+          this.project_pagination.length=res.details.MyProjectsTotal;
+        }
+        if(selected_project_pagination=="ACCEPTEDPROJECT" || this.isActiveAcceptProject){
+          this.projectList=res.details.AcceptedProjects;
+          this.project_pagination.length=res.details.AcceptedProjectsTotal;
+        }
+        if(selected_project_pagination=="REQUESTEDPROJECT" || this.isActiveReqProject){
+          this.projectList=res.details.RequestedProjects;
+          this.project_pagination.length=res.details.RequestedProjectsTotal;
+        }
+        // this.project_pagination.length=res.details.MyProjectsTotal;
+        // this.project_pagination.length=res.details.AcceptedProjectsTotal;
+        // this.project_pagination.length=res.details.RequestedProjectsTotal;
+        // this.myProjectList=res.details.MyProjects;
+        // this.AcceptedProjectList=res.details.AcceptedProjects;
+        // this.RequestedProjectList=res.details.RequestedProjects;
       },
       error => this.toast.setMessage('Some thing wrong!', 'danger')
     );

@@ -48,6 +48,18 @@
                 </popup>
             </table>
         </div>
+        <div style="float:right">
+            <pagination class="pagination-sm"
+                [(ngModel)]="my_project_pagination.page"
+                [totalItems]="my_project_pagination.length"
+                [itemsPerPage]="my_project_pagination.itemsPerPage"
+                [maxSize]="my_project_pagination.maxSize"
+                [boundaryLinks]="true"
+                [rotate]="false"
+                (pageChanged)="getEmployeeDetailAllData($event,'MYPROJECT')"
+                (numPages)="my_project_pagination.numPages = $event">
+            </pagination>
+        </div>
       </div>
     </div>
     <!-- assigned project list -->
@@ -95,6 +107,18 @@
             </tbody>  
         </table>
         </div>
+        <div style="float:right">
+            <pagination class="pagination-sm"
+                [(ngModel)]="assigned_project_pagination.page"
+                [totalItems]="assigned_project_pagination.length"
+                [itemsPerPage]="assigned_project_pagination.itemsPerPage"
+                [maxSize]="assigned_project_pagination.maxSize"
+                [boundaryLinks]="true"
+                [rotate]="false"
+                (pageChanged)="getEmployeeDetailAllData($event,'ASSIGNEDPROJECT')"
+                (numPages)="assigned_project_pagination.numPages = $event">
+            </pagination>
+        </div>
       </div>
     </div>
     <!-- list requested project -->
@@ -140,6 +164,18 @@
                   </tr> 
                 </tbody>  
             </table>
+            </div>
+            <div style="float:right">
+                <pagination class="pagination-sm"
+                    [(ngModel)]="requested_project_pagination.page"
+                    [totalItems]="requested_project_pagination.length"
+                    [itemsPerPage]="requested_project_pagination.itemsPerPage"
+                    [maxSize]="requested_project_pagination.maxSize"
+                    [boundaryLinks]="true"
+                    [rotate]="false"
+                    (pageChanged)="getEmployeeDetailAllData($event,'REQUESTEDPROJECT')"
+                    (numPages)="requested_project_pagination.numPages = $event">
+                </pagination>
             </div>
           </div>
         </div>

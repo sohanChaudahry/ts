@@ -150,14 +150,35 @@ export class ProjectComponent implements OnInit {
   }
   public my_task_pagination = {
     page:1,
-    itemsPerPage:1,
+    itemsPerPage:10,
     maxSize:5,
     numPages:5,
     length : 0,
   }
   public assigned_task_pagination ={
     page:1,
-    itemsPerPage:1,
+    itemsPerPage:10,
+    maxSize:5,
+    numPages:5,
+    length : 0,
+  }
+  public my_project_pagination={
+    page:1,
+    itemsPerPage:10,
+    maxSize:5,
+    numPages:5,
+    length : 0,
+  }
+  public assigned_project_pagination={
+    page:1,
+    itemsPerPage:10,
+    maxSize:5,
+    numPages:5,
+    length : 0,
+  }
+  public requested_project_pagination={
+    page:1,
+    itemsPerPage:10,
     maxSize:5,
     numPages:5,
     length : 0,
@@ -970,19 +991,29 @@ addSelectedEmp(){
   }
   // get project data with pagination    requestedProjectList=[];
 
-  getEmployeeDetailAllData(){
+  public getEmployeeDetailAllData(page ? : any, assign_list_pagination ? :any){
     let reqData={
       "email":localStorage.getItem("email") ? localStorage.getItem("email") : "",
-      "page" : 1,
-      "limit" : 20
+      "page" : page ? page.page : 1,
+      "limit" : this.my_project_pagination.itemsPerPage
     }
   //  this.spinnerService.show();
    this.projectService.getdetailsByEmailwithPagination({"reqData":reqData}).subscribe(
        res => {
           // this.spinnerService.hide();
-          this.MyProjectsList=res.details.MyProjects;
-          this.AssignedProjectsList=res.details.AcceptedProjects;
-          this.requestedProjectList=res.details.RequestedProjects;
+          if(assign_list_pagination=='MYPROJECT' || !assign_list_pagination || assign_list_pagination==undefined){
+            this.MyProjectsList=res.details.MyProjects;
+          } 
+          if(assign_list_pagination=='ASSIGNEDPROJECT' || !assign_list_pagination || assign_list_pagination==undefined){
+            this.AssignedProjectsList=res.details.AcceptedProjects;
+          }
+          if(assign_list_pagination=='REQUESTEDPROJECT' || !assign_list_pagination || assign_list_pagination==undefined){
+            this.requestedProjectList=res.details.RequestedProjects;
+          }
+          this.my_project_pagination.length=res.details.MyProjectsTotal;
+          this.assigned_project_pagination.length=res.details.AcceptedProjectsTotal;
+          this.requested_project_pagination.length=res.details.RequestedProjectsTotal;
+
           let project_list=[];
            if(this.MyProjectsList.length!=0){
                for(var i=0;i<this.MyProjectsList.length;i++){

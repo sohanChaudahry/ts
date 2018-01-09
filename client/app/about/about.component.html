@@ -6,51 +6,50 @@
         <div> 
           <ul class="nav nav-tabs">
               <li class="nav-item">
-                <a class="nav-link" (click)="openMyProject();isActiveMyProject=true;isActiveAcceptProject=false;isActiveReqProject=false;" [ngClass]="{'isActiveClass':isActiveMyProject}">My Project ({{myProjectList.length}})</a>
+                <a class="nav-link" (click)="openMyProject();isActiveMyProject=true;isActiveAcceptProject=false;isActiveReqProject=false;" [ngClass]="{'isActiveClass':isActiveMyProject}">My Project</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openAcceptedProject();isActiveMyProject=false;isActiveAcceptProject=true;isActiveReqProject=false;" [ngClass]="{'isActiveClass':isActiveAcceptProject}">Accepted Project ({{AcceptedProjectList.length}})</a>
+                <a class="nav-link" (click)="openAcceptedProject();isActiveMyProject=false;isActiveAcceptProject=true;isActiveReqProject=false;" [ngClass]="{'isActiveClass':isActiveAcceptProject}">Accepted Project </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openRequestedProject();isActiveMyProject=false;isActiveAcceptProject=false;isActiveReqProject=true;" [ngClass]="{'isActiveClass':isActiveReqProject}">Requested Project ({{RequestedProjectList.length}})</a>
+                <a class="nav-link" (click)="openRequestedProject();isActiveMyProject=false;isActiveAcceptProject=false;isActiveReqProject=true;" [ngClass]="{'isActiveClass':isActiveReqProject}">Requested Project </a>
               </li>
             </ul>
         </div>
     </div>
     <div *ngFor="let project_detail of projectList">
         <div *ngIf="isActiveReqProject!=true"  class="card card_ctm">
-          <div class="card-body">
-            <div>
-                <span class="card-title project_name_span" style="margin-left: 0px;">{{project_detail.project_name}}</span>
-                <!-- <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openTaskListDialog(project_detail)"></i> -->
+            <div class="card-body">
+                <div>
+                    <span class="card-title project_name_span" style="margin-left: 0px;">{{project_detail.project_name}}</span>
+                    <!-- <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openTaskListDialog(project_detail)"></i> -->
+                </div>
+                <p class="card-text desc_elipsis">{{project_detail.desc}} </p>
             </div>
-            <p class="card-text desc_elipsis">{{project_detail.desc}} </p>
-          </div>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">Role : {{project_detail.role}}</li>
-            <li *ngIf="isActiveReqProject==false" class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
-            <li class="list-group-item">Activities : </li>
-          </ul>
-          <div class="card-body ctm_div" style="height: 40px;float: right; margin-bottom: 0px; margin-left: 10px;">
-            <a class="card-link cursor_ctm" (click)="openTaskListDialog(project_detail)">Tasks</a>
-          </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Role : {{project_detail.role}}</li>
+                <li *ngIf="isActiveReqProject==false" class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
+                <li class="list-group-item">Activities : </li>
+            </ul>
+            <div class="card-body ctm_div" style="height: 40px;float: right; margin-bottom: 0px; margin-left: 10px;">
+                <a class="card-link cursor_ctm" (click)="openTaskListDialog(project_detail)">Tasks</a>
+            </div>
         </div>
         <div *ngIf="isActiveReqProject==true" class="card card_ctm" style="height: 220px;">
             <div class="card-body">
-              <div>
-                  <span class="card-title project_name_span" >{{project_detail.project_name}}
-                  </span>
-                  <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openTaskListDialog(project_detail)"></i>
-              </div>
-              <p class="card-text desc_elipsis">{{project_detail.desc}} </p>
+            <div>
+                <span class="card-title project_name_span" style="margin-left: 0px;">{{project_detail.project_name}} </span>
+                <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openTaskListDialog(project_detail)"></i>
+            </div>
+            <p class="card-text desc_elipsis">{{project_detail.desc}} </p>
             </div>
             <ul class="list-group list-group-flush">
-              <li *ngIf="isActiveReqProject==false" class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
-              <li class="list-group-item">Activities : </li>
-              <!-- <li>  
+            <li *ngIf="isActiveReqProject==false" class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
+            <li class="list-group-item">Activities : </li>
+            <!-- <li>  
                 <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
                 <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
-              </li> -->
+            </li> -->
             </ul>
             <div class="card-body ctm_div" style="height: 40px;float: right; margin-right: 10px;">
                 <button class="btn btn-sm btn-success" (click)="acceptProjectReq(project_detail._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
@@ -59,31 +58,19 @@
         </div>
     </div>
     <div *ngIf="projectList.length==0" style="margin: 20px;">
-       <span style="margin-left: 40%;">No record available in DB.</span>
+        <span style="margin-left: 40%;">No record available in DB.</span>
     </div>
-    <div *ngIf="taskList.length!=0" class="row">
-      <div class="col-md-10"></div>
-      <div class="col-md-2">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-              <li class="page-item">
-                <a class="page-link" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                  <span class="sr-only">Previous</span>
-                </a>
-              </li>
-              <li class="page-item"><a class="page-link">1</a></li>
-              <li class="page-item"><a class="page-link">2</a></li>
-              <li class="page-item"><a class="page-link">3</a></li>
-              <li class="page-item">
-                <a class="page-link" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                  <span class="sr-only">Next</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
+    <div style="float:right">
+        <pagination class="pagination-sm"
+            [(ngModel)]="project_pagination.page"
+            [totalItems]="project_pagination.length"
+            [itemsPerPage]="project_pagination.itemsPerPage"
+            [maxSize]="project_pagination.maxSize"
+            [boundaryLinks]="true"
+            [rotate]="false"
+            (pageChanged)="getProjectDetail($event,null)"
+            (numPages)="project_pagination.numPages = $event">
+        </pagination>
     </div>
 </div>
 <div *ngIf="!isShowproject && isShowList">
