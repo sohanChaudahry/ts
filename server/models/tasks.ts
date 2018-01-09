@@ -18,6 +18,7 @@ var taskSchema = new mongoose.Schema({
     end_date_time: Date,
     create_date: Date,
     modify_date: Date,
+    flag: { type: Number, default: 0 },        
     stime : { type : Number }    
 });
 var mongoosePaginate = require('mongoose-paginate');
