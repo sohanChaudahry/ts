@@ -178,16 +178,26 @@
                               <span>{{task.due_date | date}}</span>
                           </td>
                           <td style="text-align: center;">
-                              <!-- <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
-                              <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="pauseTaskFun(task)"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
-                              <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="finishTaskFun(task)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
+                            <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
+                            <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='PAUSE';"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
+                            <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='FINISH';"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
 
                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> 
-                                    {{hoursDisplay}} : {{minutesDisplay}} : {{secondsDisplay}}</button>               -->
+                                    {{hoursDisplay}} : {{minutesDisplay}} : {{secondsDisplay}}</button>              
                           </td>  
                       </tr> 
                   </tbody>  
                 </table>
+                <popup #popup3 (confirmClick)="conformGetComent()" (cancelClick)="cancelGetComent()">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Comment</label>
+                                <textarea class="form-control" rows="2" name="desc" [(ngModel)]="comment_data" placeholder="Comment" ></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </popup>
               </div>
           </div>
           <div style="float:right">
