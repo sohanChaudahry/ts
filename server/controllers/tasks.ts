@@ -1262,4 +1262,27 @@ getUpcomingTasks = (req, res) => {
   
 }
 
+/*
+  @author : Vaibhav Mali 
+  @date : 09 Jan 2018
+  @API : getTaskHistory
+  @desc :Get Task history with pagination.
+  */
+  getTaskHistory = (req, res) => {   
+    var model = this.model;  
+    var reqData =  req.body.reqData;
+    var page = reqData.page;
+    var limit = reqData.limit;
+    var task_id = mongoose.Types.ObjectId(reqData._id);    
+    tasktime.paginate( { "pid": task_id }, { page: page, limit: limit }, function(err, data) {
+      data.docs.sort(function(a,b){
+        var c:any = new Date(a.end_date_time);
+        var d:any = new Date(b.end_date_time);
+        return d-c;
+        });
+      res.send(data);      
+      return;
+    })
+  }
+  
 }

@@ -447,6 +447,7 @@ export default class ProjectsCtrl  {
                                 follower._doc.name = data8[0].name;
                                 follower._doc.act_status = data8[0].act_status;
                                 follower._doc.type = data8[0].type;
+                                follower._doc["registered"]= 1;                                       
                                 follower._doc.accept = 1;                                 
                                 followertemp.followers.push(follower._doc)
                                 count1 = count1 + 1;

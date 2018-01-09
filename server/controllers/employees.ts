@@ -517,6 +517,7 @@ getemployeeDetailswithProjectPagination = (req, res) => {
                                                             project["_id"] = data2[0]._doc._id;                              
                                                             project["project_name"] = data2[0]._doc.project_name;
                                                             project["desc"] = data2[0]._doc.desc; 
+                                                            project["role"] = requestuser._doc.role; 
                                                             project["modify_date"] = requestuser._doc.modify_date;                                                                                                                        
                                                             project["accept"] = 0;
                                                             activities.find({ "pid": project_id }, function (err, data3) {
