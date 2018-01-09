@@ -466,7 +466,7 @@ export default class ProjectsCtrl  {
                                         followert["employee_id"] = data11[0]._id;
                                         followert["name"] = data11[0].name;
                                         followert["role"] = requestuser._doc.role;
-                                        followert["email"] = data11[0].email;                                                                             
+                                        followert["to_email"] = data11[0].email;                                                                             
                                         followert["act_status"] = data11[0].act_status;
                                         followert["type"] = data11[0].type;
                                         followert["registered"] = 1;       
@@ -478,7 +478,7 @@ export default class ProjectsCtrl  {
                                       else if( (data10 && data10.length <= 0) && (data11 && data11.length <= 0)){
                                         var followert = {};
                                         followert["name"] = requestuser._doc.to_email;   
-                                        followert["email"] = requestuser._doc.to_email;       
+                                        followert["to_email"] = requestuser._doc.to_email;       
                                         followert["role"] = requestuser._doc.role;     
                                         followert["accept"] = 0;     
                                         followert["registered"] = 0;       

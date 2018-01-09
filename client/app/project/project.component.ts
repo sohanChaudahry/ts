@@ -150,14 +150,14 @@ export class ProjectComponent implements OnInit {
   }
   public my_task_pagination = {
     page:1,
-    itemsPerPage:10,
+    itemsPerPage:1,
     maxSize:5,
     numPages:5,
     length : 0,
   }
   public assigned_task_pagination ={
     page:1,
-    itemsPerPage:10,
+    itemsPerPage:1,
     maxSize:5,
     numPages:5,
     length : 0,

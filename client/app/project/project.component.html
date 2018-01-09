@@ -154,7 +154,7 @@
                 <div class="col-md-7">
                     <div class="form-group">
                         <label>Email Id</label>
-                        <input class="form-control" type="text" name="email"  placeholder="Email Id" [(ngModel)]="inviteUserData.to_email">
+                        <input class="form-control" type="email" name="email"  placeholder="Email Id" [(ngModel)]="inviteUserData.to_email">
                     </div>
                 </div>
                 <div class="col-md-5">
@@ -280,7 +280,7 @@
                             <div class="col-md-1" (click)="removeAssignUserFun(user,projectDetail)" style="padding-left:5%;color:red">
                                 <i class="fa fa-times" aria-hidden="true"></i>
                             </div>    
-                            <div class="col-md-1" style="color: blue;" (click)="openProjectWorkingTask(projectDetail,user)">
+                            <div *ngIf="user.accept==1" class="col-md-1" style="color: blue;" (click)="openProjectWorkingTask(projectDetail,user)">
                                 <i class="fa fa-tasks" aria-hidden="true"></i>
                             </div>
                         </div>
@@ -376,7 +376,7 @@
                         </thead>
                         <tbody *ngIf="projectWorkingTaskList.length == 0">
                             <tr>
-                                <td colspan="4" style="text-align: center;">There are no record in the DB.</td>
+                                <td colspan="6" style="text-align: center;">There are no record in the DB.</td>
                             </tr>  
                         </tbody>
                         <tbody>
@@ -515,9 +515,8 @@
                                 <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='PAUSE';"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
                                 <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='FINISH';"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
 
-                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> :{{secondsDisplay}}</button>                
-                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px"> :{{minutesDisplay}}</button>                
-                                 <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px">{{hoursDisplay}}</button>
+                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> 
+                                    {{hoursDisplay}} : {{minutesDisplay}} : {{secondsDisplay}}</button>                
                             </td>  
                         </tr> 
                     </tbody>  

@@ -148,7 +148,7 @@
                       <tr> 
                           <th width="15%">Task Name</th>
                           <th width="20%">Task Description</th>
-                          <th width="20%">Assign From</th>
+                          <th width="20%">{{isActiveMyProject ? 'Assign To' :'Assign From'}}</th>
                           <th width="10%">Actual Hours</th>
                           <th width="10%">Due Date</th> 
                           <th width="25%" style="text-align: center;">Action</th>
@@ -168,7 +168,8 @@
                               <span>{{task.task_description}}</span>
                           </td>
                           <td>
-                              <span>{{task.assign_from.name}}</span>
+                              <span *ngIf="isActiveMyProject">{{task.assign_to.name}}</span>
+                              <span *ngIf="!isActiveMyProject">{{task.assign_from.name}}</span>
                           </td>
                           <td>
                               <span>{{task.actual_hrs}}</span>
@@ -181,9 +182,8 @@
                               <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="pauseTaskFun(task)"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
                               <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="finishTaskFun(task)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
 
-                              <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> :{{secondsDisplay}}</button>                
-                              <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px"> :{{minutesDisplay}}</button>                
-                               <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px">{{hoursDisplay}}</button> -->
+                               <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> 
+                                    {{hoursDisplay}} : {{minutesDisplay}} : {{secondsDisplay}}</button>               -->
                           </td>  
                       </tr> 
                   </tbody>  
