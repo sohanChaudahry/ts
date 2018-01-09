@@ -397,6 +397,7 @@ export class ProjectComponent implements OnInit {
   public selected(value:any):void {
     console.log('Selected value is: ', value);
     this.searchEmpDetail.name=value.text;
+    this.searchEmpDetail.to_email=value.id;
   }
  
   public removed(value:any):void {
@@ -596,11 +597,11 @@ export class ProjectComponent implements OnInit {
     for(var i=0;i<this.projectDetail.activities.length;i++){
         this.projectDetail.activities[i].activity_name=this.projectDetail.activities[i].name;
     }
-    this.isLoading1=true;   
+    this.isLoading=true;   
     // this.spinnerService.show();
     this.projectService.saveProjectDetails({"reqData":[this.projectDetail]}).subscribe(
       res => {
-        this.isLoading1=false;   
+        this.isLoading=false;   
         //  this.spinnerService.hide();
          if(res.successProjects.successData.length!=0){
           this.isProjectList=true;
@@ -622,7 +623,7 @@ export class ProjectComponent implements OnInit {
            let data=res;
            this.employeesList=res.employees;
            for(var i=0;i<this.employeesList.length;i++){
-               this.employeesToshow.push(this.employeesList[i].name);
+               this.employeesToshow.push({"id":this.employeesList[i].email,"text":this.employeesList[i].name});
            }
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')

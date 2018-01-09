@@ -44,14 +44,11 @@ import { EmployeeComponent } from './employee/employee.component';
     RoutingModule,
     SharedModule,
     PopupModule.forRoot(),
-    // Ng4LoadingSpinnerModule.forRoot(),
     SelectModule,
-     // DatePickerModule,
     FormsModule,
     AngularDateTimePickerModule,
     Ng2TableModule,
     PaginationModule.forRoot(),
-    //  A2Edatetimepicker
 
   ],
   declarations: [

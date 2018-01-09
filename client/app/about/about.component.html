@@ -45,7 +45,7 @@
             </div>
             <ul class="list-group list-group-flush">
             <li *ngIf="isActiveReqProject==false" class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
-            <li class="list-group-item">Activities : </li>
+            <li class="list-group-item">Role : {{project_detail.role}}</li>
             <!-- <li>  
                 <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
                 <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
@@ -204,7 +204,7 @@
                   </thead>
                   <tbody *ngIf="taskList.length==0">
                       <tr>
-                          <td colspan="6" style="text-align: center;">There are no task in the DB. Add a new task.</td>
+                          <td colspan="10" style="text-align: center;">There are no task in the DB. Add a new task.</td>
                       </tr>  
                   </tbody>
                   <tbody>
