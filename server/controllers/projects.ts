@@ -477,7 +477,7 @@ export default class ProjectsCtrl  {
                                       } 
                                       else if( (data10 && data10.length <= 0) && (data11 && data11.length <= 0)){
                                         var followert = {};
-                                        followert["name"] = requestuser._doc.to_email;   
+                                        // followert["name"] = requestuser._doc.to_email;   
                                         followert["to_email"] = requestuser._doc.to_email;       
                                         followert["role"] = requestuser._doc.role;     
                                         followert["accept"] = 0;     

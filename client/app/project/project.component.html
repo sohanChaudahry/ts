@@ -133,7 +133,6 @@
                   <tr>
                     <th width="30%">Project Name</th>
                     <th width="50%">Description</th>
-                    <!-- <th width="11%">Role</th> -->
                     <th width="20%" style="text-align: center;">Action</th>
                   </tr>
                 </thead>
@@ -150,9 +149,6 @@
                     <td>
                         <span>{{project.desc}}</span>
                     </td>
-                    <!-- <td>
-                        <span>{{project.role}}</span>
-                    </td> -->
                     <td style="text-align: center;">
                         <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
                         <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button> 
@@ -180,13 +176,11 @@
           </div>
         </div>
     <div class="card " *ngIf="iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-        <!-- <app-loading [condition]="isLoading1"></app-loading> -->
         <div class="card-header">
             <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
         </div>
         <popup  #popup2 (confirmClick)="conformPopupInviteUSer()" (cancelClick)="cancelPopupInviteUSer()">
             <div class="row">
-                <!-- <div class="col-md-1"></div> -->
                 <div class="col-md-7">
                     <div class="form-group">
                         <label>Email Id</label>
@@ -199,7 +193,6 @@
                         <option *ngFor="let role of roleList;" [ngValue]="role" placeholder="Role">{{role}}</option>
                     </select>
                 </div>
-                <!-- <div class="col-md-1"></div> -->
             </div>
         </popup>
         <div class="ctm_form">
@@ -212,14 +205,6 @@
                    <input class="form-control" type="text" name="project_name" [(ngModel)]="projectDetail.project_name" placeholder="Project Name">
                 </div>
               </div>
-             <!-- <div class="col-md-5">
-                 <div class="form-group">
-                   <label>Role</label>
-                   <select class="form-control" name="role" [(ngModel)]="projectDetail.role">
-                        <option [ngValue]="role" *ngFor="let role of roleList;"  placeholder="Role">{{role}}</option>
-                   </select>
-                  </div>
-              </div> -->
               <div class="col-md-1"></div>
           </div>
           <div class="row">
@@ -301,18 +286,20 @@
             <div class="col-md-10 cat_lable custom-div-margin">
                 <div class="form-group city-data">
                     <div class="searc_head"> 
-                          <div class="col-md-5">Selected Employees</div>
-                          <div class="col-md-5">Role</div>
+                          <div class="col-md-3">Selected Employees</div>
+                          <div class="col-md-4">Email</div>
+                          <div class="col-md-3">Role</div>
                           <div class="col-md-2" style="text-align:right;padding-right: 7%;">Action</div>
                     </div>
                      <div *ngIf="addAssignUserList.length==0" class="city-data-div user_table">
                          <div class="col-md-4"></div>
                          <div class="col-md-8">No employee selected for assign project.</div>
                     </div> 
-                    <div *ngIf="addAssignUserList.length!=0" >
+                    <div *ngIf="addAssignUserList.length!=0">
                         <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
-                            <div class="col-md-5">{{user.name}}</div>
-                            <div class="col-md-5">{{user.role}}</div>
+                            <div class="col-md-3">{{user.name ? user.name : "UNREGISTER USER"}}</div>
+                            <div class="col-md-4">{{user.to_email}}</div>
+                            <div class="col-md-3">{{user.role}}</div>
                             <div class="col-md-1" (click)="removeAssignUserFun(user,projectDetail)" style="padding-left:5%;color:red">
                                 <i class="fa fa-times" aria-hidden="true"></i>
                             </div>    

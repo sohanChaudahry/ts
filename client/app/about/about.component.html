@@ -29,7 +29,6 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">Role : {{project_detail.role}}</li>
                 <li *ngIf="isActiveReqProject==false" class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
-                <li class="list-group-item">Activities : </li>
             </ul>
             <div class="card-body ctm_div" style="height: 40px;float: right; margin-bottom: 0px; margin-left: 10px;">
                 <a class="card-link cursor_ctm" (click)="openTaskListDialog(project_detail)">Tasks</a>
@@ -39,7 +38,7 @@
             <div class="card-body">
             <div>
                 <span class="card-title project_name_span" style="margin-left: 0px;">{{project_detail.project_name}} </span>
-                <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openTaskListDialog(project_detail)"></i>
+                <!-- <i class="fa fa-briefcase icon" aria-hidden="true" (click)="openTaskListDialog(project_detail)"></i> -->
             </div>
             <p class="card-text desc_elipsis">{{project_detail.desc}} </p>
             </div>
@@ -76,7 +75,7 @@
 <div *ngIf="!isShowproject && isShowList">
   <div class="home_header" style="padding-top: 6px;">
     <div class="row"> 
-      <div class="col-md-11">
+      <div class="col-md-9">
           <ul class="nav nav-tabs">
               <li class="nav-item">
                   <a class="nav-link" (click)="openAllTasks();isTaskActive[0]=true;isTaskActive[1]=false;isTaskActive[2]=false;
@@ -98,8 +97,14 @@
                 <a class="nav-link" (click)="openCompletedTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=false;
                 isTaskActive[3]=false;isTaskActive[4]=true;" [ngClass]="{'isActiveClass' : isTaskActive[4]}">Completed Tasks</a>
               </li>
+              <li class="nav-item">
+                   
+              </li>
             </ul>
       </div>
+      <span class="col-md-2" style="padding-left: 50px;padding-top: 5px;">
+            {{selected_project_detail.project_name}} <i class="fa fa-briefcase" aria-hidden="true" style="padding-left: 5px;"></i>
+      </span>
       <span class="col-md-1" style="padding-left:50px;">
         <button class="btn btn-sm btn-success" (click)="backBtn()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
       </span>
@@ -133,12 +138,14 @@
                <table class="table table-bordered">
                   <thead class="thead-default">
                       <tr> 
-                          <th width="15%">Task Name</th>
-                          <th width="20%">Task Description</th>
-                          <th width="20%">{{isActiveMyProject ? 'Assign To' :'Assign From'}}</th>
-                          <th width="10%">Actual Hours</th>
-                          <th width="10%">Due Date</th> 
-                          <th width="25%" style="text-align: center;">Action</th>
+                          <th width="12%">Task Name</th>
+                          <th width="15%">Task Description</th>
+                          <th width="18%">{{isActiveMyProject ? 'Assign To' :'Assign From'}}</th>
+                          <th width="8%">Actual Hours</th>
+                          <th width="9%">Assign Date</th> 
+                          <th width="8%">Start Date</th> 
+                          <th width="8%">Due Date</th> 
+                          <th width="22%" style="text-align: center;" *ngIf="!isActiveMyProject">Action</th>
                       </tr>
                   </thead>
                   <tbody *ngIf="taskList.length==0">
@@ -162,15 +169,21 @@
                               <span>{{task.actual_hrs}}</span>
                           </td>
                           <td>
-                              <span>{{task.due_date | date}}</span>
+                            <span>{{task.assign_date | date : " MMM d, y h:mm:ss a"}}</span>
                           </td>
-                          <td style="text-align: center;">
+                          <td>
+                            <span>{{task.start_date_time ? ( task.start_date_time | date : " MMM d, y h:mm:ss a" ) : "Not Started"}}</span>
+                            <!-- start_date_time{{task.seen_time ? ( task.seen_time | date : " MMM d, y h:mm:ss a" ) : "Not seen"}} -->
+                          </td>
+                          <td>
+                              <span>{{task.due_date | date : " MMM d, y h:mm:ss a"}}</span>
+                          </td>
+                          <td style="text-align: center;" *ngIf="!isActiveMyProject">
                             <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
                             <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='PAUSE';"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
                             <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='FINISH';"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
-
-                               <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> 
-                                    {{hoursDisplay}} : {{minutesDisplay}} : {{secondsDisplay}}</button>              
+                            <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> 
+                                {{hoursDisplay}} : {{minutesDisplay}} : {{secondsDisplay}}</button>              
                           </td>  
                       </tr> 
                   </tbody>  

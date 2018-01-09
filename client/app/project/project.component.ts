@@ -251,16 +251,38 @@ export class ProjectComponent implements OnInit {
     };
   }
   openPopup(project_detail){
+    this.popup1.options = {
+        header: "Do you want to delete this project ?",
+        widthProsentage: 40, // The with of the popou measured by browser width 
+        animationDuration: 1, // in seconds, 0 = no animation 
+        showButtons: true, // You can hide this in case you want to use custom buttons 
+        confirmBtnContent: "OK", // The text on your confirm button 
+        cancleBtnContent: "Cancel", // the text on your cancel button 
+        confirmBtnClass: "btn btn-default", // your class for styling the confirm button 
+        cancleBtnClass: "btn btn-default", // you class for styling the cancel button 
+        animation: "fadeInDown" // 'fadeInLeft', 'fadeInRight', 'fadeInUp', 'bounceIn','bounceInDown' 
+    };
     this.selected_proj_delete=project_detail;
-    this.popup1.show();
+    this.popup1.show(this.popup1.options);
   }
   conformPopup(){
     this.popup1.hide();
     this.deleteProjects(this.selected_proj_delete);
   }
   showGetComment(task_detail){
+    this.popup3.options = {
+        header: "Task Comment",
+        widthProsentage: 40, // The with of the popou measured by browser width 
+        animationDuration: 1, // in seconds, 0 = no animation 
+        showButtons: true, // You can hide this in case you want to use custom buttons 
+        confirmBtnContent: "OK", // The text on your confirm button 
+        cancleBtnContent: "Cancel", // the text on your cancel button 
+        confirmBtnClass: "btn btn-default", // your class for styling the confirm button 
+        cancleBtnClass: "btn btn-default", // you class for styling the cancel button 
+        animation: "fadeInDown" // 'fadeInLeft', 'fadeInRight', 'fadeInUp', 'bounceIn','bounceInDown' 
+    };
     this.selectedTaskDetail=task_detail;
-    this.popup3.show();
+    this.popup3.show(this.popup3.options);
   }
   conformGetComent(){
     if(this.checkCommnetAssign=="PAUSE"){
@@ -277,7 +299,18 @@ export class ProjectComponent implements OnInit {
     this.popup1.hide();
   }
   openPopupInviteUser(){
-    this.popup2.show();
+    this.popup2.options = {
+        header: "Invite Employee",
+        widthProsentage: 40, // The with of the popou measured by browser width 
+        animationDuration: 1, // in seconds, 0 = no animation 
+        showButtons: true, // You can hide this in case you want to use custom buttons 
+        confirmBtnContent: "OK", // The text on your confirm button 
+        cancleBtnContent: "Cancel", // the text on your cancel button 
+        confirmBtnClass: "btn btn-default", // your class for styling the confirm button 
+        cancleBtnClass: "btn btn-default", // you class for styling the cancel button 
+        animation: "fadeInDown" // 'fadeInLeft', 'fadeInRight', 'fadeInUp', 'bounceIn','bounceInDown' 
+    };
+    this.popup2.show(this.popup2.options);
   }
   conformPopupInviteUSer(){
     if(this.inviteUserData.to_email=='' || this.inviteUserData.to_email==null || this.inviteUserData.to_email==undefined){
@@ -288,7 +321,7 @@ export class ProjectComponent implements OnInit {
       this.toast.setMessage('Role should not be blank !', 'danger');
       return;
     }
-    this.inviteUserData.name=this.inviteUserData.to_email;
+    // this.inviteUserData.name=this.inviteUserData.to_email;
     this.addAssignUserList.push(this.inviteUserData);
     this.popup2.hide();
     this.inviteUserData={"to_email":"",role:"","name":""}
@@ -828,7 +861,7 @@ finishTaskFun(task){
 addSelectedEmp(){
     if(this.searchEmpDetail.name && this.searchEmpDetail.role){
       for(var i=0;i<this.addAssignUserList.length;i++){
-        if(this.addAssignUserList[i].name==this.searchEmpDetail.name){
+        if(this.addAssignUserList[i].to_email==this.searchEmpDetail.to_email){
           this.toast.setMessage('Employee already selected!', 'danger');
           return;
         }

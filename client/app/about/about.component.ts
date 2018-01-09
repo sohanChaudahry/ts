@@ -48,7 +48,7 @@ export class AboutComponent implements OnInit{
   
   //Vaibhav Mali 09 Jan 2018 ...End
 
-
+  selected_project_detail={};
   isShowproject=true;
   isShowList=false;
   employeeDetail = {};
@@ -94,7 +94,6 @@ export class AboutComponent implements OnInit{
     setTimeout(()=>{    
       this.openMyProject();
     },50);
-
        //Vaibhav Mali 09 Jan 2018 ...Start
         this.selectvalue = localStorage.getItem("select") ? parseInt( localStorage.getItem("select")) : 0;      
         if(parseInt(this.selectvalue.toString()) == 1){
@@ -114,9 +113,22 @@ export class AboutComponent implements OnInit{
   @fn : startTimer,UpdateAssignedTaskDetail,startTaskFun,
         pauseTaskFun,finishTaskFun,setTimerValue,showGetComment,conformGetComent,cancelGetComent.
   */
+
   showGetComment(task_detail){
+    this.comment_data="";
     this.selectedTaskDetail=task_detail;
-    this.popup3.show();
+    this.popup3.options = {
+        header: "Comment",
+        widthProsentage: 40, // The with of the popou measured by browser width 
+        animationDuration: 1, // in seconds, 0 = no animation 
+        showButtons: true, // You can hide this in case you want to use custom buttons 
+        confirmBtnContent: "OK", // The text on your confirm button 
+        cancleBtnContent: "Cancel", // the text on your cancel button 
+        confirmBtnClass: "btn btn-default", // your class for styling the confirm button 
+        cancleBtnClass: "btn btn-default", // you class for styling the cancel button 
+        animation: "fadeInDown" // 'fadeInLeft', 'fadeInRight', 'fadeInUp', 'bounceIn','bounceInDown' 
+    };
+    this.popup3.show(this.popup3.options);
   }
   conformGetComent(){
     if(this.checkCommnetAssign=="PAUSE"){
@@ -127,6 +139,7 @@ export class AboutComponent implements OnInit{
     this.popup3.hide();
   }
   cancelGetComent(){
+    this.comment_data="";
     this.popup3.hide();
   }
 
@@ -174,8 +187,6 @@ export class AboutComponent implements OnInit{
           clearTimeout(this.timer);                   
         }
 }
-
- 
 UpdateAssignedTaskDetail(){
   console.log(this.AssignedtaskFormDetail);
   this.taskService.saveTaskDetail({reqData:[this.AssignedtaskFormDetail]}).subscribe(
@@ -272,6 +283,7 @@ finishTaskFun(task){
     this.isShowList=false;
   }
   openTaskListDialog(selected_project){
+    this.selected_project_detail=selected_project;
     this.selectedProjectId=selected_project._id;
     this.isShowproject=false;
     this.isShowList=true;
@@ -447,6 +459,7 @@ finishTaskFun(task){
     // this.projectList=this.RequestedProjectList;
   }
   backBtn(){
+    this.selected_project_detail={};
     this.isShowproject=true;
     this.isShowList=false;
     this.taskList=[];
