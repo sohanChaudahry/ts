@@ -31,6 +31,7 @@ export class AboutComponent implements OnInit{
   paused = 0;  
   checkCommnetAssign=null;  
   selectedTaskDetail={};  
+  selectedTaskId="";
   taskHistoryDetail=[];
   hoursDisplay: number = localStorage.getItem("hoursDisplay") ? parseInt(localStorage.getItem("hoursDisplay")) : 0;    
   minutesDisplay: number = localStorage.getItem("minutesDisplay") ? parseInt(localStorage.getItem("minutesDisplay")) : 0;    
@@ -91,6 +92,13 @@ export class AboutComponent implements OnInit{
     numPages:5,
     length:0
   }
+  task_history_pagination={
+    page:1,
+    itemsPerPage:10,
+    maxSize:5,
+    numPages:5,
+    length:0
+  }
   ngOnInit() {
     this.setTimerValue();    
     this.auth.getLogedinUserData();
@@ -109,7 +117,7 @@ export class AboutComponent implements OnInit{
       //Vaibhav Mali 09 Jan 2018 ...End
   }
 
-/*
+  /*
      @author : Vaibhav Mali 
      @date : 09 Jan 2018
      @API : check_new_tasks
@@ -311,38 +319,43 @@ finishTaskFun(task){
         animation: "fadeInDown" // 'fadeInLeft', 'fadeInRight', 'fadeInUp', 'bounceIn','bounceInDown' 
     };
     this.popup1.show(this.popup1.options);
-    this.getTaskHistory(task_detail);
+    this.selectedTaskId=task_detail._id;
+    this.getTaskHistory(null);
   }
-  getTaskHistory(task_detail){
+  getTaskHistory(page ? : any){
     let reqData={  
-      "_id" : task_detail._id ? task_detail._id : "",
-      "page" :  1,
-      "limit" : 10
+      "_id" : this.selectedTaskId ? this.selectedTaskId : "",
+      "page" :  page ? page.page : 1,
+      "limit" : this.task_history_pagination.itemsPerPage
     }
     this.homeService.getTaskHistory({"reqData":reqData}).subscribe(
         res => {     
           console.log(res); 
             this.taskHistoryDetail=res.docs;
+            this.task_history_pagination.length=res.total;
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
     );
   }
   conformTaskHistoryDialog(){
+    this.selectedTaskId="";
     this.popup1.hide();
   }
   cancelTaskHistoryDialog(){
+    this.selectedTaskId="";
     this.popup1.hide();
   }
   openTaskListDialog(selected_project){
     this.projectService.updateTaskReadStatus(selected_project._id).subscribe(
       res => {
         localStorage.setItem(selected_project._id,null);
-        this.selectedProjectId=selected_project._id;
-        this.isShowproject=false;
-        this.isShowList=true;
-        this.isTaskActive=[true,false,false,false,false];
-        this.openAllTasks();
-      })
+    this.selected_project_detail=selected_project;
+    this.selectedProjectId=selected_project._id;
+    this.isShowproject=false;
+    this.isShowList=true;
+    this.isTaskActive=[true,false,false,false,false];
+    this.openAllTasks();
+    })
   }
   openAllTasks(page ? :any){
     this.taskList=[];

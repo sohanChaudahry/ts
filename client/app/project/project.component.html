@@ -1,31 +1,150 @@
 <div class="cointaner">
-    <app-loading [condition]="isLoading"></app-loading>
-    <app-toast [message]="toast.message"></app-toast>
-    <!-- <ng4-loading-spinner> </ng4-loading-spinner> -->
-    <!-- my project list -->
-    <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-      <div class="card-header hearder_btn">
-        <span class="custom_span_header">My Project</span>
-        <button class="btn btn-sm btn-primary header_btn" (click)="craeteProjectBtn()">Create Project</button> 
-      </div>
-      <div class="card-block">
-        <div class="table-responsive custom_table">
+        <app-loading [condition]="isLoading"></app-loading>
+        <app-toast [message]="toast.message"></app-toast>
+        <!-- <ng4-loading-spinner> </ng4-loading-spinner> -->
+        <!-- my project list -->
+        <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
+          <div class="card-header hearder_btn">
+            <span class="custom_span_header">My Project</span>
+            <button class="btn btn-sm btn-primary header_btn" (click)="craeteProjectBtn()">Create Project</button> 
+          </div>
+          <div class="card-block">
+            <div class="table-responsive custom_table">
+                <table class="table table-bordered">
+                    <thead class="thead-default">
+                    <tr>
+                        <th width="25%">Project Name</th>
+                        <th width="45%">Description</th>
+                        <th width="15%">Role</th>
+                        <th width="15%" style="text-align: center;">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody *ngIf="MyProjectsList.length == 0">
+                    <tr>
+                        <td colspan="4" style="text-align: center;">There are no project in the DB. Add a new project.</td>
+                    </tr>  
+                    </tbody>
+                    <tbody>
+                        <tr *ngFor="let project of MyProjectsList">
+                            <td>
+                                <span>{{project.project_name}}</span>
+                            </td>
+                            <td>
+                                <span>{{project.desc}}</span>
+                            </td>
+                            <td>
+                                <span>{{project.role}}</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <!-- deleteProjects(project)  -->
+                                <button class="btn btn-sm btn-warning" (click)="projectEditBtm(project)"><i class="fa fa-pencil"></i></button> 
+                                <button class="btn btn-sm btn-danger" (click)="openPopup(project)"><i class="fa fa-times" aria-hidden="true"></i></button> 
+                                <button class="btn btn-sm btn-primary" (click)="openTaskListPage(project,true)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
+                            </td>
+                        </tr> 
+                    </tbody>  
+                    <popup  #popup1 (confirmClick)="conformPopup()" (cancelClick)="cancelPopup()">
+                        <span>Do you want to delete project ?</span>
+                    </popup>
+                </table>
+            </div>
+            <div style="float:right" *ngIf="MyProjectsList.length!=0">
+                <pagination class="pagination-sm"
+                    [(ngModel)]="my_project_pagination.page"
+                    [totalItems]="my_project_pagination.length"
+                    [itemsPerPage]="my_project_pagination.itemsPerPage"
+                    [maxSize]="my_project_pagination.maxSize"
+                    [boundaryLinks]="true"
+                    [rotate]="false"
+                    (pageChanged)="getEmployeeDetailAllData($event,'MYPROJECT')"
+                    (numPages)="my_project_pagination.numPages = $event">
+                </pagination>
+            </div>
+          </div>
+        </div>
+        <!-- assigned project list -->
+        <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
+            <div class="card-header">
+            <span class="custom_span_header">Accepted Project</span>
+          </div>
+          <div class="card-block">
+            <div class="table-responsive custom_table">
             <table class="table table-bordered">
                 <thead class="thead-default">
-                <tr>
+                  <tr>
                     <th width="25%">Project Name</th>
                     <th width="45%">Description</th>
                     <th width="15%">Role</th>
                     <th width="15%" style="text-align: center;">Action</th>
-                </tr>
+                  </tr>
                 </thead>
-                <tbody *ngIf="MyProjectsList.length == 0">
-                <tr>
+                <tbody *ngIf="AssignedProjectsList.length == 0">
+                  <tr>
                     <td colspan="4" style="text-align: center;">There are no project in the DB. Add a new project.</td>
-                </tr>  
+                  </tr>  
                 </tbody>
                 <tbody>
-                    <tr *ngFor="let project of MyProjectsList">
+                  <tr *ngFor="let project of AssignedProjectsList">
+                    <td>
+                        <span>{{project.project_name}}</span>
+                    </td>
+                    <td>
+                        <span>{{project.desc}}</span>
+                    </td>
+                    <td>
+                        <span>{{project.role}}</span>
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
+                        <!-- <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button>  -->
+                        <button class="btn btn-sm btn-danger" *ngIf="project.accept==1" (click)="exitProjectReq(project)"><i class="fa fa-times" aria-hidden="true"></i> Exit</button> 
+                        <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
+                        <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
+                        <!-- <button class="btn btn-sm btn-primary" *ngIf="project.accept==1" (click)="openTaskListPage(project)"><i class="fa fa-tasks" aria-hidden="true"></i></button>  -->
+                        <button class="btn btn-sm btn-primary" *ngIf="project.accept==1 && !check_new_tasks(project._id)" (click)="openTaskListPage(project,false)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
+                        <button class="btn btn-sm btn-primary" *ngIf="project.accept==1 && check_new_tasks(project._id)" (click)="openTaskListPage(project,false)" style="color:red"><i class="fa fa-tasks" aria-hidden="true"></i></button>                     
+                    </td>
+                  </tr> 
+                </tbody>  
+            </table>
+            </div>
+            <div style="float:right" *ngIf="AssignedProjectsList.length!=0">
+                <pagination class="pagination-sm"
+                    [(ngModel)]="assigned_project_pagination.page"
+                    [totalItems]="assigned_project_pagination.length"
+                    [itemsPerPage]="assigned_project_pagination.itemsPerPage"
+                    [maxSize]="assigned_project_pagination.maxSize"
+                    [boundaryLinks]="true"
+                    [rotate]="false"
+                    (pageChanged)="getEmployeeDetailAllData($event,'ASSIGNEDPROJECT')"
+                    (numPages)="assigned_project_pagination.numPages = $event">
+                </pagination>
+            </div>
+          </div>
+        </div>
+        <!-- list requested project -->
+        <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
+                <div class="card-header">
+                <span class="custom_span_header">Requested Projects</span>
+              </div>
+              <div class="card-block">
+                <div class="table-responsive custom_table">
+                <table class="table table-bordered">
+                    <thead class="thead-default">
+                      <tr>
+                        <th width="20%">Project Name</th>
+                        <th width="50%">Description</th>
+                        <th width="10%">Role</th>
+                        <th width="20%" style="text-align: center;">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngIf="requestedProjectList.length == 0">
+                      <tr>
+                        <td colspan="4" style="text-align: center;">There are no project in the DB. Add a new project.</td>
+                      </tr>  
+                    </tbody>
+                    <tbody>
+                      <tr *ngFor="let project of requestedProjectList">
                         <td>
                             <span>{{project.project_name}}</span>
                         </td>
@@ -36,626 +155,618 @@
                             <span>{{project.role}}</span>
                         </td>
                         <td style="text-align: center;">
-                            <!-- deleteProjects(project)  -->
-                            <button class="btn btn-sm btn-warning" (click)="projectEditBtm(project)"><i class="fa fa-pencil"></i></button> 
-                            <button class="btn btn-sm btn-danger" (click)="openPopup(project)"><i class="fa fa-times" aria-hidden="true"></i></button> 
-                            <button class="btn btn-sm btn-primary" (click)="openTaskListPage(project,true)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
+                            <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
+                            <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button> 
+                            <button class="btn btn-sm btn-danger" *ngIf="project.accept==1" (click)="exitProjectReq(project)"><i class="fa fa-times" aria-hidden="true"></i> Exit</button> 
+                            <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
+                            <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
+                            <button class="btn btn-sm btn-primary" *ngIf="project.accept==1" (click)="openTaskListPage(project,false)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
                         </td>
-                    </tr> 
-                </tbody>  
-                <popup  #popup1 (confirmClick)="conformPopup()" (cancelClick)="cancelPopup()">
-                    <span>Do you want to delete project ?</span>
-                </popup>
-            </table>
-        </div>
-        <div style="float:right">
-            <pagination class="pagination-sm"
-                [(ngModel)]="my_project_pagination.page"
-                [totalItems]="my_project_pagination.length"
-                [itemsPerPage]="my_project_pagination.itemsPerPage"
-                [maxSize]="my_project_pagination.maxSize"
-                [boundaryLinks]="true"
-                [rotate]="false"
-                (pageChanged)="getEmployeeDetailAllData($event,'MYPROJECT')"
-                (numPages)="my_project_pagination.numPages = $event">
-            </pagination>
-        </div>
-      </div>
-    </div>
-    <!-- assigned project list -->
-    <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-        <div class="card-header">
-        <span class="custom_span_header">Accepted Project</span>
-      </div>
-      <div class="card-block">
-        <div class="table-responsive custom_table">
-        <table class="table table-bordered">
-            <thead class="thead-default">
-              <tr>
-                <th width="25%">Project Name</th>
-                <th width="45%">Description</th>
-                <th width="15%">Role</th>
-                <th width="15%" style="text-align: center;">Action</th>
-              </tr>
-            </thead>
-            <tbody *ngIf="AssignedProjectsList.length == 0">
-              <tr>
-                <td colspan="4" style="text-align: center;">There are no project in the DB. Add a new project.</td>
-              </tr>  
-            </tbody>
-            <tbody>
-              <tr *ngFor="let project of AssignedProjectsList">
-                <td>
-                    <span>{{project.project_name}}</span>
-                </td>
-                <td>
-                    <span>{{project.desc}}</span>
-                </td>
-                <td>
-                    <span>{{project.role}}</span>
-                </td>
-                <td style="text-align: center;">      
-                    <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
-                    <!-- <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button>  -->
-                    <button class="btn btn-sm btn-danger" *ngIf="project.accept==1" (click)="exitProjectReq(project)"><i class="fa fa-times" aria-hidden="true"></i> Exit</button> 
-                    <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
-                    <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
-                    <!-- <button class="btn btn-sm btn-primary" *ngIf="project.accept==1" (click)="openTaskListPage(project)"><i class="fa fa-tasks" aria-hidden="true"></i></button>  -->
-                    <button class="btn btn-sm btn-primary" *ngIf="project.accept==1 && !check_new_tasks(project._id)" (click)="openTaskListPage(project,false)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
-                    <button class="btn btn-sm btn-primary" *ngIf="project.accept==1 && check_new_tasks(project._id)" (click)="openTaskListPage(project,false)" style="color:red"><i class="fa fa-tasks" aria-hidden="true"></i></button>                     
-                </td>
-              </tr> 
-            </tbody>  
-        </table>
-        </div>
-        <div style="float:right">
-            <pagination class="pagination-sm"
-                [(ngModel)]="assigned_project_pagination.page"
-                [totalItems]="assigned_project_pagination.length"
-                [itemsPerPage]="assigned_project_pagination.itemsPerPage"
-                [maxSize]="assigned_project_pagination.maxSize"
-                [boundaryLinks]="true"
-                [rotate]="false"
-                (pageChanged)="getEmployeeDetailAllData($event,'ASSIGNEDPROJECT')"
-                (numPages)="assigned_project_pagination.numPages = $event">
-            </pagination>
-        </div>
-      </div>
-    </div>
-    <!-- list requested project -->
-    <div class="card" *ngIf="!iscreateProject && isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-            <div class="card-header">
-            <span class="custom_span_header">Requested Projects</span>
-          </div>
-          <div class="card-block">
-            <div class="table-responsive custom_table">
-            <table class="table table-bordered">
-                <thead class="thead-default">
-                  <tr>
-                    <th width="30%">Project Name</th>
-                    <th width="50%">Description</th>
-                    <th width="20%" style="text-align: center;">Action</th>
-                  </tr>
-                </thead>
-                <tbody *ngIf="requestedProjectList.length == 0">
-                  <tr>
-                    <td colspan="3" style="text-align: center;">There are no project in the DB. Add a new project.</td>
-                  </tr>  
-                </tbody>
-                <tbody>
-                  <tr *ngFor="let project of requestedProjectList">
-                    <td>
-                        <span>{{project.project_name}}</span>
-                    </td>
-                    <td>
-                        <span>{{project.desc}}</span>
-                    </td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-sm btn-primary" (click)="showAssignedProjectView(project)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
-                        <button class="btn btn-sm btn-success" *ngIf="project.accept==1"><i class="fa fa-check" aria-hidden="true"></i></button> 
-                        <button class="btn btn-sm btn-danger" *ngIf="project.accept==1" (click)="exitProjectReq(project)"><i class="fa fa-times" aria-hidden="true"></i> Exit</button> 
-                        <button class="btn btn-sm btn-success" *ngIf="project.accept==0" (click)="acceptProjectReq(project._id)"><i class="fa fa-plus" aria-hidden="true"></i> Accept </button>
-                        <button class="btn btn-sm btn-danger" *ngIf="project.accept==0" (click)="rejectProjectReq(project._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject </button>
-                        <button class="btn btn-sm btn-primary" *ngIf="project.accept==1" (click)="openTaskListPage(project,false)"><i class="fa fa-tasks" aria-hidden="true"></i></button> 
-                    </td>
-                  </tr> 
-                </tbody>  
-            </table>
-            </div>
-            <div style="float:right">
-                <pagination class="pagination-sm"
-                    [(ngModel)]="requested_project_pagination.page"
-                    [totalItems]="requested_project_pagination.length"
-                    [itemsPerPage]="requested_project_pagination.itemsPerPage"
-                    [maxSize]="requested_project_pagination.maxSize"
-                    [boundaryLinks]="true"
-                    [rotate]="false"
-                    (pageChanged)="getEmployeeDetailAllData($event,'REQUESTEDPROJECT')"
-                    (numPages)="requested_project_pagination.numPages = $event">
-                </pagination>
-            </div>
-          </div>
-        </div>
-    <div class="card " *ngIf="iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-        <div class="card-header">
-            <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
-        </div>
-        <popup  #popup2 (confirmClick)="conformPopupInviteUSer()" (cancelClick)="cancelPopupInviteUSer()">
-            <div class="row">
-                <div class="col-md-7">
-                    <div class="form-group">
-                        <label>Email Id</label>
-                        <input class="form-control" type="email" name="email"  placeholder="Email Id" [(ngModel)]="inviteUserData.to_email">
-                    </div>
+                      </tr> 
+                    </tbody>  
+                </table>
                 </div>
-                <div class="col-md-5">
-                    <span class="Assign">Role</span>
-                    <select class="form-control" [(ngModel)]="inviteUserData.role">
-                        <option *ngFor="let role of roleList;" [ngValue]="role" placeholder="Role">{{role}}</option>
-                    </select>
-                </div>
-            </div>
-        </popup>
-        <div class="ctm_form">
-          <br>
-          <div class="row">
-              <div class="col-md-1"></div>
-              <div class="col-md-10">
-                <div class="form-group">
-                   <label>Project Name</label>
-                   <input class="form-control" type="text" name="project_name" [(ngModel)]="projectDetail.project_name" placeholder="Project Name">
-                </div>
-              </div>
-              <div class="col-md-1"></div>
-          </div>
-          <div class="row">
-              <div class="col-md-1"></div>
-              <div class="col-md-10">
-                <div class="form-group">
-                   <label>Project Description</label>
-                   <textarea class="form-control" rows="2" name="desc" [(ngModel)]="projectDetail.desc" placeholder="Project Description" ></textarea>
-                </div>
-              </div>
-              <div class="col-md-1"></div>
-          </div>
-          <div class="row">
-              <div class="col-md-1"></div>
-              <div class="col-md-10">
-                  <label>Activities</label>
-                  <div class="">
-                    <table class="table table-fixed table-bordered activity_ctm">
-                        <thead class="thead-default">
-                            <tr>
-                                <th class="col-md-1">&nbsp;</th>
-                                <th class="col-md-9">Name</th>
-                                <th class="col-md-2" style="text-align:center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let act of activityData;let i=index;">
-                                <td class="col-md-1">
-                                    {{i+1}}
-                                </td>
-                                <td class="col-md-9">
-                                    <div class="form-group ctm_input">
-                                    <input class="form-control" type="text" [(ngModel)]="act.name" placeholder="Name">
-                                    </div>
-                                </td>
-                                <td class="col-md-2">
-                                    <button class="btn btn-sm btn-danger" (click)="removeActivity(index);"><i class="fa fa-times" aria-hidden="true"></i></button>
-                                    <button class="btn btn-sm btn-info" (click)="addActivity();" *ngIf="activityData.length==i+1"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                                </td>
-                            </tr> 
-                        </tbody>  
-                    </table>
-                  </div>
-              </div>
-              <div class="col-md-1"></div>
-          </div>
-          <div class="row">
-             <br>
-              <div class="col-md-1"></div>
-              <div class="col-md-6">
-                  <span class="Assign">Assign To</span>
-                  <ng-select [allowClear]="true"
-                        [items]="employeesToshow"
-                        [disabled]="disabled"
-                        [active]="isEmpAutoSelect"
-                        (data)="refreshValue($event)"
-                        (selected)="selected($event)"
-                        (removed)="removed($event)"
-                        (typed)="typed($event)"
-                        placeholder="No employee selected">
-                  </ng-select>
-              </div>
-              <div class="col-md-2">
-                   <span class="Assign">Role</span>
-                   <select class="form-control" [(ngModel)]="searchEmpDetail.role">
-                        <option *ngFor="let role of roleList;" [ngValue]="role" placeholder="Role">{{role}}</option>
-                   </select>
-              </div>
-              <div class="col-md-2">
-                  <span class="Assign">&nbsp;</span>
-                  <button class="btn btn-sm btn-danger" (click)="addSelectedEmp()">Add</button>
-                  <button class="btn btn-sm btn-success" (click)="openPopupInviteUser()">Invite User</button>
-              </div>
-              <div class="col-md-1"></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-md-1"></div>
-            <div class="col-md-10 cat_lable custom-div-margin">
-                <div class="form-group city-data">
-                    <div class="searc_head"> 
-                          <div class="col-md-3">Selected Employees</div>
-                          <div class="col-md-4">Email</div>
-                          <div class="col-md-3">Role</div>
-                          <div class="col-md-2" style="text-align:right;padding-right: 7%;">Action</div>
-                    </div>
-                     <div *ngIf="addAssignUserList.length==0" class="city-data-div user_table">
-                         <div class="col-md-4"></div>
-                         <div class="col-md-8">No employee selected for assign project.</div>
-                    </div> 
-                    <div *ngIf="addAssignUserList.length!=0">
-                        <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
-                            <div class="col-md-3">{{user.name ? user.name : "UNREGISTER USER"}}</div>
-                            <div class="col-md-4">{{user.to_email}}</div>
-                            <div class="col-md-3">{{user.role}}</div>
-                            <div class="col-md-1" (click)="removeAssignUserFun(user,projectDetail)" style="padding-left:5%;color:red">
-                                <i class="fa fa-times" aria-hidden="true"></i>
-                            </div>    
-                            <div *ngIf="user.accept==1" class="col-md-1" style="color: blue;" (click)="openProjectWorkingTask(projectDetail,user)">
-                                <i class="fa fa-tasks" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-1"></div>
-          </div>
-          <div class="row">
-              <div class="col-md-1"></div>
-              <div class="col-md-6">
-                <button class="btn btn-sm btn-primary" type="button" (click)="sendProjectFormData()"><i class="fa fa-floppy-o"></i> Save</button>
-                <button class="btn btn-sm btn-primary" (click)="cancel()" type="button"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
-              </div>
-          </div>
-          <br>
-        </div>
-     </div>
-     <div class="card " *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
-        <div class="card-header">
-        <span class="custom_span_header">View Project Detail</span>
-       </div>
-        <div class="ctm_form">
-          <br>
-          <div class="row" style="padding-bottom: 14px;">
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-                  <span style="font-weight: 600;">Project Name : </span>{{AssignedProjectView.project_name}}
-            </div>
-            <div class="col-md-1"></div>
-          </div>
-          <div class="row" style="padding-bottom: 14px;">
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-                  <span style="font-weight: 600;">Project Description : </span>{{AssignedProjectView.desc}}
-            </div>
-            <div class="col-md-1"></div>
-          </div>
-          <div class="row" style="padding-bottom: 14px;">
-            <div class="col-md-1"></div>
-            <div class="col-md-10 cat_lable custom-div-margin">
-                <div class="form-group city-data">
-                    <div class="searc_head"> 
-                        <div class="col-md-5">Followers</div>
-                        <div class="col-md-5">Email</div>
-                        <div class="col-md-2">Role</div>
-                    </div>
-                     <div *ngIf="AssignedProjectView.followers.length==0" class="city-data-div user_table">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-8">No record availble in DB.</div>
-                    </div> 
-                    <div *ngIf="AssignedProjectView.followers.length!=0" >
-                    <div class="city-data-div user_table" *ngFor="let user of AssignedProjectView.followers">
-                        <div class="col-md-5">{{user.name}}</div>
-                        <div class="col-md-5">{{user.email}}</div>
-                        <div class="col-md-2">{{user.role}}</div>
-                    </div>   
-                    </div> 
-                </div>
-            </div>
-            <div class="col-md-1"></div>
-          </div>
-           <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-6">
-                  <button class="btn btn-sm btn-primary" (click)="cancelView()" type="button"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
-                </div>
-            </div>
-            <br>
-        </div>
-      </div>
-        <!-- ProjectWorkingTask -->
-        <div class="card" *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && isProjectWorkingTask">
-            <!-- <app-loading [condition]="isLoading"></app-loading> -->
-            <div class="card-header">
-                <span class="custom_span_header">Employee task status</span>
-                <span class="custom_back_btn">
-                    <button class="btn btn-sm btn-success" (click)="backProjectWorkingTaskPage()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
-                </span>
-            </div>
-            <div class="card-block">
-                <div class="table-responsive custom_table">
-                    <table class="table table-bordered">
-                        <thead class="thead-default">
-                            <tr>
-                                <th width="15%">Task Title</th>
-                                <th width="30%">Description</th>
-                                <th width="10%">Estimate Hours</th>
-                                <th width="15%">Actual Hours</th>
-                                <th width="20%">Last Seen</th>
-                                <th width="10%">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody *ngIf="projectWorkingTaskList.length == 0">
-                            <tr>
-                                <td colspan="6" style="text-align: center;">There are no record in the DB.</td>
-                            </tr>  
-                        </tbody>
-                        <tbody>
-                            <tr *ngFor="let task of projectWorkingTaskList" [ngClass]="task.select==1 ? 'row_selected' : ''">
-                                <td>{{task.task_title}} </td>
-                                <td> {{task.task_description}} </td>
-                                <td>{{task.estimate_hrs}} </td>
-                                <td>{{task.actual_hrs}} </td>
-                                <td>{{task.seen_time ? ( task.seen_time | date : " MMM d, y h:mm:ss a" ) : "Not seen"}} </td>   
-                                <td *ngIf = "task.status == 0">{{"Pending"}} </td>       
-                                <td *ngIf = "task.status == 1">{{"In progress"}} </td>       
-                                <td *ngIf = "task.status == 2">{{"Completed"}} </td>       
-                            </tr> 
-                        </tbody>  
-                    </table>
-                </div>
-            </div>
-        </div>
-     <!--list task -->
-     <div *ngIf="!isProjectList && isTaskCardShow">
-        <!--<div style="height: 40px;background: #f5f5f5;border: 1px solid #ddd;">
-            <span style="font-size: 18px;font-weight: 500;">Tasks</span>
-        </div>-->
-        <div class="custom_hd ctm_hd_task">
-            <span class="custom_span_header">Tasks</span>
-         <span class="custom_back_btn">
-              <button class="btn btn-sm btn-success" (click)="backTaskListPage()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
-          </span>
-        </div>
-        <div class="card" *ngIf="!iscreateProject && !isProjectList && !isAssignProjView  && !isAssignedTaskEdit && !isMyTaskEdit && isTaskListView && isTaskCardShow && isShowAssignedTask">
-            <div class="card-header hearder_btn">
-                <span class="custom_span_header">My Task</span>
-                <button class="btn btn-sm btn-primary header_btn" (click)="openCreateTaskPage()">Create Task</button> 
-            </div>
-            <div class="card-block">
-                <div class="table-responsive custom_table">
-                    <table class="table table-bordered">
-                        <thead class="thead-default">
-                            <tr>   
-                            <th width="22%">Task Name</th>
-                            <th width="35%">Task Description</th>
-                            <th width="20%">Assign To</th>
-                            <th width="15%">Due Date</th>
-                            <th width="8%" style="text-align: center;">Action</th>
-                            </tr>
-                        </thead>  
-                        <tbody *ngIf="getTaskAssigedToUsList.length==0">
-                            <tr>
-                            <td colspan="5" style="text-align: center;">There are no task in the DB. Add a new task.</td>
-                            </tr>  
-                        </tbody>
-                        <tbody>
-                            <tr *ngFor="let task of getTaskAssigedToUsList">
-                            <td>
-                                <span>{{task.task_title}}</span>
-                            </td>
-                            <td>
-                                <span>{{task.task_description}}</span>
-                            </td>
-                            <td>
-                                <span>{{task.assign_to.name}}</span>
-                            </td>
-                            <td>
-                                <span>{{task.due_date | date}}</span>
-                            </td>
-                            <td style="text-align: center;">
-                                <button class="btn btn-sm btn-warning" (click)="editMyTaskBtn(task)"><i class="fa fa-pencil"></i></button> 
-                            </td>  
-                            </tr> 
-                        </tbody>  
-                    </table>
-                </div>
-                <div style="float:right">
-                    <pagination *ngIf="getTaskAssigedToUsList.length!=0" class="pagination-sm"
-                            [(ngModel)]="my_task_pagination.page"
-                            [totalItems]="my_task_pagination.length"
-                            [itemsPerPage]="my_task_pagination.itemsPerPage"
-                            [maxSize]="my_task_pagination.maxSize"
-                            [boundaryLinks]="true"
-                            [rotate]="false"
-                            (pageChanged)="getTaskDetailsByAssignFromAPi($event)"
-                            (numPages)="my_task_pagination.numPages = $event">
+                <div style="float:right" *ngIf="requestedProjectList.length!=0">
+                    <pagination class="pagination-sm"
+                        [(ngModel)]="requested_project_pagination.page"
+                        [totalItems]="requested_project_pagination.length"
+                        [itemsPerPage]="requested_project_pagination.itemsPerPage"
+                        [maxSize]="requested_project_pagination.maxSize"
+                        [boundaryLinks]="true"
+                        [rotate]="false"
+                        (pageChanged)="getEmployeeDetailAllData($event,'REQUESTEDPROJECT')"
+                        (numPages)="requested_project_pagination.numPages = $event">
                     </pagination>
                 </div>
+              </div>
             </div>
-        </div>
-        <div class="card"  *ngIf="!iscreateProject && !isProjectList && !isAssignProjView  && !isAssignedTaskEdit && !isMyTaskEdit && isTaskListView && isTaskCardShow">
+        <div class="card " *ngIf="iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
             <div class="card-header">
-                <span class="custom_span_header">Assigned Task</span>   
+                <span class="custom_span_header">{{projectDetail._id ? "Update Project":"Create Project"}}</span>
             </div>
-            <div class="card-block">
-                <div class="table-responsive custom_table">
-                 <table class="table table-bordered">
-                    <thead class="thead-default">
-                        <tr> 
-                            <th width="15%">Task Name</th>
-                            <th width="20%">Task Description</th>
-                            <th width="15%">Assign From</th>
-                            <th width="15%">Actual Hours</th>
-                            <th width="10%">Due Date</th> 
-                            <th width="25%" style="text-align: center;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody *ngIf="AssigedToOtherList.length==0">
-                        <tr>
-                            <td colspan="6" style="text-align: center;">There are no task in the DB. Add a new task.</td>
-                        </tr>  
-                    </tbody>
-                    <tbody>
-                        <tr *ngFor="let task of AssigedToOtherList;let i=index;">
-                            <td>
-                                <span>{{task.task_title}}</span>
-                            </td>
-                            <td>
-                                <span>{{task.task_description}}</span>
-                            </td>
-                            <td>
-                                <span>{{task.assign_from.name}}</span>
-                            </td>
-                            <td>
-                                <span>{{task.actual_hrs}}</span>
-                            </td>
-                            <td>
-                                <span>{{task.due_date | date}}</span>
-                            </td>
-                            <td style="text-align: center;">
-                                <!-- <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
-                                <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="pauseTaskFun(task)"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
-                                <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="finishTaskFun(task)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
-
-                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> :{{secondsDisplay}}</button>                
-                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px"> :{{minutesDisplay}}</button>                
-                                 <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px">{{hoursDisplay}}</button> -->
-
-                                 <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
-                                <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='PAUSE';"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
-                                <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='FINISH';"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
-
-                                <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> 
-                                    {{hoursDisplay}} : {{minutesDisplay}} : {{secondsDisplay}}</button>                
-                            </td>  
-                        </tr> 
-                    </tbody>  
-                  </table>
-                  <popup #popup3 (confirmClick)="conformGetComent()" (cancelClick)="cancelGetComent()">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Comment</label>
-                                    <textarea class="form-control" rows="2" name="desc" [(ngModel)]="comment_data" placeholder="Comment" ></textarea>
+            <popup  #popup2 (confirmClick)="conformPopupInviteUSer()" (cancelClick)="cancelPopupInviteUSer()">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            <label>Email Id</label>
+                            <input class="form-control" type="email" name="email"  placeholder="Email Id" [(ngModel)]="inviteUserData.to_email">
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <span class="Assign">Role</span>
+                        <select class="form-control" [(ngModel)]="inviteUserData.role">
+                            <option *ngFor="let role of roleList;" [ngValue]="role" placeholder="Role">{{role}}</option>
+                        </select>
+                    </div>
+                </div>
+            </popup>
+            <div class="ctm_form">
+              <br>
+              <div class="row">
+                  <div class="col-md-1"></div>
+                  <div class="col-md-10">
+                    <div class="form-group">
+                       <label>Project Name</label>
+                       <input class="form-control" type="text" name="project_name" [(ngModel)]="projectDetail.project_name" placeholder="Project Name">
+                    </div>
+                  </div>
+                  <div class="col-md-1"></div>
+              </div>
+              <div class="row">
+                  <div class="col-md-1"></div>
+                  <div class="col-md-10">
+                    <div class="form-group">
+                       <label>Project Description</label>
+                       <textarea class="form-control" rows="2" name="desc" [(ngModel)]="projectDetail.desc" placeholder="Project Description" ></textarea>
+                    </div>
+                  </div>
+                  <div class="col-md-1"></div>
+              </div>
+              <div class="row">
+                  <div class="col-md-1"></div>
+                  <div class="col-md-10">
+                      <label>Activities</label>
+                      <div class="">
+                        <table class="table table-fixed table-bordered activity_ctm">
+                            <thead class="thead-default">
+                                <tr>
+                                    <th class="col-md-1">&nbsp;</th>
+                                    <th class="col-md-9">Name</th>
+                                    <th class="col-md-2" style="text-align:center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let act of activityData;let i=index;">
+                                    <td class="col-md-1">
+                                        {{i+1}}
+                                    </td>
+                                    <td class="col-md-9">
+                                        <div class="form-group ctm_input">
+                                        <input class="form-control" type="text" [(ngModel)]="act.name" placeholder="Name">
+                                        </div>
+                                    </td>
+                                    <td class="col-md-2">
+                                        <button class="btn btn-sm btn-danger" (click)="removeActivity(index);"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                        <button class="btn btn-sm btn-info" (click)="addActivity();" *ngIf="activityData.length==i+1"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                    </td>
+                                </tr> 
+                            </tbody>  
+                        </table>
+                      </div>
+                  </div>
+                  <div class="col-md-1"></div>
+              </div>
+              <div class="row">
+                 <br>
+                  <div class="col-md-1"></div>
+                  <div class="col-md-6">
+                      <span class="Assign">Assign To</span>
+                      <ng-select [allowClear]="true"
+                            [items]="employeesToshow"
+                            [disabled]="disabled"
+                            [active]="isEmpAutoSelect"
+                            (data)="refreshValue($event)"
+                            (selected)="selected($event)"
+                            (removed)="removed($event)"
+                            (typed)="typed($event)"
+                            placeholder="No employee selected">
+                      </ng-select>
+                  </div>
+                  <div class="col-md-2">
+                       <span class="Assign">Role</span>
+                       <select class="form-control" [(ngModel)]="searchEmpDetail.role">
+                            <option *ngFor="let role of roleList;" [ngValue]="role" placeholder="Role">{{role}}</option>
+                       </select>
+                  </div>
+                  <div class="col-md-2">
+                      <span class="Assign">&nbsp;</span>
+                      <button class="btn btn-sm btn-danger" (click)="addSelectedEmp()">Add</button>
+                      <button class="btn btn-sm btn-success" (click)="openPopupInviteUser()">Invite User</button>
+                  </div>
+                  <div class="col-md-1"></div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10 cat_lable custom-div-margin">
+                    <div class="form-group city-data">
+                        <div class="searc_head"> 
+                              <div class="col-md-3">Selected Employees</div>
+                              <div class="col-md-4">Email</div>
+                              <div class="col-md-3">Role</div>
+                              <div class="col-md-2" style="text-align:right;padding-right: 7%;">Action</div>
+                        </div>
+                         <div *ngIf="addAssignUserList.length==0" class="city-data-div user_table">
+                             <div class="col-md-4"></div>
+                             <div class="col-md-8">No employee selected for assign project.</div>
+                        </div> 
+                        <div *ngIf="addAssignUserList.length!=0">
+                            <div class="city-data-div user_table" *ngFor="let user of addAssignUserList">
+                                <div class="col-md-3">{{user.name ? user.name : "UNREGISTER USER"}}</div>
+                                <div class="col-md-4">{{user.to_email}}</div>
+                                <div class="col-md-3">{{user.role}}</div>
+                                <div class="col-md-1" (click)="removeAssignUserFun(user,projectDetail)" style="padding-left:5%;color:red">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </div>    
+                                <div *ngIf="user.accept==1" class="col-md-1" style="color: blue;" (click)="openProjectWorkingTask(projectDetail,user)">
+                                    <i class="fa fa-tasks" aria-hidden="true"></i>
                                 </div>
                             </div>
                         </div>
-                    </popup>
+                    </div>
                 </div>
-                <div style="float:right">
-                    <pagination *ngIf="AssigedToOtherList.length!=0" class="pagination-sm"
-                            [(ngModel)]="assigned_task_pagination.page"
-                            [totalItems]="assigned_task_pagination.length"
-                            [itemsPerPage]="assigned_task_pagination.itemsPerPage"
-                            [maxSize]="assigned_task_pagination.maxSize"
-                            [boundaryLinks]="true"
-                            [rotate]="false"
-                            (pageChanged)="getDetailsByAssignToApi($event)"
-                            (numPages)="assigned_task_pagination.numPages = $event">
-                    </pagination>
-                </div>
+                <div class="col-md-1"></div>
+              </div>
+              <div class="row">
+                  <div class="col-md-1"></div>
+                  <div class="col-md-6">
+                    <button class="btn btn-sm btn-primary" type="button" (click)="sendProjectFormData()"><i class="fa fa-floppy-o"></i> Save</button>
+                    <button class="btn btn-sm btn-primary" (click)="cancel()" type="button"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
+                  </div>
+              </div>
+              <br>
             </div>
-        </div>
-        <!--edit my task task -->
-        <div class="card " *ngIf="!iscreateProject && !isProjectList && !isAssignProjView && !isTaskListView && !isAssignedTaskEdit && isMyTaskEdit && isTaskCardShow">    
+         </div>
+         <div class="card " *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && isAssignProjView && !isTaskCardShow && !isProjectWorkingTask">
             <div class="card-header">
-                <span class="custom_span_header">{{task_id ? "Update Task" : "Create Task"}}</span>
+            <span class="custom_span_header">View Project Detail</span>
+           </div>
+            <div class="ctm_form">
+              <br>
+              <div class="row" style="padding-bottom: 14px;">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                      <span style="font-weight: 600;">Project Name : </span>{{AssignedProjectView.project_name}}
+                </div>
+                <div class="col-md-1"></div>
+              </div>
+              <div class="row" style="padding-bottom: 14px;">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                      <span style="font-weight: 600;">Project Description : </span>{{AssignedProjectView.desc}}
+                </div>
+                <div class="col-md-1"></div>
+              </div>
+              <div class="row" style="padding-bottom: 14px;">
+                <div class="col-md-1"></div>
+                <div class="col-md-10 cat_lable custom-div-margin">
+                    <div class="form-group city-data">
+                        <div class="searc_head"> 
+                            <div class="col-md-5">Followers</div>
+                            <div class="col-md-5">Email</div>
+                            <div class="col-md-2">Role</div>
+                        </div>
+                         <div *ngIf="AssignedProjectView.followers.length==0" class="city-data-div user_table">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">No record availble in DB.</div>
+                        </div> 
+                        <div *ngIf="AssignedProjectView.followers.length!=0" >
+                        <div class="city-data-div user_table" *ngFor="let user of AssignedProjectView.followers">
+                            <div class="col-md-5">{{user.name}}</div>
+                            <div class="col-md-5">{{user.email}}</div>
+                            <div class="col-md-2">{{user.role}}</div>
+                        </div>   
+                        </div> 
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+              </div>
+               <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-6">
+                      <button class="btn btn-sm btn-primary" (click)="cancelView()" type="button"><i class="fa fa-times" aria-hidden="true"></i>Cancel</button>
+                    </div>
+                </div>
+                <br>
             </div>
-            <div class="card-block">
-                <div>
-                    <div class="row">
-                        <div class="col-md-1"></div>
-                        <div class="col-md-10">
-                            <div class="form-group">
-                                <label for="exampleFormControlTextarea1">Task Title</label>
-                                <input class="form-control" type="text" [(ngModel)]="taskFormDetail.task_title" placeholder="Task Title">
-                            </div>
-                        </div>
-                        <div class="col-md-1"></div>
+          </div>
+            <!-- ProjectWorkingTask -->
+            <div class="card" *ngIf="!iscreateProject && !isProjectList  && !isAssignedTaskEdit && !isMyTaskEdit && !isTaskListView && !isAssignProjView && !isTaskCardShow && isProjectWorkingTask">
+                <!-- <app-loading [condition]="isLoading"></app-loading> -->
+                <div class="card-header">
+                    <span class="custom_span_header">Employee task status</span>
+                    <span class="custom_back_btn">
+                        <button class="btn btn-sm btn-success" (click)="backProjectWorkingTaskPage()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
+                    </span>
+                </div>
+                <div class="card-block">
+                    <div class="table-responsive custom_table">
+                        <table class="table table-bordered">
+                            <thead class="thead-default">
+                                <tr>
+                                    <th width="15%">Task Title</th>
+                                    <th width="30%">Description</th>
+                                    <th width="10%">Estimate Hours</th>
+                                    <th width="15%">Actual Hours</th>
+                                    <th width="20%">Last Seen</th>
+                                    <th width="10%">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="projectWorkingTaskList.length == 0">
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">There are no record in the DB.</td>
+                                </tr>  
+                            </tbody>
+                            <tbody>
+                                <tr *ngFor="let task of projectWorkingTaskList" [ngClass]="task.select==1 ? 'row_selected' : ''">
+                                    <td>{{task.task_title}} </td>
+                                    <td> {{task.task_description}} </td>
+                                    <td>{{task.estimate_hrs}} </td>
+                                    <td>{{task.actual_hrs}} </td>
+                                    <td>{{task.seen_time ? ( task.seen_time | date : " MMM d, y h:mm:ss a" ) : "Not seen"}} </td>   
+                                    <td *ngIf = "task.status == 0">{{"Pending"}} </td>       
+                                    <td *ngIf = "task.status == 1">{{"In progress"}} </td>       
+                                    <td *ngIf = "task.status == 2">{{"Completed"}} </td>       
+                                </tr> 
+                            </tbody>  
+                        </table>
                     </div>
-                    <div class="row" style="padding-bottom: 15px;">
-                        <div class="col-md-1"></div>
-                        <div class="col-md-5">
-                            <label>Activities</label>
-                            <select class="form-control" [(ngModel)]="taskFormDetail.activity_id">
-                                <option [ngValue]="act.activity_id" *ngFor="let act of activityList;"  placeholder="Select Activities">{{act.name}}</option>
-                            </select>
-                        </div>
-                        <div class="col-md-5">
-                        <label class="Assign">Assign To</label>
-                        <select class="form-control" [(ngModel)]="taskFormDetail.assign_to">
-                            <option [ngValue]="emp.employee_id" *ngFor="let emp of addAssignTaskUserList;"  placeholder="Select Project">{{emp.name}}</option>
-                        </select>
-                        </div>
-                        <div class="col-md-1"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-1"></div>
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label for="exampleFormControlTextarea1">Estimate Hours</label>
-                                <input class="form-control" type="number" min="0.1" [(ngModel)]="taskFormDetail.estimate_hrs" placeholder="Estimate Hours">
+                </div>
+            </div>
+         <!--list task -->
+         <div *ngIf="!isProjectList && isTaskCardShow">
+            <!--<div style="height: 40px;background: #f5f5f5;border: 1px solid #ddd;">
+                <span style="font-size: 18px;font-weight: 500;">Tasks</span>
+            </div>-->
+            <div class="custom_hd ctm_hd_task">
+                <span class="custom_span_header" style="min-width: 80%;float: left;">Tasks</span> 
+                <span  style="float: left;">
+                        {{selectedProjectDetail.project_name}} <i class="fa fa-briefcase" aria-hidden="true" style="padding-left: 5px;"></i>
+                </span>
+                <span class="custom_back_btn">
+                    <button class="btn btn-sm btn-success" (click)="backTaskListPage()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
+                </span>
+            </div>
+            <div class="card" *ngIf="!iscreateProject && !isProjectList && !isAssignProjView  && !isAssignedTaskEdit && !isMyTaskEdit && isTaskListView && isTaskCardShow && isShowAssignedTask">
+                <div class="card-header hearder_btn">
+                    <span class="custom_span_header">My Task</span>
+                    <button class="btn btn-sm btn-primary header_btn" (click)="openCreateTaskPage()">Create Task</button> 
+                </div>
+                <div class="card-block">
+                    <div class="table-responsive custom_table">
+                        <table class="table table-bordered">
+                            <thead class="thead-default">
+                                <tr>   
+                                <th width="22%">Task Name</th>
+                                <th width="35%">Task Description</th>
+                                <th width="20%">Assign To</th>
+                                <th width="15%">Due Date</th>
+                                <th width="8%" style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>  
+                            <tbody *ngIf="getTaskAssigedToUsList.length==0">
+                                <tr>
+                                <td colspan="5" style="text-align: center;">There are no task in the DB. Add a new task.</td>
+                                </tr>  
+                            </tbody>
+                            <tbody>
+                                <tr *ngFor="let task of getTaskAssigedToUsList">
+                                <td>
+                                    <span>{{task.task_title}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.task_description}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.assign_to.name}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.due_date | date}}</span>
+                                </td>
+                                <td style="text-align: center;">
+                                    <button class="btn btn-sm btn-success" (click)="openTaskHistoryDialog(task)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
+                                    <button class="btn btn-sm btn-warning" (click)="editMyTaskBtn(task)"><i class="fa fa-pencil"></i></button> 
+                                </td>  
+                                </tr> 
+                            </tbody>  
+                        </table>
+                        <popup #popup4 (confirmClick)="conformTaskHistoryDialog()">
+                            <div class="card">
+                                    <div class="card-block" style="margin-bottom: 0px;">
+                                    <div class="table-responsive custom_table">
+                                        <table class="table table-bordered" style="min-width: 800px;">
+                                            <thead class="thead-default">
+                                                <tr>
+                                                    <th width="27%">Start Date</th>
+                                                    <th width="27%">End Date</th>
+                                                    <th width="19%">Actual hours</th>
+                                                    <th width="27%">Comment</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody *ngIf="taskHistoryDetail.length == 0">
+                                                <tr>
+                                                    <td colspan="4" style="text-align: center;">There are no task history in DB.</td>
+                                                </tr>  
+                                            </tbody>
+                                            <tbody>
+                                                <tr *ngFor="let task of taskHistoryDetail">
+                                                    <td>
+                                                        <span>{{task.start_date_time | date : " MMM d, y h:mm:ss a"}}</span> 
+                                                    </td>
+                                                    <td>
+                                                        <span>{{task.end_date_time | date : " MMM d, y h:mm:ss a"}}</span> 
+                                                    </td>
+                                                    <td>
+                                                            <span>{{task.actual_hrs}}</span>
+                                                        </td>
+                                                    <td>
+                                                        <span>{{task.comment}}</span>
+                                                    </td>
+                                                </tr> 
+                                            </tbody>  
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="float:right">
+                                    <pagination  *ngIf="taskHistoryDetail.length!=0" class="pagination-sm"
+                                        [(ngModel)]="task_history_pagination.page"
+                                        [totalItems]="task_history_pagination.length"
+                                        [itemsPerPage]="task_history_pagination.itemsPerPage"
+                                        [maxSize]="task_history_pagination.maxSize"
+                                        [boundaryLinks]="true"
+                                        [rotate]="false"
+                                        (pageChanged)="getTaskHistory($event)"
+                                        (numPages)="task_history_pagination.numPages = $event">
+                                    </pagination>
+                                </div>
                             </div>
-                        </div>    
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>Priority</label>
-                                <select class="form-control" name="role" [(ngModel)]="taskFormDetail.priority">
-                                    <option [ngValue]="priority" *ngFor="let priority of priorityList;" placeholder="Select Priority">{{priority}}</option>
+                        </popup>
+                    </div>
+                    <div style="float:right">
+                        <pagination *ngIf="getTaskAssigedToUsList.length!=0" class="pagination-sm"
+                                [(ngModel)]="my_task_pagination.page"
+                                [totalItems]="my_task_pagination.length"
+                                [itemsPerPage]="my_task_pagination.itemsPerPage"
+                                [maxSize]="my_task_pagination.maxSize"
+                                [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="getTaskDetailsByAssignFromAPi($event)"
+                                (numPages)="my_task_pagination.numPages = $event">
+                        </pagination>
+                    </div>
+                </div>
+            </div>
+            <div class="card"  *ngIf="!iscreateProject && !isProjectList && !isAssignProjView  && !isAssignedTaskEdit && !isMyTaskEdit && isTaskListView && isTaskCardShow">
+                <div class="card-header">
+                    <span class="custom_span_header">Assigned Task</span>   
+                </div>
+                <div class="card-block">
+                    <div class="table-responsive custom_table">
+                     <table class="table table-bordered">
+                        <thead class="thead-default">
+                            <tr> 
+                                <th width="15%">Task Name</th>
+                                <th width="20%">Task Description</th>
+                                <th width="15%">Assign From</th>
+                                <th width="15%">Actual Hours</th>
+                                <th width="10%">Due Date</th> 
+                                <th width="25%" style="text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="AssigedToOtherList.length==0">
+                            <tr>
+                                <td colspan="6" style="text-align: center;">There are no task in the DB. Add a new task.</td>
+                            </tr>  
+                        </tbody>
+                        <tbody>
+                            <tr *ngFor="let task of AssigedToOtherList;let i=index;">
+                                <td>
+                                    <span>{{task.task_title}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.task_description}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.assign_from.name}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.actual_hrs}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.due_date | date}}</span>
+                                </td>
+                                <td style="text-align: center;">
+                                    <!-- <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
+                                    <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="pauseTaskFun(task)"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
+                                    <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="finishTaskFun(task)"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
+    
+                                    <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> :{{secondsDisplay}}</button>                
+                                    <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px"> :{{minutesDisplay}}</button>                
+                                     <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:2px">{{hoursDisplay}}</button> -->
+                                     <button class="btn btn-sm btn-success" (click)="openTaskHistoryDialog(task)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
+                                     <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
+                                    <button class="btn btn-sm btn-warning" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='PAUSE';"><i class="fa fa-pause-circle" aria-hidden="true"></i></button> 
+                                    <button class="btn btn-sm btn-primary" [disabled] = "(task.status == 2) || (AssignedtaskFormDetail.select == 0) || (AssignedtaskFormDetail.select == 1 && AssignedtaskFormDetail._id != task._id)" (click)="showGetComment(task);checkCommnetAssign='FINISH';"><i class="fa fa-list" aria-hidden="true"></i> Finish</button>
+    
+                                    <button *ngIf = "AssignedtaskFormDetail._id == task._id" class="btn btn-sm btn-primary" style="float:right;margin-right:10px;"> 
+                                        {{hoursDisplay}} : {{minutesDisplay}} : {{secondsDisplay}}</button>                
+                                </td>  
+                            </tr> 
+                        </tbody>  
+                      </table>
+                      <popup #popup4 (confirmClick)="conformTaskHistoryDialog()">
+                            <div class="card">
+                                    <div class="card-block" style="margin-bottom: 0px;">
+                                    <div class="table-responsive custom_table">
+                                        <table class="table table-bordered" style="min-width: 800px;">
+                                            <thead class="thead-default">
+                                                <tr>
+                                                    <th width="27%">Start Date</th>
+                                                    <th width="27%">End Date</th>
+                                                    <th width="19%">Actual hours</th>
+                                                    <th width="27%">Comment</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody *ngIf="taskHistoryDetail.length == 0">
+                                                <tr>
+                                                    <td colspan="4" style="text-align: center;">There are no task history in DB.</td>
+                                                </tr>  
+                                            </tbody>
+                                            <tbody>
+                                                <tr *ngFor="let task of taskHistoryDetail">
+                                                    <td>
+                                                        <span>{{task.start_date_time | date : " MMM d, y h:mm:ss a"}}</span> 
+                                                    </td>
+                                                    <td>
+                                                        <span>{{task.end_date_time | date : " MMM d, y h:mm:ss a"}}</span> 
+                                                    </td>
+                                                    <td>
+                                                            <span>{{task.actual_hrs}}</span>
+                                                        </td>
+                                                    <td>
+                                                        <span>{{task.comment}}</span>
+                                                    </td>
+                                                </tr> 
+                                            </tbody>  
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="float:right">
+                                    <pagination  *ngIf="taskHistoryDetail.length!=0" class="pagination-sm"
+                                        [(ngModel)]="task_history_pagination.page"
+                                        [totalItems]="task_history_pagination.length"
+                                        [itemsPerPage]="task_history_pagination.itemsPerPage"
+                                        [maxSize]="task_history_pagination.maxSize"
+                                        [boundaryLinks]="true"
+                                        [rotate]="false"
+                                        (pageChanged)="getTaskHistory($event)"
+                                        (numPages)="task_history_pagination.numPages = $event">
+                                    </pagination>
+                                </div>
+                            </div>
+                      </popup>
+                      <popup #popup3 (confirmClick)="conformGetComent()" (cancelClick)="cancelGetComent()">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Comment</label>
+                                        <textarea class="form-control" rows="2" name="desc" [(ngModel)]="comment_data" placeholder="Comment" ></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </popup>
+                    </div>
+                    <div style="float:right">
+                        <pagination *ngIf="AssigedToOtherList.length!=0" class="pagination-sm"
+                                [(ngModel)]="assigned_task_pagination.page"
+                                [totalItems]="assigned_task_pagination.length"
+                                [itemsPerPage]="assigned_task_pagination.itemsPerPage"
+                                [maxSize]="assigned_task_pagination.maxSize"
+                                [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="getDetailsByAssignToApi($event)"
+                                (numPages)="assigned_task_pagination.numPages = $event">
+                        </pagination>
+                    </div>
+                </div>
+            </div>
+            <!--edit my task task -->
+            <div class="card " *ngIf="!iscreateProject && !isProjectList && !isAssignProjView && !isTaskListView && !isAssignedTaskEdit && isMyTaskEdit && isTaskCardShow">    
+                <div class="card-header">
+                    <span class="custom_span_header">{{task_id ? "Update Task" : "Create Task"}}</span>
+                </div>
+                <div class="card-block">
+                    <div>
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label for="exampleFormControlTextarea1">Task Title</label>
+                                    <input class="form-control" type="text" [(ngModel)]="taskFormDetail.task_title" placeholder="Task Title">
+                                </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                        <div class="row" style="padding-bottom: 15px;">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-5">
+                                <label>Activities</label>
+                                <select class="form-control" [(ngModel)]="taskFormDetail.activity_id">
+                                    <option [ngValue]="act.activity_id" *ngFor="let act of activityList;"  placeholder="Select Activities">{{act.name}}</option>
                                 </select>
                             </div>
+                            <div class="col-md-5">
+                            <label class="Assign">Assign To</label>
+                            <select class="form-control" [(ngModel)]="taskFormDetail.assign_to">
+                                <option [ngValue]="emp.employee_id" *ngFor="let emp of addAssignTaskUserList;"  placeholder="Select Project">{{emp.name}}</option>
+                            </select>
+                            </div>
+                            <div class="col-md-1"></div>
                         </div>
-                        <div class="col-md-1"></div>
-                    </div>
-                    <div class="row" style="    padding-bottom: 15px;">
-                        <div class="col-md-1"></div>
+                        <div class="row">
+                            <div class="col-md-1"></div>
                             <div class="col-md-5">
                                 <div class="form-group">
-                                    <label>Start Date</label>
-                                    <angular2-date-picker [(ngModel)]="taskFormDetail.assign_date" placeholder="Start Date" [settings]="settings1"></angular2-date-picker>
-                                </div>      
-                            </div>
+                                    <label for="exampleFormControlTextarea1">Estimate Hours</label>
+                                    <input class="form-control" type="number" min="0.1" [(ngModel)]="taskFormDetail.estimate_hrs" placeholder="Estimate Hours">
+                                </div>
+                            </div>    
                             <div class="col-md-5">
                                 <div class="form-group">
-                                    <label>Due Date</label>
-                                    <angular2-date-picker [(ngModel)]="taskFormDetail.due_date" placeholder="Due Date" [settings]="settings1"></angular2-date-picker>
-                                </div>      
+                                    <label>Priority</label>
+                                    <select class="form-control" name="role" [(ngModel)]="taskFormDetail.priority">
+                                        <option [ngValue]="priority" *ngFor="let priority of priorityList;" placeholder="Select Priority">{{priority}}</option>
+                                    </select>
+                                </div>
                             </div>
-                        <div class="col-md-1"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-1"></div>
-                        <div class="col-md-10">
-                        <div class="form-group">
-                            <label>Task Description</label>
-                            <textarea class="form-control" rows="3" name="desc" [(ngModel)]="taskFormDetail.task_description" placeholder="Task Description" ></textarea>
-                            </div>
+                            <div class="col-md-1"></div>
                         </div>
-                        <div class="col-md-1"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-1"></div>
-                        <div class="col-md-6">
-                            <button class="btn btn-sm btn-primary" (click)="saveTaskDetail()" type="button"><i class="fa fa-floppy-o"></i> Save</button>
-                            <button class="btn btn-sm btn-primary" type="button" (click)="cancelCreateTaskPage()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+                        <div class="row" style="    padding-bottom: 15px;">
+                            <div class="col-md-1"></div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <angular2-date-picker [(ngModel)]="taskFormDetail.assign_date" placeholder="Start Date" [settings]="settings1"></angular2-date-picker>
+                                    </div>      
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Due Date</label>
+                                        <angular2-date-picker [(ngModel)]="taskFormDetail.due_date" placeholder="Due Date" [settings]="settings1"></angular2-date-picker>
+                                    </div>      
+                                </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                            <div class="form-group">
+                                <label>Task Description</label>
+                                <textarea class="form-control" rows="3" name="desc" [(ngModel)]="taskFormDetail.task_description" placeholder="Task Description" ></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-6">
+                                <button class="btn btn-sm btn-primary" (click)="saveTaskDetail()" type="button"><i class="fa fa-floppy-o"></i> Save</button>
+                                <button class="btn btn-sm btn-primary" type="button" (click)="cancelCreateTaskPage()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-  </div>
-</div>
+      </div>
+    </div>
+    

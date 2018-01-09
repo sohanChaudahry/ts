@@ -1,6 +1,7 @@
 import { Component, OnInit , ViewChild } from '@angular/core';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { ProjectService } from '../services/project.service';
+import { HomeService } from '../services/home.service';
 import { TaskService } from '../services/task.service';
 import {Popup} from 'ng2-opd-popup';
 
@@ -46,6 +47,7 @@ export class ProjectComponent implements OnInit {
   @ViewChild('popup1') popup1: Popup;
   @ViewChild('popup2') popup2: Popup;
   @ViewChild('popup3') popup3: Popup;
+  @ViewChild('popup4') popup4: Popup;
 
   public employeesToshow:Array<any>=[];
   private value:any = {};
@@ -66,6 +68,7 @@ export class ProjectComponent implements OnInit {
   AssigedToOtherList=[];
   getTaskAssigedToUsList=[];
   selected_proj_delete={};
+  taskHistoryDetail=[];
   inviteUserData={"to_email":"",role:"","name":""}
   roleList=["Developer","Tester"];
   addAssignUserList=[];
@@ -79,6 +82,7 @@ export class ProjectComponent implements OnInit {
   isProjectList=true;
   me = this;
   comment_data="";
+  task_history_ID="";
   checkCommnetAssign=null;
   iscreateProject=false;
   isAssignProjView=false;
@@ -155,40 +159,48 @@ export class ProjectComponent implements OnInit {
     numPages:5,
     length : 0,
   }
-  public assigned_task_pagination ={
+  public assigned_task_pagination = {
     page:1,
     itemsPerPage:10,
     maxSize:5,
     numPages:5,
     length : 0,
   }
-  public my_project_pagination={
+  public my_project_pagination= {
     page:1,
     itemsPerPage:10,
     maxSize:5,
     numPages:5,
     length : 0,
   }
-  public assigned_project_pagination={
+  public assigned_project_pagination = {
     page:1,
     itemsPerPage:10,
     maxSize:5,
     numPages:5,
     length : 0,
   }
-  public requested_project_pagination={
+  public requested_project_pagination = {
     page:1,
     itemsPerPage:10,
     maxSize:5,
     numPages:5,
     length : 0,
+  }
+  task_history_pagination = {
+    page:1,
+    itemsPerPage:10,
+    maxSize:5,
+    numPages:5,
+    length:0
   }
   constructor(public toast:ToastComponent,
   private projectService:ProjectService,
   private formBuilder:FormBuilder,
   private taskService : TaskService,
   private userService: UserService,
-  private recursiveService :RecursiveService) { }
+  private recursiveService :RecursiveService,
+  private homeService:HomeService) { }
   
   ngOnInit() {
       this.getAllEmployeeList();
@@ -281,6 +293,46 @@ export class ProjectComponent implements OnInit {
   conformPopup(){
     this.popup1.hide();
     this.deleteProjects(this.selected_proj_delete);
+  }
+  openTaskHistoryDialog(task){
+    this.popup4.options = {
+        header: "Task History",
+        widthProsentage: 70, // The with of the popou measured by browser width 
+        animationDuration: 1, // in seconds, 0 = no animation 
+        showButtons: true, // You can hide this in case you want to use custom buttons 
+        confirmBtnContent: "OK", // The text on your confirm button 
+        cancleBtnContent: "Cancel", // the text on your cancel button 
+        confirmBtnClass: "btn btn-default", // your class for styling the confirm button 
+        cancleBtnClass: "btn btn-default", // you class for styling the cancel button 
+        animation: "fadeInDown" // 'fadeInLeft', 'fadeInRight', 'fadeInUp', 'bounceIn','bounceInDown' 
+    };
+    this.task_history_ID=task._id;
+    this.popup4.show(this.popup4.options);
+    this.getTaskHistory();
+  }
+  getTaskHistory(page ? : any){
+    let reqData={  
+      "_id" : this.task_history_ID ? this.task_history_ID : "",
+      "page" :  page ? page.page : 1,
+      "limit" : this.task_history_pagination.itemsPerPage
+    }
+    this.homeService.getTaskHistory({"reqData":reqData}).subscribe(
+        res => {     
+          console.log(res); 
+            this.taskHistoryDetail=res.docs;
+            this.task_history_pagination.length=res.total;
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
+  }
+  conformTaskHistoryDialog(){
+    this.popup4.hide();
+    this.task_history_ID="";
+  }
+  cancelTaskHistoryDialog(){
+    this.popup4.hide();
+    this.task_history_ID="";
+
   }
   showGetComment(task_detail){
     this.popup3.options = {
@@ -420,7 +472,7 @@ export class ProjectComponent implements OnInit {
      this.isTaskCardShow=true;
      this.getTaskDetailsByAssignFromAPi();
      this.getDetailsByAssignToApi();
-      })
+    })
   }
   openCreateTaskPage(){
      this.iscreateProject=false; 
