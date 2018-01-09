@@ -745,6 +745,7 @@ UpdateAssignedTaskDetail(){
 startTaskFun(task){
   this.AssignedtaskFormDetail._id = task._id;
   this.isProjectRunning = task.project_id;  
+  this.paused = 0; 
   this.AssignedtaskFormDetail.status = 1;
   this.AssignedtaskFormDetail.select = 1;
  // this.projectService.getTaskDetailsByTaskId(task._id).subscribe(
@@ -805,7 +806,11 @@ finishTaskFun(task){
     delete this.AssignedtaskFormDetail['start_date_time'];
     this.AssignedtaskFormDetail['end_date_time'] = new Date(); 
     this.spendtime['end_date_time'] = new Date();
-    this.spendtime['comment'] = this.comment_data;    
+    this.spendtime['comment'] = this.comment_data;  
+    localStorage.setItem('select', null);  
+    localStorage.setItem("hoursDisplay",(0).toString());
+    localStorage.setItem("minutesDisplay",(0).toString()); 
+    localStorage.setItem("secondsDisplay",(0).toString());         
     this.startTimer(1)  
     this.spendtime.actual_hrs = this.hoursDisplay + ((parseInt((this.minutesDisplay * 60).toString()) + parseInt(this.secondsDisplay.toString()))/3600);
     if(this.paused == 1)
@@ -813,6 +818,9 @@ finishTaskFun(task){
     else
       this.AssignedtaskFormDetail.spendtime = this.spendtime;      
     this.paused = 0;
+    this.hoursDisplay = 0;            
+    this.minutesDisplay = 0;               
+    this.secondsDisplay = 0;  
     this.UpdateAssignedTaskDetail();
   }
 }
