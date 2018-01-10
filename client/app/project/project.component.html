@@ -718,7 +718,7 @@
                                 </select>
                             </div>
                             <div class="col-md-5">
-                            <label class="Assign">Assign To</label>
+                            <label>Assign To</label>
                             <select class="form-control" [(ngModel)]="taskFormDetail.assign_to">
                                 <option [ngValue]="emp.employee_id" *ngFor="let emp of addAssignTaskUserList;"  placeholder="Select Project">{{emp.name}}</option>
                             </select>

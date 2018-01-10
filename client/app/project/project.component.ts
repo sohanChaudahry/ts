@@ -1173,7 +1173,6 @@ addSelectedEmp(){
       this.taskFormDetail['_id'] = this.task_id;
     }
     this.taskFormDetail['spendtime'] = {};
-    console.log(this.taskFormDetail);
 
     if(this.taskFormDetail.task_title==null || !this.taskFormDetail.task_title|| this.taskFormDetail.task_title==''){
       this.toast.setMessage('Task title should not be blank!', 'danger');
@@ -1199,6 +1198,14 @@ addSelectedEmp(){
       this.toast.setMessage('Task description should not be blank!', 'danger');
       return;
     } 
+    var start_date=new Date(this.taskFormDetail.assign_date);
+    var end_date=new Date(this.taskFormDetail.due_date);
+   
+    if(start_date>=end_date){
+      this.toast.setMessage('Due date should be greater than start date!', 'danger');
+      return;
+    }
+  
     // Vaibhav Mali 29 Dec 2017 ...End
     this.taskService.saveTaskDetail({reqData:[this.taskFormDetail]}).subscribe(
       res => {
