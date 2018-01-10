@@ -322,7 +322,7 @@ finishTaskFun(task){
         header: "Task History",
         widthProsentage: 70, // The with of the popou measured by browser width 
         animationDuration: 1, // in seconds, 0 = no animation 
-        showButtons: true, // You can hide this in case you want to use custom buttons 
+        showButtons: false, // You can hide this in case you want to use custom buttons 
         confirmBtnContent: "OK", // The text on your confirm button 
         cancleBtnContent: "Cancel", // the text on your cancel button
         confirmBtnClass: "btn btn-default", // your class for styling the confirm button 

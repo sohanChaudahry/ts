@@ -31,9 +31,9 @@
                 <li *ngIf="isActiveReqProject==false" class="list-group-item">Last seen : {{project_detail.modify_date | date : " MMM d, y h:mm:ss a" }}</li>
             </ul>
             <div class="card-body ctm_div" style="height: 40px;float: right; margin-bottom: 0px; margin-left: 10px;">
-                    <a class="card-link cursor_ctm" *ngIf = "!check_new_tasks(project_detail._id)" (click)="openTaskListDialog(project_detail)">Tasks</a>
-                    <a class="card-link cursor_ctm" *ngIf = "check_new_tasks(project_detail._id)" style="color:red" (click)="openTaskListDialog(project_detail)">Tasks</a>                
-                   </div>
+                <a class="card-link cursor_ctm" *ngIf = "!check_new_tasks(project_detail._id)" (click)="openTaskListDialog(project_detail)">Tasks</a>
+                <a class="card-link cursor_ctm" *ngIf = "check_new_tasks(project_detail._id)" style="color:red" (click)="openTaskListDialog(project_detail)">Tasks</a>                
+            </div>
         </div>
         <div *ngIf="isActiveReqProject==true" class="card card_ctm" style="height: 220px;">
             <div class="card-body">
@@ -60,7 +60,7 @@
     <div *ngIf="projectList.length==0" style="margin: 20px;">
         <span style="margin-left: 40%;">No record available in DB.</span>
     </div>
-    <div style="float:right">
+    <div class="pagiantion_ctm">
         <pagination class="pagination-sm"
             [(ngModel)]="project_pagination.page"
             [totalItems]="project_pagination.length"
@@ -76,7 +76,7 @@
 <div *ngIf="!isShowproject && isShowList">
   <div class="home_header" style="padding-top: 6px;">
     <div class="row"> 
-      <div class="col-md-9">
+      <div class="col-md-8">
           <ul class="nav nav-tabs">
               <li class="nav-item">
                   <a class="nav-link" (click)="openAllTasks();isTaskActive[0]=true;isTaskActive[1]=false;isTaskActive[2]=false;
@@ -103,10 +103,10 @@
               </li>
             </ul>
       </div>
-      <span class="col-md-2" style="padding-left: 50px;padding-top: 5px;">
+      <span class="col-md-3" style="padding-left: 30px;padding-top: 5px;">
             {{selected_project_detail.project_name}} <i class="fa fa-briefcase" aria-hidden="true" style="padding-left: 5px;"></i>
       </span>
-      <span class="col-md-1" style="padding-left:50px;">
+      <span class="col-md-1" style="padding-left:20px;">
         <button class="btn btn-sm btn-success" (click)="backBtn()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
       </span>
     </div>
@@ -186,7 +186,13 @@
                         </pagination>
                     </div>
                 </div>
-                </popup>
+                <div class="row">
+                    <div class="col-md-11"></div>
+                    <div class="col-md-1">
+                        <button class="btn btn-sm btn-light" (click)="conformTaskHistoryDialog()">Close</button>
+                    </div>
+                </div>
+              </popup>
                <table class="table table-bordered">
                   <thead class="thead-default">
                       <tr> 
@@ -261,7 +267,7 @@
                 </popup>
               </div>
           </div>
-          <div style="float:right">
+          <div style="float:right;padding-right:2%">
               <pagination  *ngIf="taskList.length!=0" class="pagination-sm"
                   [(ngModel)]="task_pagination.page"
                   [totalItems]="task_pagination.length"

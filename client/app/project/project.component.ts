@@ -299,7 +299,7 @@ export class ProjectComponent implements OnInit {
         header: "Task History",
         widthProsentage: 70, // The with of the popou measured by browser width 
         animationDuration: 1, // in seconds, 0 = no animation 
-        showButtons: true, // You can hide this in case you want to use custom buttons 
+        showButtons: false, // You can hide this in case you want to use custom buttons 
         confirmBtnContent: "OK", // The text on your confirm button 
         cancleBtnContent: "Cancel", // the text on your cancel button 
         confirmBtnClass: "btn btn-default", // your class for styling the confirm button 
@@ -656,16 +656,16 @@ export class ProjectComponent implements OnInit {
   @desc :To check whether current project have followers or not.
   */
   IsFollowerExist(selectedProject){
-    this.projectService.getProjectDetailById(selectedProject._id).subscribe(
-      res => {
-         if(res && res.followers.length > 0) 
-           return 1;
-         else
-           return 0;
-      },
-      error => this.toast.setMessage('Some thing wrong!', 'danger')
-    );
-}
+      this.projectService.getProjectDetailById(selectedProject._id).subscribe(
+        res => {
+          if(res && res.followers.length > 0) 
+            return 1;
+          else
+            return 0;
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+      );
+  }
   showAssignedProjectView(selected_data){
       this.isProjectList=false;
       this.iscreateProject=false;
