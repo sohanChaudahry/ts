@@ -543,7 +543,7 @@ export default class TasksCtrl  {
   else{
       var project_id1 = mongoose.Types.ObjectId(project_id);
       var assign_from = mongoose.Types.ObjectId(assign_from);
-      model.paginate({"assign_from": assign_from,"project_id":project_id1}, { page: page, limit: limit }, function(err, data) {                
+      model.paginate({"assign_from": assign_from,"project_id":project_id1}, { sort:{"due_date":-1},page: page, limit: limit }, function(err, data) {                
    //   model.find({"assign_from": assign_from,"project_id":project_id1}, function (err, data) {
       if(data && data.docs.length > 0){
        async.forEach(data.docs, function (task, callback) {
@@ -604,11 +604,11 @@ export default class TasksCtrl  {
        })
         }, function (err, cb) {
         if(count >= data.docs.length){
-          tasktemp.tasks.sort(function(a,b){
+          /*tasktemp.tasks.sort(function(a,b){
             var c:any = new Date(a.due_date);
             var d:any = new Date(b.due_date);
             return c-d;
-          })
+          })*/
           tasks['tasks'] = tasktemp.tasks;
           tasks['Pages'] = data.pages;
           tasks['Total'] = data.total;
@@ -661,7 +661,7 @@ getTaskDetailsByAssignTo = (req, res) => {
   else{
       var project_id1 = mongoose.Types.ObjectId(project_id);
       var assign_to = mongoose.Types.ObjectId(assign_to);
-    model.paginate({"assign_to": assign_to,"project_id":project_id1}, { page: page, limit: limit }, function(err, data) {        
+    model.paginate({"assign_to": assign_to,"project_id":project_id1}, { sort:{"due_date":-1},page: page, limit: limit }, function(err, data) {        
       if(data && data.docs.length > 0){
        async.forEach(data.docs, function (task, callback) {
         var employee_id1 = mongoose.Types.ObjectId(task._doc.assign_from);        
@@ -721,11 +721,11 @@ getTaskDetailsByAssignTo = (req, res) => {
        })
         }, function (err, cb) {
         if(count >= data.docs.length){
-          tasktemp.tasks.sort(function(a,b){
+          /*tasktemp.tasks.sort(function(a,b){
             var c:any = new Date(a.due_date);
             var d:any = new Date(b.due_date);
             return c-d;
-          })
+          })*/
           tasks['tasks'] = tasktemp.tasks;
           tasks['Pages'] = data.pages;
           tasks['Total'] = data.total;
@@ -785,7 +785,7 @@ getPendingTasks = (req, res) => {
     else{
       query = {"assign_to": emp_id,"project_id":project_id1,"status":0,"assign_date":{$lte:new Date()}}
     }
-    model.paginate(query, { page: page, limit: limit }, function(err, data) {
+    model.paginate(query, {sort:{"due_date":-1}, page: page, limit: limit }, function(err, data) {
       //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
         if(data && data.docs.length > 0){
          async.forEach(data.docs, function (task, callback) {
@@ -847,13 +847,13 @@ getPendingTasks = (req, res) => {
          })
           }, function (err, cb) {
              if(count >= data.docs.length){
-              if(pending && pending.tasks.length > 0){
+        /*      if(pending && pending.tasks.length > 0){
               pending.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
               return c-d;
               });
-              }
+              }*/
                tasks['Pending'] = pending.tasks;
                tasks["Pages"] = data.pages;
                tasks["Total"] = data.total;
@@ -915,7 +915,7 @@ getCompletedTasks = (req, res) => {
     else{
       query = {"assign_to": emp_id,"project_id":project_id1,"status":2}
     }
-    model.paginate(query, { page: page, limit: limit }, function(err, data) {
+    model.paginate(query, {sort:{"due_date":-1}, page: page, limit: limit }, function(err, data) {
       //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
         if(data && data.docs.length > 0){
          async.forEach(data.docs, function (task, callback) {
@@ -976,13 +976,13 @@ getCompletedTasks = (req, res) => {
          })
           }, function (err, cb) {
              if(count >= data.docs.length){
-              if(completed && completed.tasks.length > 0){
+              /*if(completed && completed.tasks.length > 0){
                 completed.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
               return c-d;
               });
-              }
+              }*/
                tasks['Completed'] = completed.tasks;
                tasks["Pages"] = data.pages;
                tasks["Total"] = data.total;
@@ -1044,7 +1044,7 @@ getIn_ProgressTasks = (req, res) => {
     else{
       query = {"assign_to": emp_id,"project_id":project_id1,"status":1}
     }
-    model.paginate(query, { page: page, limit: limit }, function(err, data) {
+    model.paginate(query, {sort:{"due_date":-1}, page: page, limit: limit }, function(err, data) {
       //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
         if(data && data.docs.length > 0){
          async.forEach(data.docs, function (task, callback) {
@@ -1106,13 +1106,13 @@ getIn_ProgressTasks = (req, res) => {
          })
           }, function (err, cb) {
              if(count >= data.docs.length){
-              if(in_progress && in_progress.tasks.length > 0){
+             /* if(in_progress && in_progress.tasks.length > 0){
                 in_progress.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
               return c-d;
               });
-              }
+              }*/
                tasks['In_Progress'] = in_progress.tasks;
                tasks["Pages"] = data.pages;
                tasks["Total"] = data.total;
@@ -1174,7 +1174,7 @@ getUpcomingTasks = (req, res) => {
     else{
       query = {"assign_to": emp_id,"project_id":project_id1,"status":0,"assign_date":{$gt:new Date()}}
     }
-    model.paginate( query, { page: page, limit: limit }, function(err, data) {
+    model.paginate( query, {sort:{"due_date":-1}, page: page, limit: limit }, function(err, data) {
       //  model.find({"assign_to": assign_to,"project_id":project_id1}, function (err, data) {
         if(data && data.docs.length > 0){
          async.forEach(data.docs, function (task, callback) {
@@ -1235,13 +1235,13 @@ getUpcomingTasks = (req, res) => {
          })
           }, function (err, cb) {
              if(count >= data.docs.length){
-              if(upcoming && upcoming.tasks.length > 0){
+             /* if(upcoming && upcoming.tasks.length > 0){
                 upcoming.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
               return c-d;
               });
-              }
+              }*/
                tasks['Upcoming'] = upcoming.tasks;
                tasks["Pages"] = data.pages;
                tasks["Total"] = data.total;
@@ -1275,7 +1275,7 @@ getUpcomingTasks = (req, res) => {
     var limit = reqData.limit;
     var task_id = mongoose.Types.ObjectId(reqData._id); 
     var count = 0;   
-    tasktime.paginate( { "pid": task_id }, { page: page, limit: limit }, function(err, data) {
+    tasktime.paginate( { "pid": task_id },{sort:{"end_date_time":-1}, page: page, limit: limit }, function(err, data) {
         async.forEach(data.docs, function (task, callback) {
           if(Math.ceil(parseFloat(task._doc.actual_hrs)) === task._doc.actual_hrs){
             task._doc.actual_hrs = task._doc.actual_hrs + " : 0 : 0 ";
@@ -1293,11 +1293,11 @@ getUpcomingTasks = (req, res) => {
           callback();                       
         }, function (err, cb) {
           if(count >= data.docs.length){
-              data.docs.sort(function(a,b){
+             /* data.docs.sort(function(a,b){
               var c:any = new Date(a.end_date_time);
               var d:any = new Date(b.end_date_time);
               return d-c;
-              });
+              });*/
               res.send(data);      
               return;
           }

@@ -340,13 +340,13 @@ getemployeeDetailswithProjectPagination = (req, res) => {
                 }
                 else if (data && data.length > 0) {
                   //My Projects
-                  Followers.paginate({"email": data[0]._doc.email,"ismanager" : 1}, { page: pagenumber, limit: limit }, function(err, data1) {
+                  Followers.paginate({"email": data[0]._doc.email,"ismanager" : 1}, {sort:{"modify_date":-1}, page: pagenumber, limit: limit }, function(err, data1) {
                  // Followers.find({ "email": data[0]._doc.email }, function (err, data1) {                 
-                    data1.docs.sort(function(a,b){
+                   /* data1.docs.sort(function(a,b){
                       var c:any = new Date(a.modify_date);
                       var d:any = new Date(b.modify_date);
                       return d-c;
-                    });
+                    });*/
                     dt['name'] = data[0]._doc.name;
                     dt['act_status'] = data[0]._doc.act_status;
                     dt['email'] = data[0]._doc.email;
@@ -419,13 +419,13 @@ getemployeeDetailswithProjectPagination = (req, res) => {
                                   dt["MyProjectsPages"] = data1.pages;
                                   dt["MyProjectsTotal"] = data1.total;
                                 //Assigned Projects which accepted.
-                                Followers.paginate({"email": data[0]._doc.email,"ismanager" : 0}, { page: pagenumber, limit: limit }, function(err, data1) {
+                                Followers.paginate({"email": data[0]._doc.email,"ismanager" : 0}, { sort:{"modify_date":-1},page: pagenumber, limit: limit }, function(err, data1) {
                                   // Followers.find({ "email": data[0]._doc.email }, function (err, data1) {                 
-                                    data1.docs.sort(function(a,b){
+                                  /*  data1.docs.sort(function(a,b){
                                       var c:any = new Date(a.modify_date);
                                       var d:any = new Date(b.modify_date);
                                       return d-c;
-                                    });
+                                    });*/
                                      var resData = {};
                                      dt['name'] = data[0]._doc.name;
                                      dt['act_status'] = data[0]._doc.act_status;
@@ -501,13 +501,13 @@ getemployeeDetailswithProjectPagination = (req, res) => {
                                                    dt["AcceptedProjectsTotal"] = data1.total;  
                                                    var tempprojects = {projects: []};    
                                                   //Assigned Projects which request.
-                                                User_accept.paginate({"to_email": data[0]._doc.email,"accept" : 0}, { page: pagenumber, limit: limit }, function(err, data9) {                                                  
+                                                User_accept.paginate({"to_email": data[0]._doc.email,"accept" : 0}, { sort:{"modify_date":-1},page: pagenumber, limit: limit }, function(err, data9) {                                                  
                                                // User_accept.find({ "to_email": req.user.emails[0].value,"accept":0}, function (err, data9) {                                   
-                                                  data9.docs.sort(function(a,b){
+                                                  /*data9.docs.sort(function(a,b){
                                                     var c:any = new Date(a.modify_date);
                                                     var d:any = new Date(b.modify_date);
                                                     return d-c;
-                                                  });
+                                                  });*/
                                                   async.eachSeries(data9.docs, function (requestuser, callback) { 
                                                       var tempactivities = {activities: []};
                                                       var project = {} 
