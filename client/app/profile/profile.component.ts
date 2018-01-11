@@ -27,13 +27,16 @@ export class ProfileComponent implements OnInit {
       defaultOpen: false,
       closeOnSelect:false
   }
-
-
-  // @ViewChild('popup1') popup1: Popup;
-  // @ViewChild('popup2') popup2: Popup;
-
+  asset_pagination={
+    page:1,
+    itemsPerPage:1,
+    maxSize:5,
+    numPages:5,
+    length : 0,
+  }
   profileFormData: FormGroup;
   isLoading = false;
+  assetList=[];
   name = new FormControl('', [Validators.required,]);
   email = new FormControl('', [
     Validators.required,
@@ -41,7 +44,6 @@ export class ProfileComponent implements OnInit {
     Validators.maxLength(100)
   ]);
   address = new FormControl('', [Validators.required]);
-  // type = new FormControl('', [ Validators.required]);
 
   typeList=[{"val":"E","name":"Employee"}];
   constructor(private toast :ToastComponent,
@@ -53,6 +55,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.getEmployeeDetailByEmail();
+    this.getAssetList();
       this.profileFormData = this.formBuilder.group({
           name: this.name,
           email: this.email,
@@ -61,14 +64,6 @@ export class ProfileComponent implements OnInit {
           _id : localStorage.getItem("_id") ? localStorage.getItem("_id") : ""
       });
   }
-
-  // ClickButton(){
-  //   this.popup1.show();
-  // }
- 
-  // ClickAnotherButton(){
-  //   this.popup2.show();
-  // }
 
   saveProfile(){
     console.log(this.profileFormData.value);
@@ -91,6 +86,20 @@ export class ProfileComponent implements OnInit {
     this.projectService.getEmpDetailApi({"reqData":reqData}).subscribe(
         res => {
             this.profileFormData.patchValue(res.details);
+        },
+        error => this.toast.setMessage('Some thing wrong!', 'danger')
+    );
+  }
+  getAssetList(page?:any){
+    let reqData={
+        "employee_id":localStorage.getItem("_id") ? localStorage.getItem("_id") : "",
+        "page" : page ? page.page : 1,
+        "limit": this.asset_pagination.itemsPerPage ? this.asset_pagination.itemsPerPage : 10
+    }
+    this.profileService.getAssetList({"reqData":reqData}).subscribe(
+        res => {
+            this.assetList=res.assetList.docs;
+            this.asset_pagination.length=res.assetList.total;
         },
         error => this.toast.setMessage('Some thing wrong!', 'danger')
     );

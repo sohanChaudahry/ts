@@ -8,6 +8,10 @@ import ActivitiesCtrl from './models/activities';
  import TaskTimeCtrl from './controllers/tasktime'; 
  import UtilsCtrl from './controllers/utils'; 
  import UserCtrl from './controllers/user';
+ import AssetsCtrl from './controllers/assets';
+
+ import RepairRequestCtrl from './controllers/repair_request';
+
  import UserAcceptCtrl from './controllers/user_accept';
  
  
@@ -28,6 +32,9 @@ export default function setRoutes(app) {
   const taskstimeCtrl = new TaskTimeCtrl();  
   const Util = new UtilsCtrl();
   const userAcceptCtrl = new UserAcceptCtrl();
+  const repairRequestCtrl = new RepairRequestCtrl();
+  const assetsCtrl = new AssetsCtrl();
+
   
   // Users
   router.route('/login').post(userCtrl.login);
@@ -84,6 +91,16 @@ export default function setRoutes(app) {
  
 //Followers 
 router.route('/followers/delete').post(followersCtrl.deleteFollowerByprojectId); 
+
+
+//assets
+ router.route('/assets/save_update_assets').post(assetsCtrl.save_update_assets); 
+ router.route('/assets/deleteAssets/:id').get(assetsCtrl.deleteAsset); 
+ router.route('/assets/getAssetByEmpId').post(assetsCtrl.getAssetByEmpId); 
+
+//repair request
+router.route('/assets/save_repair_request').post(repairRequestCtrl.saveRepairRequest); 
+router.route('/assets/get_repair_request_history').post(repairRequestCtrl.getRepairRequestHistory); 
 
  
 /*

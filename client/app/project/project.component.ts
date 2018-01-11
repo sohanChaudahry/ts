@@ -103,8 +103,8 @@ export class ProjectComponent implements OnInit {
      assign_to : "",
      project_id : "",
      activity_id : "",
-     assign_date : new Date(),     
      due_date : new Date(),
+     assign_date : new Date(),     
      priority : "",
      estimate_hrs : null,
   };
@@ -757,9 +757,7 @@ export class ProjectComponent implements OnInit {
            this.taskFormDetail.priority = res.priority;
            this.taskFormDetail.task_description = res.task_description;
            this.taskFormDetail.due_date = res.due_date;
-
-           this.taskFormDetail.assign_date = res.assign_date;
-           
+           this.taskFormDetail.assign_date = res.assign_date;    
            this.taskFormDetail.task_title= res.task_title;
            this.taskFormDetail.task_description = res.task_description;  
          //  this.taskFormDetail['_id'] = res.__id;

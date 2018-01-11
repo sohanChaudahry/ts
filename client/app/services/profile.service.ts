@@ -16,4 +16,7 @@ export class ProfileService {
   saveProfile(reqData): Observable<any> {
     return this.http.post('/api/employees/save_update_Employees', JSON.stringify(reqData), this.options).map(res => res.json());
   }
+  getAssetList(reqData): Observable<any> {
+    return this.http.post('/api/assets/getAssetByEmpId', JSON.stringify(reqData), this.options).map(res => res.json());
+  }
 }

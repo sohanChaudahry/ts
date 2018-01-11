@@ -604,11 +604,11 @@ export default class TasksCtrl  {
        })
         }, function (err, cb) {
         if(count >= data.docs.length){
-          /*tasktemp.tasks.sort(function(a,b){
+          tasktemp.tasks.sort(function(a,b){
             var c:any = new Date(a.due_date);
             var d:any = new Date(b.due_date);
             return c-d;
-          })*/
+          })
           tasks['tasks'] = tasktemp.tasks;
           tasks['Pages'] = data.pages;
           tasks['Total'] = data.total;
@@ -721,11 +721,11 @@ getTaskDetailsByAssignTo = (req, res) => {
        })
         }, function (err, cb) {
         if(count >= data.docs.length){
-          /*tasktemp.tasks.sort(function(a,b){
+          tasktemp.tasks.sort(function(a,b){
             var c:any = new Date(a.due_date);
             var d:any = new Date(b.due_date);
             return c-d;
-          })*/
+          })
           tasks['tasks'] = tasktemp.tasks;
           tasks['Pages'] = data.pages;
           tasks['Total'] = data.total;
@@ -847,13 +847,13 @@ getPendingTasks = (req, res) => {
          })
           }, function (err, cb) {
              if(count >= data.docs.length){
-        /*      if(pending && pending.tasks.length > 0){
+             if(pending && pending.tasks.length > 0){
               pending.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
               return c-d;
               });
-              }*/
+              }
                tasks['Pending'] = pending.tasks;
                tasks["Pages"] = data.pages;
                tasks["Total"] = data.total;
@@ -976,13 +976,13 @@ getCompletedTasks = (req, res) => {
          })
           }, function (err, cb) {
              if(count >= data.docs.length){
-              /*if(completed && completed.tasks.length > 0){
+              if(completed && completed.tasks.length > 0){
                 completed.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
               return c-d;
               });
-              }*/
+              }
                tasks['Completed'] = completed.tasks;
                tasks["Pages"] = data.pages;
                tasks["Total"] = data.total;
@@ -1106,13 +1106,13 @@ getIn_ProgressTasks = (req, res) => {
          })
           }, function (err, cb) {
              if(count >= data.docs.length){
-             /* if(in_progress && in_progress.tasks.length > 0){
+              if(in_progress && in_progress.tasks.length > 0){
                 in_progress.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
               return c-d;
               });
-              }*/
+              }
                tasks['In_Progress'] = in_progress.tasks;
                tasks["Pages"] = data.pages;
                tasks["Total"] = data.total;
@@ -1235,13 +1235,13 @@ getUpcomingTasks = (req, res) => {
          })
           }, function (err, cb) {
              if(count >= data.docs.length){
-             /* if(upcoming && upcoming.tasks.length > 0){
+             if(upcoming && upcoming.tasks.length > 0){
                 upcoming.tasks.sort(function(a,b){
               var c:any = new Date(a.due_date);
               var d:any = new Date(b.due_date);
               return c-d;
               });
-              }*/
+              }
                tasks['Upcoming'] = upcoming.tasks;
                tasks["Pages"] = data.pages;
                tasks["Total"] = data.total;
@@ -1293,11 +1293,11 @@ getUpcomingTasks = (req, res) => {
           callback();                       
         }, function (err, cb) {
           if(count >= data.docs.length){
-             /* data.docs.sort(function(a,b){
+             data.docs.sort(function(a,b){
               var c:any = new Date(a.end_date_time);
               var d:any = new Date(b.end_date_time);
               return d-c;
-              });*/
+              });
               res.send(data);      
               return;
           }

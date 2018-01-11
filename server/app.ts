@@ -204,7 +204,8 @@ app.get('/success', function(req, res) {
   console.log("Login success");
   //res.send("Login Success");
   res.redirect('http://localhost:4200/home');
-  
+  //res.redirect('http://localhost:8100/#/menu/tabs/tab-1/tab1');
+
 });  
 
 app.get('/fail', function(req, res) {

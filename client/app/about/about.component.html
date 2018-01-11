@@ -6,13 +6,13 @@
         <div> 
           <ul class="nav nav-tabs">
               <li class="nav-item">
-                <a class="nav-link" (click)="openMyProject();isActiveMyProject=true;isActiveAcceptProject=false;isActiveReqProject=false;" [ngClass]="{'isActiveClass':isActiveMyProject}">My Project</a>
+                <a class="nav-link" (click)="openMyProject();isActiveMyProject=true;isActiveAcceptProject=false;isActiveReqProject=false;" [ngClass]="{'isActiveClass':isActiveMyProject}"> <i class="fa fa-outdent" aria-hidden="true"></i> My Project</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openAcceptedProject();isActiveMyProject=false;isActiveAcceptProject=true;isActiveReqProject=false;" [ngClass]="{'isActiveClass':isActiveAcceptProject}">Accepted Project </a>
+                <a class="nav-link" (click)="openAcceptedProject();isActiveMyProject=false;isActiveAcceptProject=true;isActiveReqProject=false;" [ngClass]="{'isActiveClass':isActiveAcceptProject}"> <i class="fa fa-check-square-o" aria-hidden="true"></i> Accepted Project </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" (click)="openRequestedProject();isActiveMyProject=false;isActiveAcceptProject=false;isActiveReqProject=true;" [ngClass]="{'isActiveClass':isActiveReqProject}">Requested Project </a>
+                <a class="nav-link" (click)="openRequestedProject();isActiveMyProject=false;isActiveAcceptProject=false;isActiveReqProject=true;" [ngClass]="{'isActiveClass':isActiveReqProject}"><i class="fa fa-renren" aria-hidden="true"></i> Requested Project </a>
               </li>
             </ul>
         </div>
@@ -80,31 +80,28 @@
           <ul class="nav nav-tabs">
               <li class="nav-item">
                   <a class="nav-link" (click)="openAllTasks();isTaskActive[0]=true;isTaskActive[1]=false;isTaskActive[2]=false;
-                  isTaskActive[3]=false;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[0]}">All Task</a>
+                  isTaskActive[3]=false;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[0]}"><i class="fa fa-globe" aria-hidden="true"></i> All Task</a>
               </li>
               <li class="nav-item">
                   <a class="nav-link" (click)="openRunningTasks();isTaskActive[0]=false;isTaskActive[1]=true;isTaskActive[2]=false;
-                  isTaskActive[3]=false;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[1]}">Inprogress Tasks</a>
+                  isTaskActive[3]=false;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[1]}"><i class="fa fa-star-o" aria-hidden="true"></i> Inprogress Tasks</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" (click)="openPendingTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=true;
-                isTaskActive[3]=false;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[2]}">Pending</a>
+                isTaskActive[3]=false;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[2]}"><i class="fa fa-circle-o-notch" aria-hidden="true"></i> Pending</a>
               </li>
               <li class="nav-item">
                   <a class="nav-link" (click)="openCommingTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=false;
-                  isTaskActive[3]=true;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[3]}">Upcoming Tasks</a>
+                  isTaskActive[3]=true;isTaskActive[4]=false;" [ngClass]="{'isActiveClass' : isTaskActive[3]}"><i class="fa fa-clone" aria-hidden="true"></i> Upcoming Tasks</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" (click)="openCompletedTasks();isTaskActive[0]=false;isTaskActive[1]=false;isTaskActive[2]=false;
-                isTaskActive[3]=false;isTaskActive[4]=true;" [ngClass]="{'isActiveClass' : isTaskActive[4]}">Completed Tasks</a>
-              </li>
-              <li class="nav-item">
-                   
+                isTaskActive[3]=false;isTaskActive[4]=true;" [ngClass]="{'isActiveClass' : isTaskActive[4]}"><i class="fa fa-list" aria-hidden="true"></i> Completed Tasks</a>
               </li>
             </ul>
       </div>
       <span class="col-md-3" style="padding-left: 30px;padding-top: 5px;">
-            {{selected_project_detail.project_name}} <i class="fa fa-briefcase" aria-hidden="true" style="padding-left: 5px;"></i>
+        <i class="fa fa-briefcase" aria-hidden="true" style="padding-left: 5px;"></i> {{selected_project_detail.project_name}} 
       </span>
       <span class="col-md-1" style="padding-left:20px;">
         <button class="btn btn-sm btn-success" (click)="backBtn()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
@@ -133,7 +130,7 @@
             </ul>
           </div>
       </div> -->
-      <div class="card">
+      <div class="card" style="margin:7px;">
           <div class="card-block">
               <div class="table-responsive custom_table">
                 <popup #popup1 (confirmClick)="conformTaskHistoryDialog()">

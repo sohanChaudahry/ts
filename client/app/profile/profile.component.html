@@ -1,7 +1,6 @@
 <div class="cointaner">
     <app-loading [condition]="isLoading"></app-loading>
     <app-toast [message]="toast.message"></app-toast>
-    <!-- <div class="loader" [hidden]="false"></div> -->
     <div class="card">
       <div class="card-header">
         <span class="custom_span_header">Profile</span>
@@ -38,18 +37,6 @@
                 </div>
               <div class="col-md-1"></div>
             </div>
-            <!-- <div class="row">
-              <div class="col-md-1"></div>
-              <div class="col-md-5">
-                 <div class="form-group">
-                   <label>Type</label>
-                   <select class="form-control" name="role" formControlName="type">
-                        <option [ngValue]="type.val" *ngFor="let type of typeList;"  placeholder="Role">{{type.name}}</option>
-                   </select>
-                  </div>
-              </div>
-              <div class="col-md-1"></div>
-            </div> -->
             <div class="row">
               <div class="col-md-1"></div>
               <div class="col-md-6">
@@ -58,14 +45,72 @@
             </div>
         </form>
       </div>
-      <!-- <button class="btn btn-sm btn-primary" type="button" (click)="ClickButton()"><i class="fa fa-floppy-o"></i> Button 1</button>
-      <button class="btn btn-sm btn-primary" type="button" (click)="ClickAnotherButton()"><i class="fa fa-floppy-o"></i> Button 2</button>
-      <popup  #popup1>
-          Add your custom html elements here
-      </popup>
-       
-      <popup  #popup2>
-          Add your other custom html elements here
-      </popup> -->
     </div>
+    <div class="card">
+        <div class="card-header hearder_btn">
+          <span class="custom_span_header">Assets</span>
+        </div>
+        <div class="card-block">
+          <div class="table-responsive custom_table">
+              <table class="table table-bordered">
+                  <thead class="thead-default">
+                  <tr>
+                      <th width="25%">Assets ID</th>
+                      <th width="25%">Assets Name</th>
+                      <th width="45%">Description</th>
+                      <th width="15%">Manufacturer</th>
+                      <th width="45%">Rented</th>
+                      <th width="15%">Serical No</th>
+                      <th width="15%" style="text-align: center;">Action</th>
+                  </tr>
+                  </thead>
+                  <tbody *ngIf="assetList.length == 0">
+                  <tr>
+                      <td colspan="4" style="text-align: center;">There are no project in the DB. Add a new project.</td>
+                  </tr>  
+                  </tbody>
+                  <tbody>
+                      <tr *ngFor="let asset of assetList">
+                          <td>
+                              <span>{{asset.assets_id}}</span>
+                          </td>
+                          <td>
+                              <span>{{asset.assets_name}}</span>
+                          </td>
+                          <td>
+                              <span>{{asset.description}}</span>
+                          </td>
+                          <td>
+                              <span>{{asset.manufacturer}}</span>
+                          </td>
+                          <td>
+                              <span>{{asset.rented}}</span>
+                          </td>
+                          <td>
+                              <span>{{asset.serical_no}}</span>
+                          </td>
+                          <td style="text-align: center;">
+                            
+                          </td>
+                      </tr> 
+                  </tbody>  
+                  <popup  #popup1 (confirmClick)="conformPopup()" (cancelClick)="cancelPopup()">
+                      <span>Do you want to delete project ?</span>
+                  </popup>
+              </table>
+          </div>
+          <div style="float:right" *ngIf="assetList.length!=0">
+              <pagination class="pagination-sm"
+                  [(ngModel)]="asset_pagination.page"
+                  [totalItems]="asset_pagination.length"
+                  [itemsPerPage]="asset_pagination.itemsPerPage"
+                  [maxSize]="asset_pagination.maxSize"
+                  [boundaryLinks]="true"
+                  [rotate]="false"
+                  (pageChanged)="getAssetList($event)"
+                  (numPages)="asset_pagination.numPages = $event">
+              </pagination>
+          </div>
+        </div>
+      </div>
 </div>

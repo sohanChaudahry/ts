@@ -349,6 +349,13 @@
               </div>
               <div class="row" style="padding-bottom: 14px;">
                 <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <span style="font-weight: 600;">Role : </span>{{AssignedProjectView.role}}
+                </div>
+                <div class="col-md-1"></div>
+              </div>
+              <div class="row" style="padding-bottom: 14px;">
+                <div class="col-md-1"></div>
                 <div class="col-md-10 cat_lable custom-div-margin">
                     <div class="form-group city-data">
                         <div class="searc_head"> 
@@ -399,7 +406,7 @@
                                     <th width="10%">Estimate Hours</th>
                                     <th width="15%">Actual Hours</th>
                                     <th width="20%">Last Seen</th>
-                                    <th width="10%">Status</th>
+                                    <th width="10%">Status</th> 
                                 </tr>
                             </thead>
                             <tbody *ngIf="projectWorkingTaskList.length == 0">
@@ -430,8 +437,8 @@
             </div>-->
             <div class="custom_hd ctm_hd_task">
                 <span class="custom_span_header" style="min-width: 80%;float: left;">Tasks</span> 
-                <span  style="float: left;">
-                        {{selectedProjectDetail.project_name}} <i class="fa fa-briefcase" aria-hidden="true" style="padding-left: 5px;"></i>
+                <span class="custom_span_header" style="float: left;">
+                    <i class="fa fa-briefcase" aria-hidden="true" style="padding-left: 5px;"></i> {{selectedProjectDetail.project_name}}
                 </span>
                 <span class="custom_back_btn">
                     <button class="btn btn-sm btn-success" (click)="backTaskListPage()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
@@ -447,16 +454,20 @@
                         <table class="table table-bordered">
                             <thead class="thead-default">
                                 <tr>   
-                                <th width="22%">Task Name</th>
-                                <th width="35%">Task Description</th>
-                                <th width="20%">Assign To</th>
-                                <th width="15%">Due Date</th>
+                                <th width="12%">Task Name</th>
+                                <th width="15%">Task Description</th>
+                                <th width="18%">Assign To</th>
+                                <th width="5%">Priority</th>
+                                <th width="8%">Actual Hours</th>
+                                <th width="10%">Assign Date</th> 
+                                <th width="10%">Start Date</th> 
+                                <th width="10%">Due Date</th>
                                 <th width="8%" style="text-align: center;">Action</th>
                                 </tr>
                             </thead>  
                             <tbody *ngIf="getTaskAssigedToUsList.length==0">
                                 <tr>
-                                <td colspan="5" style="text-align: center;">There are no task in the DB. Add a new task.</td>
+                                <td colspan="9" style="text-align: center;">There are no task in the DB. Add a new task.</td>
                                 </tr>  
                             </tbody>
                             <tbody>
@@ -471,7 +482,19 @@
                                     <span>{{task.assign_to.name}}</span>
                                 </td>
                                 <td>
-                                    <span>{{task.due_date | date}}</span>
+                                    <span>{{task.priority}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.actual_hrs}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.assign_date | date : " MMM d, y h:mm:ss a"}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.start_date_time ? ( task.start_date_time | date : " MMM d, y h:mm:ss a" ) : "Not Started"}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.due_date | date : " MMM d, y h:mm:ss a"}}</span>
                                 </td>
                                 <td style="text-align: center;">
                                     <button class="btn btn-sm btn-success" (click)="openTaskHistoryDialog(task)"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
@@ -561,17 +584,20 @@
                      <table class="table table-bordered">
                         <thead class="thead-default">
                             <tr> 
-                                <th width="15%">Task Name</th>
-                                <th width="20%">Task Description</th>
-                                <th width="15%">Assign From</th>
-                                <th width="15%">Actual Hours</th>
-                                <th width="10%">Due Date</th> 
+                                <th width="10%">Task Name</th>
+                                <th width="12%">Task Description</th>
+                                <th width="14%">Assign From</th>
+                                <th width="5%">Priority</th>
+                                <th width="7%">Actual Hours</th>
+                                <th width="9%">Assign Date</th> 
+                                <th width="9%">Start Date</th> 
+                                <th width="9%">Due Date</th>
                                 <th width="25%" style="text-align: center;">Action</th>
                             </tr>
                         </thead>
                         <tbody *ngIf="AssigedToOtherList.length==0">
                             <tr>
-                                <td colspan="6" style="text-align: center;">There are no task in the DB. Add a new task.</td>
+                                <td colspan="9" style="text-align: center;">There are no task in the DB. Add a new task.</td>
                             </tr>  
                         </tbody>
                         <tbody>
@@ -586,10 +612,19 @@
                                     <span>{{task.assign_from.name}}</span>
                                 </td>
                                 <td>
+                                    <span>{{task.priority}}</span>
+                                </td>
+                                <td>
                                     <span>{{task.actual_hrs}}</span>
                                 </td>
                                 <td>
-                                    <span>{{task.due_date | date}}</span>
+                                    <span>{{task.assign_date | date : " MMM d, y h:mm:ss a"}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.start_date_time ? ( task.start_date_time | date : " MMM d, y h:mm:ss a" ) : "Not Started"}}</span>
+                                </td>
+                                <td>
+                                    <span>{{task.due_date | date : " MMM d, y h:mm:ss a"}}</span>
                                 </td>
                                 <td style="text-align: center;">
                                     <!-- <button class="btn btn-sm btn-danger" (click)="startTaskFun(task)" [disabled] = "(task.status == 2 ) || (AssignedtaskFormDetail.select == 1)"><i class="fa fa-play" aria-hidden="true"></i></button> 
