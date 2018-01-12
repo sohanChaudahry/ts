@@ -19,12 +19,23 @@
             </div>
             <div class="row">
               <div class="col-md-1"></div>
-                <div class="col-md-10">
+                <div class="col-md-5">
                   <div class="form-group">
                     <label>Email</label>
                      <input class="form-control" type="email" formControlName="email" placeholder="Email">
                     </div>
                 </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select class="form-control" formControlName="type">
+                            <option value="EMPLOYEE" selected>Employee</option>
+                            <option value="MANAGER">Manager</option>
+                            <option value="SUPER-MANAGER">Super-Manager</option>
+                        </select>
+                    </div>
+                </div>
+                
               <div class="col-md-1"></div>
             </div>
             <div class="row">
@@ -47,57 +58,106 @@
       </div>
     </div>
     <div class="card">
-        <div class="card-header hearder_btn">
+        <div class="card-header ">
           <span class="custom_span_header">Assets</span>
         </div>
-        <div class="card-block">
+        <div class="card-block" style="padding-top: 0px;">
+          <div class="row" style="padding: 5px;">
+                <div class="col-md-9"></div>
+                <div class="col-md-3" style="text-align:right;">
+                    <button class="btn btn-sm btn-success" (click)="addAssetRow()"><i class="fa fa-plus"></i> Add Row</button> 
+                    <button class="btn btn-sm btn-primary" (click)="saveAssetDetail()"><i class="fa fa-floppy-o"></i> Save</button> 
+                </div>
+          </div>
           <div class="table-responsive custom_table">
-              <table class="table table-bordered">
+            <popup #popup2 (confirmClick)="conformDeleteAssetPopup()" (cancelClick)="cancelDeleteAssetPopup()">
+                <span>Do you want to delete this assets ?</span>
+            </popup>
+            <table class="table table-bordered">
                   <thead class="thead-default">
                   <tr>
-                      <th width="25%">Assets ID</th>
-                      <th width="25%">Assets Name</th>
-                      <th width="45%">Description</th>
-                      <th width="15%">Manufacturer</th>
-                      <th width="45%">Rented</th>
-                      <th width="15%">Serical No</th>
-                      <th width="15%" style="text-align: center;">Action</th>
+                      <th width="15%">Assets ID</th>
+                      <th width="15%">Assets Name</th>
+                      <th width="27%">Description</th>
+                      <th width="8%">Manufacturer</th>
+                      <th width="5%">Rented</th>
+                      <th width="10%">Serical No</th>
+                      <th width="10%" style="text-align: center;">Action</th>
                   </tr>
                   </thead>
                   <tbody *ngIf="assetList.length == 0">
-                  <tr>
-                      <td colspan="4" style="text-align: center;">There are no project in the DB. Add a new project.</td>
-                  </tr>  
+                    <tr>
+                        <td colspan="7" style="text-align: center;">There are no assets in the DB. Add a new assets.</td>
+                    </tr>  
                   </tbody>
                   <tbody>
-                      <tr *ngFor="let asset of assetList">
+                      <tr *ngFor="let asset of assetList;let i=index;">
                           <td>
-                              <span>{{asset.assets_id}}</span>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.assets_id}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                 <input class="form-control" type="text" [(ngModel)]="asset.assets_id" placeholder="Assets Id">
+                              </div>
                           </td>
                           <td>
-                              <span>{{asset.assets_name}}</span>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.assets_name}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                <input class="form-control" type="text" [(ngModel)]="asset.assets_name" placeholder="Assets Name">
+                              </div>
                           </td>
                           <td>
-                              <span>{{asset.description}}</span>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.description}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                <input class="form-control" type="text" [(ngModel)]="asset.description" placeholder="Description">
+                              </div>
                           </td>
                           <td>
-                              <span>{{asset.manufacturer}}</span>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.manufacturer}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                <input class="form-control" type="text" [(ngModel)]="asset.manufacturer" placeholder="Manufacturer">
+                              </div>
                           </td>
                           <td>
-                              <span>{{asset.rented}}</span>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.rented==1 ? "RENTED" : "NOT RENTED"}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                <input class="form-control" type="text" [(ngModel)]="asset.rented" placeholder="Rented">
+                              </div>
                           </td>
                           <td>
-                              <span>{{asset.serical_no}}</span>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.serical_no}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                <input class="form-control" type="text" [(ngModel)]="asset.serical_no" placeholder="Serical No">
+                              </div>
                           </td>
                           <td style="text-align: center;">
-                            
+                            <button class="btn btn-sm btn-warning" (click)="updateAsset(i)"><i class="fa fa-pencil"></i></button> 
+                            <button class="btn btn-sm btn-danger" (click)="deleteAssetDialog(asset,i)"><i class="fa fa-times" aria-hidden="true"></i></button> 
+                            <button class="btn btn-sm btn-primary" (click)="openRepairRequestDialog(asset);"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
                           </td>
                       </tr> 
                   </tbody>  
-                  <popup  #popup1 (confirmClick)="conformPopup()" (cancelClick)="cancelPopup()">
-                      <span>Do you want to delete project ?</span>
-                  </popup>
               </table>
+              <popup  #popup1 (confirmClick)="conformRequestPopup()" (cancelClick)="cancelRequestPopup()">
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                <label for="exampleFormControlTextarea1">Title</label>
+                                <input class="form-control" type="text" [(ngModel)]="requestData.title" placeholder="Name">
+                            </div>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea class="form-control" rows="2" name="desc" [(ngModel)]="requestData.description"  placeholder="Address" ></textarea>
+                                </div>
+                            </div>
+                        <div class="col-md-1"></div>
+                    </div>
+              </popup>
           </div>
           <div style="float:right" *ngIf="assetList.length!=0">
               <pagination class="pagination-sm"
@@ -113,4 +173,61 @@
           </div>
         </div>
       </div>
+      <div class="card">
+            <div class="card-header">
+              <span class="custom_span_header">Repair Request History</span>
+            </div>
+            <div class="card-block">
+              <div class="table-responsive custom_table">
+                  <table class="table table-bordered">
+                      <thead class="thead-default">
+                        <tr>
+                            <th width="20%">Title</th>
+                            <th width="35%">Description</th>
+                            <th width="20%">Assets Name</th>
+                            <th width="15%">Apply Date</th>
+                            <th width="10%">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody *ngIf="repairRequestHistory.length == 0">
+                        <tr>
+                            <td colspan="4" style="text-align: center;">There are no repair request history in the DB.</td>
+                        </tr>  
+                      </tbody>
+                      <tbody>
+                          <tr *ngFor="let repair of repairRequestHistory;let i=index;">
+                              <td>
+                                  <span>{{repair.title}}</span>
+                              </td>
+                              <td>
+                                  <span>{{repair.description}}</span>
+                              </td>
+                              <td>
+                                    <span>{{repair.assets_id}}</span>
+                              </td>
+                              <td>
+                                    <span>{{repair.created_date | date : " MMM d, y h:mm:ss a"}}</span>
+                              </td>
+                              <td>
+                                  <span>{{repair.status==0 ? "PENDING" : "SOLVED"}}</span>
+                              </td>
+                             
+                          </tr> 
+                      </tbody>  
+                  </table>
+              </div>
+              <div style="float:right" *ngIf="repairRequestHistory.length!=0">
+                  <pagination class="pagination-sm"
+                      [(ngModel)]="history_pagination.page"
+                      [totalItems]="history_pagination.length"
+                      [itemsPerPage]="history_pagination.itemsPerPage"
+                      [maxSize]="history_pagination.maxSize"
+                      [boundaryLinks]="true"
+                      [rotate]="false"
+                      (pageChanged)="getRepairRequestHistory($event)"
+                      (numPages)="history_pagination.numPages = $event">
+                  </pagination>
+              </div>
+            </div>
+        </div>
 </div>

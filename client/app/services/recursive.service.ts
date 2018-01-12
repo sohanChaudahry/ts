@@ -124,8 +124,8 @@ export class RecursiveService {
             var count = 0;
             localStorage.setItem("project_requests",count.toString()); 
           }
-        });
-      }
+      });
+    }
 
      /*
      @author : Vaibhav Mali 
@@ -151,7 +151,6 @@ export class RecursiveService {
             }
             this.toast.setMessage(messages, 'success top',4000)  
           }
-          console.log(res);
         });
       }
 
@@ -178,7 +177,6 @@ export class RecursiveService {
             if(messages != "")
             this.toast.setMessage(messages, 'success top',4000)  
           }
-          console.log(res);
         });
       }
 

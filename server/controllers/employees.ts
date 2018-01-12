@@ -1013,6 +1013,7 @@ getCurrentLoginDetails = (req, res) => {
       resData["name"] = data[0]._doc.name;
       resData["login_status"] = 1;
       resData["email"] = req.user.emails[0].value;
+      resData["type"]=data[0]._doc.type;
       res.send(resData);      
     })
   }

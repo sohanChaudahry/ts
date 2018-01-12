@@ -1,7 +1,7 @@
 <app-loading [condition]="isLoading"></app-loading>
 
 <app-toast [message]="toast.message"></app-toast>
-<div class="card" *ngIf="isEmployeeListShow && !isProjectListShow">
+<div class="card" *ngIf="isEmployeeListShow && !isProjectListShow && !isAssetsListShow">
     <div class="card-header hearder_btn">
       <span class="custom_span_header">Employees </span>
     </div>
@@ -10,15 +10,16 @@
           <table class="table table-bordered">
               <thead class="thead-default">
                   <tr>
-                      <th width="40%">Employee Name</th>
-                      <th width="20%">Address</th>
+                      <th width="25%">Employee Name</th>
+                      <th width="15%">Address</th>
                       <th width="30%">Email</th>
-                      <th width="10%" style="text-align: center;">Action</th>
+                      <th width="15%">Role</th>
+                      <th width="15%" style="text-align: center;">Action</th>
                   </tr>
               </thead>
               <tbody *ngIf="employeeList.length == 0">
                 <tr>
-                    <td colspan="4">There are no employee in the DB.</td>
+                    <td colspan="5">There are no employee in the DB.</td>
                 </tr>  
               </tbody>
               <tbody>
@@ -31,9 +32,14 @@
                     </td>
                     <td>
                         <span>{{emp.email}}</span>
-                    </td>  
+                    </td> 
+                    <td>
+                        <span>{{emp.type}}</span>
+                    </td>   
                     <td style="text-align: center;">
+                        <button *ngIf="authService.user_type=='SUPER-MANAGER'" class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></button> 
                         <button class="btn btn-sm btn-primary" (click)="openProjectListDialog(emp)"><i class="fa fa-briefcase icon" aria-hidden="true"></i></button> 
+                        <button *ngIf="authService.user_type!='EMPLOYEE'" class="btn btn-sm btn-primary" (click)="openAssetDialog(emp)">Assets</button> 
                     </td>
                 </tr> 
               </tbody>  
@@ -53,7 +59,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="!isEmployeeListShow && isProjectListShow">
+  <div *ngIf="!isEmployeeListShow && isProjectListShow && !isAssetsListShow">
       <div class="custom_hd ctm_hd_task">
           <span class="custom_span_header">Projects</span>
           <span class="custom_back_btn">
@@ -157,6 +163,100 @@
           </div>
       </div>
   </div>
+  <div class="card" *ngIf="!isEmployeeListShow && !isProjectListShow && isAssetsListShow">
+        <div class="custom_hd ctm_hd_task">
+            <span class="custom_span_header">Assets</span>
+            <span class="custom_back_btn">
+                <button class="btn btn-sm btn-success" (click)="backEmpListPage()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
+            </span>
+        </div>
+        <div class="card-block" style="padding-top: 0px;">
+          <div class="row" style="padding: 5px;">
+                <div class="col-md-9"></div>
+                <div class="col-md-3" style="text-align:right;padding: 5px;">
+                    <button class="btn btn-sm btn-success" (click)="addAssetRow()"><i class="fa fa-plus"></i> Add Row</button> 
+                    <button class="btn btn-sm btn-primary" (click)="saveAssetDetail()"><i class="fa fa-floppy-o"></i> Save</button> 
+                </div>
+          </div>
+          <div class="table-responsive custom_table">
+            <table class="table table-bordered">
+                  <thead class="thead-default">
+                    <tr>
+                        <th width="15%">Assets ID</th>
+                        <th width="15%">Assets Name</th>
+                        <th width="27%">Description</th>
+                        <th width="8%">Manufacturer</th>
+                        <th width="5%">Rented</th>
+                        <th width="10%">Serical No</th>
+                        <th width="10%" style="text-align: center;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="assetList.length == 0">
+                    <tr>
+                        <td colspan="7" style="text-align: center;">There are no assets in the DB. Add a new assets.</td>
+                    </tr>  
+                  </tbody>
+                  <tbody>
+                      <tr *ngFor="let asset of assetList;let i=index;">
+                          <td>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.assets_id}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                 <input class="form-control" type="text" [(ngModel)]="asset.assets_id" placeholder="Assets Id">
+                              </div>
+                          </td>
+                          <td>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.assets_name}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                <input class="form-control" type="text" [(ngModel)]="asset.assets_name" placeholder="Assets Name">
+                              </div>
+                          </td>
+                          <td>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.description}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                <input class="form-control" type="text" [(ngModel)]="asset.description" placeholder="Description">
+                              </div>
+                          </td>
+                          <td>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.manufacturer}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                <input class="form-control" type="text" [(ngModel)]="asset.manufacturer" placeholder="Manufacturer">
+                              </div>
+                          </td>
+                          <td>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.rented==1 ? "RENTED" : "NOT RENTED"}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                <input class="form-control" type="text" [(ngModel)]="asset.rented" placeholder="Rented">
+                              </div>
+                          </td>
+                          <td>
+                              <span *ngIf="asset.isAssetEdit==0">{{asset.serical_no}}</span>
+                              <div *ngIf="asset.isAssetEdit==1" class="form-group">
+                                <input class="form-control" type="text" [(ngModel)]="asset.serical_no" placeholder="Serical No">
+                              </div>
+                          </td>
+                          <td style="text-align: center;">
+                            <button class="btn btn-sm btn-warning" (click)="updateAsset(i)"><i class="fa fa-pencil"></i></button> 
+                            <button class="btn btn-sm btn-danger" (click)="deleteAssetDialog(asset)"><i class="fa fa-times" aria-hidden="true"></i></button> 
+                            <button class="btn btn-sm btn-primary" (click)="openRepairRequestDialog(asset);"><i class="fa fa-info-circle" aria-hidden="true"></i></button> 
+                          </td>
+                      </tr> 
+                  </tbody>  
+              </table>
+          </div>
+          <div style="float:right" *ngIf="assetList.length!=0">
+              <pagination class="pagination-sm"
+                  [(ngModel)]="asset_pagination.page"
+                  [totalItems]="asset_pagination.length"
+                  [itemsPerPage]="asset_pagination.itemsPerPage"
+                  [maxSize]="asset_pagination.maxSize"
+                  [boundaryLinks]="true"
+                  [rotate]="false"
+                  (pageChanged)="getAssetList($event)"
+                  (numPages)="asset_pagination.numPages = $event">
+              </pagination>
+          </div>
+        </div>
+</div>
 <!-- <div class="home_header">
   <span>Employees ({{employeeList.length}})</span>
 </div>

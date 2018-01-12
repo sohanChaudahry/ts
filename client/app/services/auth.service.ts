@@ -12,6 +12,7 @@ export class AuthService {
   isAdmin = false;
   jwtHelper: JwtHelper = new JwtHelper();
   current_user_name="";
+  user_type="";
   constructor(private userService: UserService,
               private router: Router) {
        
@@ -31,12 +32,13 @@ export class AuthService {
       res => {
         if(res && res.login_status){
             this.current_user_name=res.name;
+            this.user_type=res.type;
             localStorage.setItem('_id', res._id);
             localStorage.setItem('name', res.name);
             localStorage.setItem('login_status', res.login_status); 
             localStorage.setItem('email', res.email);
+            localStorage.setItem('type', res.type);
             this.checkIsLogin=res.login_status;
-            // console.log(res);
         }else{
             localStorage.clear();
         }

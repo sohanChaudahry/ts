@@ -51,13 +51,11 @@ export default class AssetsCtrl  {
                             "serical_no":asset.serical_no ? asset.serical_no : "",
                          }}).exec(function(err,data2){
                             if (err){
-                                console.log(data2);
                                 count=count + 1;
                                 asset.error = err;                                       
                                 failedData.failedData.push(asset);
                                 callback();
                             }else{
-                                console.log(data2);
                                 count=count + 1;
                                 asset.success = "true";
                                 successData.successData.push(asset);
@@ -148,5 +146,5 @@ export default class AssetsCtrl  {
             }
         });
     }
-}
+  }
 }

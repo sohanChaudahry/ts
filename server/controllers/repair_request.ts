@@ -22,7 +22,6 @@ export default class RepairRequestCtrl  {
             new_repair_request.assets_id=repairRequestList.assets_id ? repairRequestList.assets_id : "";
             new_repair_request.created_date=repairRequestList.created_date ? new Date(repairRequestList.created_date) : new Date();
             new_repair_request.modify_date=repairRequestList.modify_date ? new Date(repairRequestList.modify_date) : new Date();
-
             new_repair_request.save(function (err) {
                 if (err) {
                   resData['error'] = err;  
@@ -37,15 +36,52 @@ export default class RepairRequestCtrl  {
     getRepairRequestHistory = (req,res) => {
         var request_detail=req.body.reqData;
         var resData={
-            repairRequestList :[]
+            repairRequestList:[]
         };
         if(request_detail){
             var employee_id = mongoose.Types.ObjectId(request_detail.employee_id);
-            repair_request_model.paginate({"employee_id": employee_id}, {page : request_detail.page, limit: request_detail.limit }, function(err, data){
-            // repair_request_model.find({ "employee_id": employee_id }, function (err, data) {
-                if(data){
-                    res['success']='ture';
-                    resData.repairRequestList=data.docs;
+            if(request_detail.assets_id){
+                var assets_id = mongoose.Types.ObjectId(request_detail.assets_id);
+            }
+            //get data from repair request collection
+            var query={};
+            // if(request_detail.assets_id){
+            //     query={"employee_id": employee_id,"assets_id":assets_id} 
+            // }else{
+            //     query={"employee_id": employee_id} 
+            // }
+            // repair_request_model.paginate({"employee_id": employee_id} , { page : request_detail.page, limit: request_detail.limit }, function(err, repair_history_list){
+             repair_request_model.find({ "employee_id": employee_id }, function (err, repair_history_list) {
+                if(repair_history_list.length!=0){
+                    // let count=0;
+                    // let length=repair_history_list.docs.length;
+                    // async.forEach(repair_history_list.docs, function(repair_list, callback) {
+                    //     var assets_id = mongoose.Types.ObjectId(repair_list._doc.assets_id);        
+                    //     var employee_id = mongoose.Types.ObjectId(repair_list._doc.employee_id);
+                    //     assets_model.find({ "_id":assets_id}, function (err, asset_data) {
+                    //         employees_model.find({ "_id":employee_id}, function (err, emp_data) {
+                    //             if(asset_data.length>0 && emp_data.length>0){
+                    //                 repair_list._doc.assets_id=asset_data[0]._doc;
+                    //                 repair_list._doc.employee_id=emp_data[0]._doc;
+                    //                 resData.repairRequestList.push(repair_list._doc);
+                    //                 count=count+1;
+                    //                 callback();
+                    //             }
+                    //         });
+                    //     });
+                    // }, function(err) {
+                    //     res['success']='true';
+                    //     if(count >= length){
+                    //         // resData.repairRequestList.sort(function(a,b){
+                    //         // var c:any = new Date(a.created_date);
+                    //         // var d:any = new Date(b.created_date);
+                    //         // return c-d;
+                    //         // })
+                    //         res.send(resData);
+                    //     } 
+                    // });
+                    resData.repairRequestList=repair_history_list;
+                    res['success']='true';
                     res.send(resData);
                 }else{
                     res['error']=err;
